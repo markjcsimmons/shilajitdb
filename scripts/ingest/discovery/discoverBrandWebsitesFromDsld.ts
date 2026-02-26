@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { getCachedJson, setCachedJson } from "@/scripts/ingest/shared/cache";
 import { fetchJsonWithRetry, fetchTextWithRetry } from "@/scripts/ingest/shared/http";
-import { createEmptyStats, finishRun, startRun } from "@/scripts/ingest/shared/observability";
+import { createEmptyStats, finishRun, heartbeatRun, startRun } from "@/scripts/ingest/shared/observability";
 import { DomainRateLimiter, Semaphore } from "@/scripts/ingest/web/rateLimit";
 import { getRobotsRulesForDomain, isUrlAllowedByRobots } from "@/scripts/ingest/web/robots";
 import * as cheerio from "cheerio";
@@ -715,6 +715,24 @@ export async function runDiscoverBrandWebsitesFromDsld(opts: Args) {
   const runId = await startRun("DISCOVERY");
   const stats = createEmptyStats();
 
+  const heartbeatIntervalMs = Math.max(
+    3000,
+    Number(process.env.INGEST_HEARTBEAT_INTERVAL_MS ?? 10_000)
+  );
+  let lastHeartbeatAt = 0;
+  let heartbeatInFlight: Promise<void> | null = null;
+  function kickHeartbeat() {
+    const now = Date.now();
+    if (now - lastHeartbeatAt < heartbeatIntervalMs) return;
+    if (heartbeatInFlight) return;
+    lastHeartbeatAt = now;
+    heartbeatInFlight = heartbeatRun(runId, stats)
+      .catch(() => {})
+      .finally(() => {
+        heartbeatInFlight = null;
+      });
+  }
+
   const concurrency = Math.max(1, Number(process.env.WEBSITE_DISCOVERY_CONCURRENCY ?? 2));
   const sem = new Semaphore(concurrency);
   const rate = new DomainRateLimiter(Math.max(200, Number(process.env.WEBSITE_SEARCH_INTERVAL_MS ?? 1200)));
@@ -769,6 +787,8 @@ export async function runDiscoverBrandWebsitesFromDsld(opts: Args) {
       take: opts.maxBrands,
       })
     );
+
+    kickHeartbeat();
 
     const work = brands.map((b) => async () => {
       await sem.acquire();
@@ -927,6 +947,7 @@ export async function runDiscoverBrandWebsitesFromDsld(opts: Args) {
         }
       } finally {
         stats.brandsProcessed += 1;
+        kickHeartbeat();
         sem.release();
       }
     });

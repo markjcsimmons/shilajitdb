@@ -37,6 +37,14 @@ export async function startRun(type: IngestionRunType) {
   return run.id;
 }
 
+export async function heartbeatRun(runId: string, stats: IngestionStats) {
+  // Keep RUNNING runs "fresh" for the admin UI without overwriting CANCELED.
+  await prisma.ingestionRun.updateMany({
+    where: { id: runId, status: "RUNNING" },
+    data: { statsJson: stats as Prisma.InputJsonValue },
+  });
+}
+
 export async function finishRun(
   runId: string,
   status: IngestionRunStatus,

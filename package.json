@@ -18,7 +18,8 @@
     "ingest:web:brands": "tsx scripts/ingest/web/crawlBrandSites.ts",
     "ingest:discovery:csv": "tsx scripts/ingest/discovery/importCsv.ts",
     "ingest:discovery:run": "tsx scripts/ingest/discovery/runDiscovery.ts",
-    "ingest:discovery:websites": "tsx scripts/ingest/discovery/discoverBrandWebsitesFromDsld.ts"
+    "ingest:discovery:websites": "tsx scripts/ingest/discovery/discoverBrandWebsitesFromDsld.ts",
+    "ingest:listings": "tsx scripts/ingest/listings/runListings.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",

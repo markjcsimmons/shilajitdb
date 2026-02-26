@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { labelClarity, labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
-import type { EvidenceType } from "@prisma/client";
+import type { EvidenceType, ListingSource } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,6 +13,13 @@ export const dynamic = "force-dynamic";
 
 function labelEvidenceType(t: EvidenceType) {
   return t.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
+}
+
+function labelListingSource(s: ListingSource) {
+  if (s === "OFFICIAL") return "Official";
+  if (s === "AMAZON") return "Amazon";
+  if (s === "WALMART") return "Walmart";
+  return "Other retailer";
 }
 
 export async function generateMetadata({
@@ -50,6 +57,7 @@ export default async function ProductPage({
     include: {
       brand: true,
       evidence: { orderBy: { createdAt: "desc" } },
+      listings: { orderBy: [{ source: "asc" }, { updatedAt: "desc" }] },
     },
   });
   if (!product) notFound();
@@ -101,6 +109,29 @@ export default async function ProductPage({
     name: product.name,
     brand: { "@type": "Brand", name: product.brand.name },
     url: absoluteUrl(`/product/${product.slug}`),
+    ...(product.listings.length
+      ? {
+          offers: product.listings.map((l) => {
+            const offer: Record<string, unknown> = {
+              "@type": "Offer",
+              url: l.url,
+              priceCurrency: l.currency ?? undefined,
+              price:
+                typeof l.priceCents === "number" && Number.isFinite(l.priceCents)
+                  ? (l.priceCents / 100).toFixed(2)
+                  : undefined,
+              availability:
+                typeof l.inStock === "boolean"
+                  ? l.inStock
+                    ? "https://schema.org/InStock"
+                    : "https://schema.org/OutOfStock"
+                  : undefined,
+              seller: l.seller ? { "@type": "Organization", name: l.seller } : undefined,
+            };
+            return offer;
+          }),
+        }
+      : {}),
   };
 
   const reportSubject = encodeURIComponent(`Update request: ${product.brand.name} — ${product.name}`);
@@ -293,6 +324,63 @@ export default async function ProductPage({
               <li key={r}>{r}</li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+            Where This Product Is Sold
+          </h2>
+          <div className="text-sm text-slate-600">
+            {product.listings.length} listing{product.listings.length === 1 ? "" : "s"}
+          </div>
+        </div>
+        <div className="mt-4 space-y-3">
+          {product.listings.length ? (
+            product.listings.map((l) => (
+              <div
+                key={l.id}
+                className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-slate-900">
+                    {labelListingSource(l.source)}
+                  </div>
+                  <div className="mt-1 text-sm text-slate-700 truncate">
+                    <a
+                      href={l.url}
+                      className="underline underline-offset-4"
+                      target="_blank"
+                      rel="nofollow"
+                    >
+                      {l.title ?? l.url}
+                    </a>
+                  </div>
+                  <div className="mt-1 text-xs text-slate-500">
+                    Last seen: {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleDateString() : "—"}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={l.source === "OFFICIAL" ? "outline" : "muted"}>
+                    {l.source}
+                  </Badge>
+                  <a
+                    href={l.url}
+                    target="_blank"
+                    rel="nofollow"
+                    className="text-sm underline underline-offset-4"
+                  >
+                    Visit
+                  </a>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-sm text-slate-700">
+              No listings have been captured yet.
+            </div>
+          )}
         </div>
       </div>
 

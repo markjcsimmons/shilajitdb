@@ -26,7 +26,11 @@ export default async function AdminProductEditPage({
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
     prisma.product.findUnique({
       where: { id },
-      include: { brand: true, evidence: { orderBy: { createdAt: "desc" } } },
+      include: {
+        brand: true,
+        evidence: { orderBy: { createdAt: "desc" } },
+        listings: { orderBy: [{ source: "asc" }, { updatedAt: "desc" }] },
+      },
     }),
   ]);
   if (!product) notFound();
@@ -233,6 +237,59 @@ export default async function AdminProductEditPage({
             <Button type="submit">Save changes</Button>
           </div>
         </form>
+      </div>
+
+      <div id="listings" className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Listings</h2>
+          <div className="text-sm text-slate-600">
+            {product.listings.length} known listing{product.listings.length === 1 ? "" : "s"}
+          </div>
+        </div>
+
+        <div className="mt-4 overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="text-xs uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-slate-200">
+                <th className="py-2 pr-4">Source</th>
+                <th className="py-2 pr-4">URL</th>
+                <th className="py-2 pr-4">Title</th>
+                <th className="py-2 pr-4">Last seen</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {product.listings.length ? (
+                product.listings.map((l) => (
+                  <tr key={l.id}>
+                    <td className="py-3 pr-4">
+                      <Badge variant={l.source === "OFFICIAL" ? "outline" : "muted"}>{l.source}</Badge>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <a
+                        href={l.url}
+                        target="_blank"
+                        rel="nofollow"
+                        className="underline underline-offset-4"
+                      >
+                        {l.url}
+                      </a>
+                    </td>
+                    <td className="py-3 pr-4 text-slate-700">{l.title ?? "—"}</td>
+                    <td className="py-3 pr-4 text-slate-700">
+                      {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleString() : "—"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="py-4 text-slate-700">
+                    No listings yet. Ingest official and marketplace listings to populate this section.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div id="evidence" className="rounded-2xl border border-slate-200 bg-white p-6">

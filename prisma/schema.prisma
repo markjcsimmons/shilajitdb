@@ -83,6 +83,19 @@ enum CompanyRole {
   OTHER
 }
 
+enum ListingSource {
+  OFFICIAL
+  AMAZON
+  WALMART
+  OTHER_RETAILER
+}
+
+enum ListingStatus {
+  ACTIVE
+  INACTIVE
+  UNKNOWN
+}
+
 model Brand {
   id          String    @id @default(cuid())
   name        String    @unique
@@ -104,6 +117,13 @@ model Product {
   name                      String
   slug                      String                @unique
   form                      ProductForm
+  gtin                      String?               @unique
+  mpn                       String?
+  brandSku                  String?
+  netQuantityText           String?
+  servingsCount             Int?
+  capsuleCount              Int?
+  flavor                    String?
   ingredientText            String                @db.Text
   ingredientsNormalized     String[]              @default([]) @db.Text
   manufacturingCountryClaim String?
@@ -121,9 +141,55 @@ model Product {
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
   evidence                  Evidence[]
+  listings                  Listing[]
 
   @@index([brandId])
   @@index([name])
+  @@index([gtin])
+  @@index([brandSku])
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+
+  productId     String
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  source        ListingSource
+
+  url           String        @unique
+
+  title         String?
+
+  seller        String?
+
+  priceCents    Int?
+
+  currency      String?
+
+  inStock       Boolean?
+
+  shipsToUS     Boolean?
+
+  observedGtin  String?
+
+  observedSku   String?
+
+  imageUrls     String[]      @default([]) @db.Text
+
+  status        ListingStatus @default(UNKNOWN)
+
+  lastSeenAt    DateTime?
+
+  createdAt     DateTime      @default(now())
+
+  updatedAt     DateTime      @updatedAt
+
+  @@index([productId])
+
+  @@index([source])
+
+  @@index([observedGtin])
 }
 
 model Evidence {
