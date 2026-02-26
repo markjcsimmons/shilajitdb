@@ -1,0 +1,52 @@
+{
+  "name": "shilajit-transparency-database",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "dev:clean": "pkill -f \"next dev\" || true && rm -rf .next && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma": "prisma",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
+    "db:recompute": "tsx scripts/recompute-grades.ts",
+    "ingest:dsld:shilajit": "tsx scripts/ingest/dsld/ingestShilajitFromDsld.ts",
+    "ingest:web:brands": "tsx scripts/ingest/web/crawlBrandSites.ts",
+    "ingest:discovery:csv": "tsx scripts/ingest/discovery/importCsv.ts",
+    "ingest:discovery:run": "tsx scripts/ingest/discovery/runDiscovery.ts",
+    "ingest:discovery:websites": "tsx scripts/ingest/discovery/discoverBrandWebsitesFromDsld.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.1",
+    "cheerio": "^1.1.2",
+    "clsx": "^2.1.1",
+    "csv-parse": "^5.6.0",
+    "next": "^15.5.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.20.0",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@tailwindcss/typography": "^0.5.16",
+    "autoprefixer": "^10.4.20",
+    "dotenv": "^16.6.1",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "^15.5.0",
+    "postcss": "^8.5.1",
+    "prisma": "^6.16.1",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
+

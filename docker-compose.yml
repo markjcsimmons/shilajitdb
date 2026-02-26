@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shilajit_transparency
+    ports:
+      - "5432:5432"
+    volumes:
+      - shilajit_db_data:/var/lib/postgresql/data
+
+volumes:
+  shilajit_db_data:
+

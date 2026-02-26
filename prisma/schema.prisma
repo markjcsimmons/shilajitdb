@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductForm {
+  RESIN
+  CAPSULE
+  POWDER
+  GUMMY
+  LIQUID
+  BLEND
+  OTHER
+}
+
+enum ManufacturingClarity {
+  CLEAR
+  AMBIGUOUS
+  NOT_STATED
+}
+
+enum CoaStatus {
+  PUBLIC
+  REQUEST_ONLY
+  NONE
+  UNKNOWN
+}
+
+enum TransparencyGrade {
+  F
+  D
+  C
+  B
+  A
+}
+
+enum QualityTier {
+  POOR
+  AVERAGE
+  PREMIUM
+  ULTRA_PREMIUM
+}
+
+enum EvidenceType {
+  COA
+  MANUFACTURING
+  INGREDIENTS
+  TESTING
+  OTHER
+}
+
+enum DataCompleteness {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum IngestionRunType {
+  DSLD
+  BRAND_CRAWL
+  DISCOVERY
+  REFRESH
+}
+
+enum IngestionRunStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
+enum CompanyRole {
+  UNKNOWN
+  MANUFACTURER
+  DISTRIBUTOR
+  MARKETER
+  PACKAGER
+  RESELLER
+  OTHER
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  website     String?
+  websiteDomain String?
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+  aliases     BrandAlias[]
+  companies   BrandCompany[]
+}
+
+model Product {
+  id                        String                @id @default(cuid())
+  brandId                   String
+  brand                     Brand                 @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  name                      String
+  slug                      String                @unique
+  form                      ProductForm
+  ingredientText            String                @db.Text
+  ingredientsNormalized     String[]              @default([]) @db.Text
+  manufacturingCountryClaim String?
+  manufacturingClarity      ManufacturingClarity
+  manufacturingClaimText    String?               @db.Text
+  manufacturingEvidenceUrl  String?
+  coaStatus                 CoaStatus
+  coaUrl                    String?
+  transparencyGrade         TransparencyGrade
+  qualityTier               QualityTier
+  sourceDsldLabelId         String?               @unique
+  sourceDsldUrl             String?
+  dataCompleteness          DataCompleteness      @default(LOW)
+  lastVerifiedAt            DateTime?
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+  evidence                  Evidence[]
+
+  @@index([brandId])
+  @@index([name])
+}
+
+model Evidence {
+  id        String       @id @default(cuid())
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      EvidenceType
+  url       String
+  sourceName String?
+  quote     String?      @db.Text
+  fetchedAt DateTime     @default(now())
+  hash      String?
+  createdAt DateTime     @default(now())
+
+  @@index([productId])
+}
+
+model BrandAlias {
+  id        String   @id @default(cuid())
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  alias     String
+  source    String?
+  createdAt DateTime @default(now())
+
+  @@unique([brandId, alias])
+  @@index([alias])
+}
+
+model CompanyEntity {
+  id             String   @id @default(cuid())
+  name           String
+  normalizedName String   @unique
+  website        String?
+  websiteDomain  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  brands         BrandCompany[]
+}
+
+model BrandCompany {
+  id            String       @id @default(cuid())
+  brandId       String
+  brand         Brand         @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  companyId     String
+  company       CompanyEntity @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role          CompanyRole   @default(UNKNOWN)
+  sourceDsldId  String?
+  createdAt     DateTime      @default(now())
+
+  @@unique([brandId, companyId, role])
+  @@index([companyId])
+}
+
+model IngestionRun {
+  id        String             @id @default(cuid())
+  type      IngestionRunType
+  startedAt DateTime           @default(now())
+  finishedAt DateTime?
+  status    IngestionRunStatus @default(RUNNING)
+  statsJson Json?
+  errorText String?            @db.Text
+  pid       Int?
+}
+
