@@ -19,7 +19,46 @@ import {
 } from "@/scripts/ingest/shared/observability";
 import { upsertBrandSafe } from "@/scripts/ingest/shared/brand";
 
-const TERMS = ["shilajit", "shilajeet", "mumijo", "mumie", "asphaltum", "mineral pitch"] as const;
+// Terms used to CONFIRM a label is actually about shilajit.
+const MATCH_TERMS = ["shilajit", "shilajeet", "mumijo", "mumie", "asphaltum", "mineral pitch"] as const;
+
+// Terms used to QUERY DSLD search. Keep this conservative to avoid importing unrelated supplements.
+const DEFAULT_SEARCH_TERMS = ["shilajit", "shilajeet", "mumijo", "mumie"] as const;
+
+function parseCsvEnv(name: string): string[] | null {
+  const raw = process.env[name];
+  if (!raw) return null;
+  const xs = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return xs.length ? xs : null;
+}
+
+function uniqueLower(xs: string[]) {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const x of xs) {
+    const k = x.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(x);
+  }
+  return out;
+}
+
+function labelMentionsShilajit(labelText: string) {
+  const t = String(labelText ?? "");
+  const patterns = [
+    /\bshilajit\b/i,
+    /\bshilajeet\b/i,
+    /\bmumijo\b/i,
+    /\bmumie\b/i,
+    /\basphaltum\b/i,
+    /\bmineral\s+pitch\b/i,
+  ];
+  return patterns.some((re) => re.test(t));
+}
 
 function parseArgs(argv: string[]) {
   const dryRun = argv.includes("--dry-run");
@@ -217,14 +256,34 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
 
   try {
     const labelIds = new Set<string>();
-    // Smaller page sizes reduce stall risk; if maxLabels is set, keep it tight.
-    const size = Math.min(200, opts.maxLabels ?? 200);
+    // Smaller page sizes reduce stall risk (DSLD search can be slow under load).
+    const defaultSize = Math.max(25, Number(process.env.DSLD_SEARCH_PAGE_SIZE ?? 100));
+    const size = Math.min(defaultSize, opts.maxLabels ?? defaultSize);
 
-    for (const term of TERMS) {
+    async function safeSearchFilter(args: { q: string; from: number; size: number }) {
+      try {
+        return await client.searchFilter(args);
+      } catch (e: any) {
+        stats.errorsCount += 1;
+        if ((stats.errorsSample?.length ?? 0) < 25) {
+          stats.errorsSample?.push({
+            message: e?.message ? String(e.message) : String(e),
+            context: `searchFilter q=${args.q} from=${args.from} size=${args.size}`,
+          });
+        }
+        return null;
+      }
+    }
+
+    const searchTerms = uniqueLower(parseCsvEnv("DSLD_SEARCH_TERMS") ?? Array.from(DEFAULT_SEARCH_TERMS));
+    stats.notes?.push(`DSLD search terms: ${searchTerms.join(", ")}`);
+
+    for (const term of searchTerms) {
       let from = 0;
       let pages = 0;
       while (pages < 200) {
-        const res = await client.searchFilter({ q: term, from, size });
+        const res = await safeSearchFilter({ q: term, from, size });
+        if (!res) break;
         const ids = extractLabelIdsFromSearchResponse(res);
         for (const id of ids) labelIds.add(id);
         if (opts.maxLabels && labelIds.size >= opts.maxLabels) break;
@@ -259,6 +318,10 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
         const dsldUrl = `https://dsld.od.nih.gov/label/${dsldId}`;
 
         const labelText = buildLabelText(label);
+        if (!labelMentionsShilajit(labelText)) {
+          stats.skippedCount += 1;
+          continue;
+        }
         const ingredients = parseIngredientsFromLabelText(labelText);
         const manufacturing = deriveManufacturingFromLabelText(labelText);
         const form = inferFormFromText(`${productName}\n${ingredients.ingredientText}`);
@@ -339,6 +402,12 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
     return { runId, stats };
   } catch (e: any) {
     stats.errorsCount += 1;
+    if ((stats.errorsSample?.length ?? 0) < 25) {
+      stats.errorsSample?.push({
+        message: e?.message ? String(e.message) : String(e),
+        context: "runDsldShilajitIngest",
+      });
+    }
     await finishRun(runId, "FAILED", stats, e?.message ? String(e.message) : String(e));
     throw e;
   }

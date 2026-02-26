@@ -2,133 +2,99 @@ import "dotenv/config";
 
 import fs from "fs/promises";
 import { parse } from "csv-parse/sync";
-import { prisma } from "@/lib/db";
-import { slugify } from "@/lib/slug";
-import { deriveWebsiteDomain } from "@/lib/url";
 import { createEmptyStats, finishRun, startRun } from "@/scripts/ingest/shared/observability";
-import { upsertBrandSafe } from "@/scripts/ingest/shared/brand";
-import { ProductForm } from "@prisma/client";
+import { resolveListingToProduct } from "./listingResolver";
+import type { ListingInput } from "./types";
+import type { ListingSource, ProductForm } from "@prisma/client";
 
-type DiscoveryRow = {
-  brandName: string;
-  website?: string;
-  productName?: string;
-  form?: string;
-};
-
-function parseArgs(argv: string[]) {
-  const dryRun = argv.includes("--dry-run");
-  const pathIdx = argv.findIndex((a) => a === "--path");
-  const path = pathIdx >= 0 ? argv[pathIdx + 1] : undefined;
-  return { dryRun, path };
+function argValue(flag: string) {
+  const idx = process.argv.findIndex((a) => a === flag);
+  if (idx < 0) return null;
+  return process.argv[idx + 1] ?? null;
 }
 
-function normalizeRow(r: any): DiscoveryRow | null {
-  const brandName = String(r.brandName ?? r.brand_name ?? r.brand ?? "").trim();
-  if (!brandName) return null;
-  const website = String(r.website ?? r.site ?? r.url ?? "").trim() || undefined;
-  const productName = String(r.productName ?? r.product_name ?? r.product ?? "").trim() || undefined;
-  const form = String(r.form ?? "").trim() || undefined;
-  return { brandName, website, productName, form };
-}
-
-function coerceProductForm(input: unknown): ProductForm {
+function coerceListingSource(input: unknown): ListingSource {
   const s = String(input ?? "")
     .trim()
     .toUpperCase()
     .replaceAll("-", "_")
     .replaceAll(" ", "_");
-  const values = Object.values(ProductForm) as string[];
-  return values.includes(s) ? (s as ProductForm) : ProductForm.OTHER;
+  const values = ["OFFICIAL", "AMAZON", "WALMART", "IHERB", "OTHER_RETAILER", "GOOGLE_SHOPPING", "MANUAL"] as const;
+  return (values.includes(s as any) ? (s as ListingSource) : "OTHER_RETAILER") as ListingSource;
 }
 
-export async function importDiscoveryCsv(opts: { csvPath: string; dryRun: boolean }) {
-  const runId = await startRun("DISCOVERY");
+function coerceProductForm(input: unknown): ProductForm | null {
+  const s = String(input ?? "")
+    .trim()
+    .toUpperCase()
+    .replaceAll("-", "_")
+    .replaceAll(" ", "_");
+  if (!s) return null;
+  const values = ["RESIN", "CAPSULE", "POWDER", "GUMMY", "LIQUID", "BLEND", "OTHER"] as const;
+  return values.includes(s as any) ? (s as ProductForm) : null;
+}
+
+function normalizeRow(r: Record<string, unknown>): ListingInput | null {
+  const url = String(r.url ?? "").trim();
+  if (!url) return null;
+  const source = coerceListingSource(r.source);
+  const title = typeof r.title === "string" ? r.title.trim() : null;
+  const brandName = typeof r.brandName === "string" ? r.brandName.trim() : null;
+  const observedGtin = typeof r.observedGtin === "string" ? r.observedGtin.trim() : null;
+  const observedSku = typeof r.observedSku === "string" ? r.observedSku.trim() : null;
+  const netQuantityText = typeof r.netQuantityText === "string" ? r.netQuantityText.trim() : null;
+  const form = coerceProductForm(r.form);
+  return { url, source, title, brandName, observedGtin, observedSku, netQuantityText, form, imageUrls: null };
+}
+
+export async function importListingsCsv(opts: { csvPath: string; dryRun: boolean; wrapRun?: boolean }) {
+  const wrapRun = opts.wrapRun ?? true;
+  const runId = wrapRun ? await startRun("DISCOVERY") : "no-run";
   const stats = createEmptyStats();
 
   try {
     const raw = await fs.readFile(opts.csvPath, "utf8");
-    const records = parse(raw, {
-      columns: true,
-      skip_empty_lines: true,
-      bom: true,
-      trim: true,
-    }) as unknown[];
+    const rows = parse(raw, { columns: true, skip_empty_lines: true, bom: true, trim: true }) as Array<
+      Record<string, unknown>
+    >;
 
-    for (const rec of records) {
-      const row = normalizeRow(rec);
-      if (!row) continue;
-
-      const websiteDomain = deriveWebsiteDomain(row.website);
-
-      const brand = await upsertBrandSafe({
-        brandName: row.brandName,
-        website: row.website ?? null,
-        websiteDomain,
-        dryRun: opts.dryRun,
-      });
-      stats.brandsProcessed += 1;
-
-      if (!row.productName) continue;
-
-      const productSlug = slugify(`${row.brandName} ${row.productName}`);
-      const form = coerceProductForm(row.form);
-      if (!opts.dryRun) {
-        await prisma.product.upsert({
-          where: { slug: productSlug },
-          update: {
-            brandId: brand.id,
-            name: row.productName,
-            form,
-            dataCompleteness: "LOW",
-            lastVerifiedAt: new Date(),
-          },
-          create: {
-            brandId: brand.id,
-            name: row.productName,
-            slug: productSlug,
-            form,
-            ingredientText: "Ingredients: Unknown (placeholder from discovery import).",
-            ingredientsNormalized: [],
-            manufacturingCountryClaim: "Unknown",
-            manufacturingClarity: "NOT_STATED",
-            manufacturingClaimText: null,
-            manufacturingEvidenceUrl: row.website ?? null,
-            coaStatus: "UNKNOWN",
-            coaUrl: null,
-            transparencyGrade: "F",
-            qualityTier: "POOR",
-            sourceDsldLabelId: null,
-            sourceDsldUrl: null,
-            dataCompleteness: "LOW",
-            lastVerifiedAt: new Date(),
-          },
-          select: { id: true },
-        });
+    for (const r of rows) {
+      const input = normalizeRow(r);
+      if (!input) continue;
+      if (opts.dryRun) {
+        stats.listingsProcessed = (stats.listingsProcessed ?? 0) + 1;
+        continue;
       }
-      stats.productsProcessed += 1;
+      const res = await resolveListingToProduct(input);
+      stats.listingsProcessed = (stats.listingsProcessed ?? 0) + 1;
+      if (res.listingCreated) stats.listingsCreated = (stats.listingsCreated ?? 0) + 1;
+      stats.mergeCandidatesCreated = (stats.mergeCandidatesCreated ?? 0) + res.mergeCandidatesCreatedCount;
+      if (!res.attachedToExistingProduct) stats.productsProcessed += 1;
     }
 
-    await finishRun(runId, "SUCCESS", stats, null);
+    if (wrapRun) await finishRun(runId, "SUCCESS", stats, null);
     return { runId, stats };
   } catch (e: any) {
     stats.errorsCount += 1;
-    await finishRun(runId, "FAILED", stats, e?.message ? String(e.message) : String(e));
+    if (wrapRun) await finishRun(runId, "FAILED", stats, e?.message ? String(e.message) : String(e));
     throw e;
   }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { dryRun, path } = parseArgs(process.argv.slice(2));
+  const dryRun = process.argv.includes("--dry-run");
+  const path = argValue("--path") ?? argValue("--csvPath");
   if (!path) {
-    console.error("Missing --path=/path/to/file.csv");
+    console.error("Missing --path=/path/to/listings.csv");
     process.exit(1);
   }
-  importDiscoveryCsv({ csvPath: path, dryRun })
+  importListingsCsv({ csvPath: path, dryRun, wrapRun: true })
     .then(({ runId, stats }) => {
-      console.log(`Discovery CSV import complete. runId=${runId}`);
+      console.log(`Listings CSV import complete. runId=${runId}`);
       console.log(JSON.stringify(stats, null, 2));
     })
-    .finally(async () => prisma.$disconnect());
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
 }
-

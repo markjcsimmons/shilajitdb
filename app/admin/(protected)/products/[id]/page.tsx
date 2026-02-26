@@ -3,6 +3,7 @@ import {
   adminDeleteEvidence,
   adminDeleteProduct,
   adminRecomputeGrades,
+  adminSetOfficialCanonicalUrl,
   adminUpsertProduct,
 } from "@/app/admin/actions";
 import { Badge, Button, Input, Select } from "@/components/ui";
@@ -17,10 +18,16 @@ export default async function AdminProductEditPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string; error?: string; recomputed?: string }>;
+  searchParams: Promise<{
+    saved?: string;
+    error?: string;
+    recomputed?: string;
+    otherId?: string;
+    otherName?: string;
+  }>;
 }) {
   const { id } = await params;
-  const { saved, error, recomputed } = await searchParams;
+  const { saved, error, recomputed, otherId, otherName } = await searchParams;
 
   const [brands, product] = await Promise.all([
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
@@ -107,7 +114,21 @@ export default async function AdminProductEditPage({
               ? "Slug must be unique."
               : error === "validation"
                 ? "Validation error. Please check fields."
-                : "Error."}
+                : error === "official_taken" && otherId
+                  ? (
+                    <>
+                      That official URL is already assigned to another product.{" "}
+                      <Link
+                        href={`/admin/products/${otherId}`}
+                        className="font-medium underline underline-offset-4"
+                      >
+                        {otherName ? `${otherName} (view)` : "View product"}
+                      </Link>
+                    </>
+                  )
+                  : error === "listing"
+                    ? "Listing not found or not OFFICIAL."
+                    : "Error."}
           </div>
         ) : null}
 
@@ -255,6 +276,7 @@ export default async function AdminProductEditPage({
                 <th className="py-2 pr-4">URL</th>
                 <th className="py-2 pr-4">Title</th>
                 <th className="py-2 pr-4">Last seen</th>
+                <th className="py-2 pr-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -278,11 +300,24 @@ export default async function AdminProductEditPage({
                     <td className="py-3 pr-4 text-slate-700">
                       {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleString() : "—"}
                     </td>
+                    <td className="py-3 pr-4">
+                      {l.source === "OFFICIAL" ? (
+                        <form action={adminSetOfficialCanonicalUrl}>
+                          <input type="hidden" name="productId" value={product.id} />
+                          <input type="hidden" name="listingId" value={l.id} />
+                          <Button type="submit" variant="secondary">
+                            Mark this Listing as Official
+                          </Button>
+                        </form>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-4 text-slate-700">
+                  <td colSpan={5} className="py-4 text-slate-700">
                     No listings yet. Ingest official and marketplace listings to populate this section.
                   </td>
                 </tr>

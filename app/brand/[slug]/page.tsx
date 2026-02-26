@@ -65,6 +65,7 @@ export default async function BrandPage({
           slug: true,
           name: true,
           form: true,
+          dataCompleteness: true,
           coaStatus: true,
           transparencyGrade: true,
           qualityTier: true,
@@ -77,10 +78,13 @@ export default async function BrandPage({
 
   const gradeRank = { A: 5, B: 4, C: 3, D: 2, F: 1 } as const;
   const tierRank = { ULTRA_PREMIUM: 4, PREMIUM: 3, AVERAGE: 2, POOR: 1 } as const;
+  const dataRank = { HIGH: 3, MEDIUM: 2, LOW: 1 } as const;
   const orderByDefault = (
     a: (typeof brand.products)[number],
     b: (typeof brand.products)[number]
   ) => {
+    const d = (dataRank[b.dataCompleteness] ?? 0) - (dataRank[a.dataCompleteness] ?? 0);
+    if (d !== 0) return d;
     const g = (tierRank[b.qualityTier] ?? 0) - (tierRank[a.qualityTier] ?? 0);
     const t = (gradeRank[b.transparencyGrade] ?? 0) - (gradeRank[a.transparencyGrade] ?? 0);
     if (t !== 0) return t;
@@ -225,6 +229,9 @@ export default async function BrandPage({
                   <TransparencyBadge grade={p.transparencyGrade} />
                   <QualityBadge tier={p.qualityTier} />
                   <Badge variant="muted">COA: {labelCoaStatus(p.coaStatus)}</Badge>
+                  {p.dataCompleteness === "LOW" ? (
+                    <Badge variant="muted" title="Placeholder or unverified">Unverified</Badge>
+                  ) : null}
                 </div>
               </div>
               <div className="mt-3 text-sm text-slate-700">

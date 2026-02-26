@@ -1,0 +1,7 @@
+[
+  {
+    "domain": "www.iherb.com",
+    "searchUrlTemplate": "https://www.iherb.com/search?kw=shilajit&p={{page}}",
+    "maxPages": 2
+  }
+]

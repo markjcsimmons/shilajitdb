@@ -1,0 +1,26 @@
+name: Link health (weekly)
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Link Health job
+        run: npm run job -- --type LINK_HEALTH --max 200
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

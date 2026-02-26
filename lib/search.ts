@@ -98,6 +98,13 @@ export const PAGE_SIZE = 20;
 export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereInput {
   const and: Prisma.ProductWhereInput[] = [];
 
+  // When no search query (homepage default): show ONLY verified products to avoid clutter.
+  // When q exists: include BOTH verified and placeholder products; ordering will put placeholders last.
+  const hasSearchQuery = Boolean(filters.q?.trim());
+  if (!hasSearchQuery) {
+    and.push({ dataCompleteness: { not: "LOW" } });
+  }
+
   if (filters.q) {
     and.push({
       OR: [
@@ -125,7 +132,9 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
 }
 
 export function buildDefaultOrderBy(): Prisma.ProductOrderByWithRelationInput[] {
+  // Verified first (dataCompleteness != LOW), then placeholders last; then grade/tier/name
   return [
+    { dataCompleteness: "desc" },
     { transparencyGrade: "desc" },
     { qualityTier: "desc" },
     { name: "asc" },

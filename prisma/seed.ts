@@ -282,6 +282,7 @@ async function main() {
 
 main()
   .then(async () => {
+    await seedDefaultJobs();
     await prisma.$disconnect();
   })
   .catch(async (e) => {
@@ -289,4 +290,20 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+async function seedDefaultJobs() {
+  const defaults: Array<{ type: "ENRICH_OFFICIAL" | "LINK_HEALTH" | "DISCOVERY_ROBOTS_ALLOWED"; name: string; schedule: string }> = [
+    { type: "ENRICH_OFFICIAL", name: "Enrich official pages", schedule: "0 3 * * *" },
+    { type: "LINK_HEALTH", name: "Check link health", schedule: "0 6 * * 1" },
+    { type: "DISCOVERY_ROBOTS_ALLOWED", name: "Discover robots-allowed sources", schedule: "0 2 * * *" },
+  ];
+  for (const d of defaults) {
+    await prisma.job.upsert({
+      where: { type: d.type },
+      update: { name: d.name, schedule: d.schedule },
+      create: { type: d.type, name: d.name, schedule: d.schedule, isEnabled: true },
+      select: { id: true },
+    });
+  }
+}
 

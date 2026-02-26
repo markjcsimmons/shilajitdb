@@ -2,7 +2,7 @@ import { AutoRefresh } from "@/components/auto-refresh";
 import { Button, Input } from "@/components/ui";
 import { cancelIngestionRun } from "@/lib/ingestion/cancelIngestionRun";
 import { prisma } from "@/lib/db";
-import { importDiscoveryCsv } from "@/scripts/ingest/discovery/importCsv";
+import { importBrandWebsiteCsv } from "@/scripts/ingest/discovery/importBrandWebsiteCsv";
 import fs from "fs/promises";
 import path from "path";
 import { redirect } from "next/navigation";
@@ -28,7 +28,7 @@ export default async function AdminIngestionPage({
 }) {
   const { ran, started } = await searchParams;
 
-  async function importDiscoveryCsvAction(formData: FormData) {
+  async function importBrandWebsiteCsvAction(formData: FormData) {
     "use server";
     const file = formData.get("file");
     if (!(file instanceof File)) return;
@@ -37,8 +37,8 @@ export default async function AdminIngestionPage({
     await fs.mkdir(dir, { recursive: true });
     const p = path.join(dir, `discovery-${Date.now()}.csv`);
     await fs.writeFile(p, buf);
-    await importDiscoveryCsv({ csvPath: p, dryRun: false });
-    redirect("/admin/ingestion?ran=discovery_csv");
+    await importBrandWebsiteCsv({ csvPath: p, dryRun: false });
+    redirect("/admin/ingestion?ran=brand_website_csv");
   }
 
   async function cancelIngestionRunAction(runId: string) {
@@ -118,12 +118,12 @@ export default async function AdminIngestionPage({
         </div>
 
         <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-          <div className="text-sm font-medium text-slate-900">Discovery CSV import</div>
+          <div className="text-sm font-medium text-slate-900">Brand website CSV import</div>
           <p className="mt-1 text-sm text-slate-600">
             Upload a CSV with columns: <code>brandName</code>, <code>website</code>,{" "}
             <code>productName</code> (optional), <code>form</code> (optional).
           </p>
-          <form action={importDiscoveryCsvAction} className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <form action={importBrandWebsiteCsvAction} className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
             <Input name="file" type="file" accept=".csv,text/csv" required />
             <Button type="submit" variant="secondary">
               Import CSV

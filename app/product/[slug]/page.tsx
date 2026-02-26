@@ -19,6 +19,9 @@ function labelListingSource(s: ListingSource) {
   if (s === "OFFICIAL") return "Official";
   if (s === "AMAZON") return "Amazon";
   if (s === "WALMART") return "Walmart";
+  if (s === "IHERB") return "iHerb";
+  if (s === "GOOGLE_SHOPPING") return "Google Shopping";
+  if (s === "MANUAL") return "Manual";
   return "Other retailer";
 }
 
@@ -30,9 +33,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await prisma.product.findUnique({
     where: { slug },
-    select: { name: true, slug: true, brand: { select: { name: true } } },
+    select: {
+      name: true,
+      slug: true,
+      dataCompleteness: true,
+      evidence: { select: { id: true } },
+      brand: { select: { name: true } },
+    },
   });
   if (!product) return { title: "Product not found" };
+
+  const noIndex =
+    product.dataCompleteness === "LOW" || product.evidence.length === 0;
 
   const title = `${product.name} transparency & quality`;
   const description = `View transparency grade, COA status, manufacturing claim clarity, ingredients disclosure, and evidence links for ${product.brand.name} — ${product.name}.`;
@@ -43,6 +55,7 @@ export async function generateMetadata({
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
+    ...(noIndex ? { robots: "noindex, nofollow" } : {}),
   };
 }
 
@@ -338,44 +351,66 @@ export default async function ProductPage({
         </div>
         <div className="mt-4 space-y-3">
           {product.listings.length ? (
-            product.listings.map((l) => (
-              <div
-                key={l.id}
-                className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-slate-900">
-                    {labelListingSource(l.source)}
+            (
+              [
+                "OFFICIAL",
+                "AMAZON",
+                "WALMART",
+                "IHERB",
+                "OTHER_RETAILER",
+                "GOOGLE_SHOPPING",
+                "MANUAL",
+              ] satisfies ListingSource[]
+            )
+              .map((source) => ({
+                source,
+                listings: product.listings.filter((l) => l.source === source),
+              }))
+              .filter((g) => g.listings.length)
+              .map((g) => (
+                <div key={g.source} className="space-y-2">
+                  <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    {labelListingSource(g.source)}
                   </div>
-                  <div className="mt-1 text-sm text-slate-700 truncate">
-                    <a
-                      href={l.url}
-                      className="underline underline-offset-4"
-                      target="_blank"
-                      rel="nofollow"
-                    >
-                      {l.title ?? l.url}
-                    </a>
-                  </div>
-                  <div className="mt-1 text-xs text-slate-500">
-                    Last seen: {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleDateString() : "—"}
+                  <div className="space-y-2">
+                    {g.listings.map((l) => (
+                      <div
+                        key={l.id}
+                        className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div className="min-w-0">
+                          <div className="mt-1 text-sm text-slate-700 truncate">
+                            <a
+                              href={l.url}
+                              className="underline underline-offset-4"
+                              target="_blank"
+                              rel="nofollow"
+                            >
+                              {l.title ?? l.url}
+                            </a>
+                          </div>
+                          <div className="mt-1 text-xs text-slate-500">
+                            Last seen: {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleDateString() : "—"}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={l.source === "OFFICIAL" ? "outline" : "muted"}>
+                            {l.source}
+                          </Badge>
+                          <a
+                            href={l.url}
+                            target="_blank"
+                            rel="nofollow"
+                            className="text-sm underline underline-offset-4"
+                          >
+                            Visit
+                          </a>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={l.source === "OFFICIAL" ? "outline" : "muted"}>
-                    {l.source}
-                  </Badge>
-                  <a
-                    href={l.url}
-                    target="_blank"
-                    rel="nofollow"
-                    className="text-sm underline underline-offset-4"
-                  >
-                    Visit
-                  </a>
-                </div>
-              </div>
-            ))
+              ))
           ) : (
             <div className="text-sm text-slate-700">
               No listings have been captured yet.

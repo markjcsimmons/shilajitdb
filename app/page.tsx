@@ -39,6 +39,7 @@ export default async function HomePage({
         slug: true,
         name: true,
         form: true,
+        dataCompleteness: true,
         manufacturingCountryClaim: true,
         manufacturingClarity: true,
         coaStatus: true,
@@ -253,6 +254,9 @@ export default async function HomePage({
                 <Badge variant="outline">Transparency: {p.transparencyGrade}</Badge>
                 <Badge variant="outline">Quality: {labelEnum(p.qualityTier)}</Badge>
                 <Badge variant="muted">COA: {labelEnum(p.coaStatus)}</Badge>
+                {p.dataCompleteness === "LOW" ? (
+                  <Badge variant="muted" title="Placeholder or unverified product">Unverified</Badge>
+                ) : null}
               </div>
             </div>
             <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-slate-700 sm:grid-cols-3">

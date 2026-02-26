@@ -6,6 +6,7 @@ import { isAdminAuthed } from "@/lib/admin-auth";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
 import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
+import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
 import { redirect } from "next/navigation";
 
 async function requireAdmin() {
@@ -205,5 +206,42 @@ export async function adminRecomputeGrades(formData: FormData) {
   if (!productId) redirect("/admin/products");
   await recomputeAndSaveProductGrades(productId);
   redirect(`/admin/products/${productId}?recomputed=1`);
+}
+
+export async function adminSetOfficialCanonicalUrl(formData: FormData) {
+  await requireAdmin();
+  const productId = String(formData.get("productId") ?? "").trim();
+  const listingId = String(formData.get("listingId") ?? "").trim();
+  if (!productId || !listingId) redirect(`/admin/products/${productId}`);
+
+  const listing = await prisma.listing.findFirst({
+    where: { id: listingId, productId, source: "OFFICIAL" },
+    select: { url: true },
+  });
+  if (!listing) redirect(`/admin/products/${productId}?error=listing`);
+
+  const officialCanonicalUrl = canonicalizeUrl(listing.url);
+  const officialDomain = extractDomain(listing.url);
+
+  // Ensure canonical URL is only assigned to ONE product: if another product already has it, do not overwrite.
+  const existing = await prisma.product.findFirst({
+    where: {
+      officialCanonicalUrl,
+      id: { not: productId },
+    },
+    select: { id: true, name: true, slug: true },
+  });
+  if (existing) {
+    redirect(
+      `/admin/products/${productId}?error=official_taken&otherId=${encodeURIComponent(existing.id)}&otherName=${encodeURIComponent(existing.name)}#listings`
+    );
+  }
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: { officialCanonicalUrl, officialDomain },
+    select: { id: true },
+  });
+  redirect(`/admin/products/${productId}?saved=1#listings`);
 }
 

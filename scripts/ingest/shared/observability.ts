@@ -8,6 +8,9 @@ export type IngestionStats = {
   coaPublicCount: number;
   coaRequestCount: number;
   manufacturingClearCount: number;
+  listingsProcessed?: number;
+  listingsCreated?: number;
+  mergeCandidatesCreated?: number;
   errorsCount: number;
   skippedCount: number;
   notes?: string[];
@@ -22,6 +25,9 @@ export function createEmptyStats(): IngestionStats {
     coaPublicCount: 0,
     coaRequestCount: 0,
     manufacturingClearCount: 0,
+    listingsProcessed: 0,
+    listingsCreated: 0,
+    mergeCandidatesCreated: 0,
     errorsCount: 0,
     skippedCount: 0,
     notes: [],

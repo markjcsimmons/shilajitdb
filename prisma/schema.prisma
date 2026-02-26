@@ -87,13 +87,22 @@ enum ListingSource {
   OFFICIAL
   AMAZON
   WALMART
+  IHERB
   OTHER_RETAILER
+  GOOGLE_SHOPPING
+  MANUAL
 }
 
 enum ListingStatus {
   ACTIVE
   INACTIVE
   UNKNOWN
+}
+
+enum MergeCandidateStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model Brand {
@@ -140,13 +149,17 @@ model Product {
   lastVerifiedAt            DateTime?
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
+  officialCanonicalUrl      String?               @unique
+  officialDomain            String?
   evidence                  Evidence[]
   listings                  Listing[]
+  mergeCandidates           MergeCandidate[]      @relation("CandidateProduct")
 
   @@index([brandId])
   @@index([name])
   @@index([gtin])
   @@index([brandSku])
+  @@index([officialDomain])
 }
 
 model Listing {
@@ -185,11 +198,33 @@ model Listing {
 
   updatedAt     DateTime      @updatedAt
 
+  mergeCandidates MergeCandidate[]
+
   @@index([productId])
 
   @@index([source])
 
   @@index([observedGtin])
+}
+
+model MergeCandidate {
+  id                 String               @id @default(cuid())
+  listingId           String
+  listing             Listing              @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  candidateProductId  String
+  candidateProduct    Product              @relation("CandidateProduct", fields: [candidateProductId], references: [id], onDelete: Cascade)
+
+  confidence          Float
+  reasons             String[]             @default([]) @db.Text
+  status              MergeCandidateStatus @default(PENDING)
+
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  @@index([listingId])
+  @@index([candidateProductId])
+  @@index([status])
+  @@unique([listingId, candidateProductId])
 }
 
 model Evidence {
@@ -253,5 +288,46 @@ model IngestionRun {
   statsJson Json?
   errorText String?            @db.Text
   pid       Int?
+}
+
+enum JobType {
+  ENRICH_OFFICIAL
+  LINK_HEALTH
+  DISCOVERY_ROBOTS_ALLOWED
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELED
+}
+
+model Job {
+  id        String   @id @default(cuid())
+  type      JobType  @unique
+  name      String
+  isEnabled Boolean  @default(true)
+  schedule  String?  // cron string e.g. "0 3 * * *" (UTC), display only
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  runs      JobRun[]
+}
+
+model JobRun {
+  id         String    @id @default(cuid())
+  jobId      String
+  job        Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  status     JobStatus @default(QUEUED)
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  statsJson  Json?
+  errorText  String?   @db.Text
+  createdAt  DateTime  @default(now())
+
+  @@index([jobId])
+  @@index([status])
+  @@index([startedAt])
 }
 

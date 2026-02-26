@@ -28,8 +28,16 @@ export default async function AdminProtectedLayout({
             Products
           </Link>
           <span className="text-slate-300">/</span>
+          <Link href="/admin/discovery" className="text-slate-700 hover:text-slate-900">
+            Discovery
+          </Link>
+          <span className="text-slate-300">/</span>
           <Link href="/admin/ingestion" className="text-slate-700 hover:text-slate-900">
             Ingestion
+          </Link>
+          <span className="text-slate-300">/</span>
+          <Link href="/admin/automation" className="text-slate-700 hover:text-slate-900">
+            Automation
           </Link>
         </nav>
         <form action="/admin/logout" method="POST">
