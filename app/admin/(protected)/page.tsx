@@ -11,7 +11,21 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+    <div className="space-y-6">
+      <div className="rounded-2xl border-2 border-slate-900 bg-slate-900 p-6 text-white">
+        <div className="text-sm font-medium uppercase tracking-wide text-slate-300">Get data in</div>
+        <div className="mt-2 text-xl font-semibold">Populate database</div>
+        <p className="mt-2 text-sm text-slate-300">
+          Run DSLD import, discovery, enrichment, and link checks in order. Use manual add only after that.
+        </p>
+        <div className="mt-4">
+          <Button href="/admin/populate" className="bg-white text-slate-900 hover:bg-slate-100">
+            Open Populate
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
         <div className="text-sm text-slate-600">Brands</div>
         <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
@@ -44,6 +58,7 @@ export default async function AdminDashboardPage() {
           claims change.
         </p>
       </div>
+    </div>
     </div>
   );
 }

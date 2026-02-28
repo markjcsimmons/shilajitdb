@@ -20,6 +20,22 @@ type AllowlistEntry = {
 const DEFAULT_QUERIES = ["shilajit", "shilajit resin", "shilajit capsules"];
 const CONFIG_PATH = "config/discoveryAllowlist.json";
 const INBOX_PATH = "data/inbox/listings.csv";
+const SEARCH_PAGE_TIMEOUT_MS = 10000;
+const RESOLVE_TIMEOUT_MS = 15000;
+
+function log(msg: string) {
+  const ts = new Date().toISOString();
+  console.log(`[${ts}] [discovery] ${msg}`);
+}
+
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
 
 function absoluteUrl(href: string, base: string): string | null {
   if (!href) return null;
@@ -56,6 +72,30 @@ export async function runRobotsAllowedDiscovery(
   const allowlistPath = opts.allowlistPath ?? path.join(process.cwd(), CONFIG_PATH);
   const inboxPath = opts.inboxPath ?? path.join(process.cwd(), INBOX_PATH);
 
+  // 1) Process inbox CSV first so it completes even if allowlist crawl is slow or finds nothing
+  try {
+    await fs.access(inboxPath);
+    log(`Inbox found: ${inboxPath}`);
+    try {
+      const result = await importListingsCsv({ csvPath: inboxPath, dryRun: false, wrapRun: false });
+      const s = result.stats;
+      stats.listingsUpserted += s.listingsProcessed ?? 0;
+      stats.placeholdersCreated += s.productsProcessed ?? 0;
+      stats.mergeCandidatesCreated += s.mergeCandidatesCreated ?? 0;
+      const inboxDir = path.dirname(inboxPath);
+      const processedPath = path.join(inboxDir, `listings.processed.${Date.now()}.csv`);
+      await fs.rename(inboxPath, processedPath);
+      log(`Inbox imported: ${s.listingsProcessed ?? 0} listings, renamed to ${path.basename(processedPath)}`);
+    } catch (e) {
+      stats.errorsCount += 1;
+      log(`Inbox import failed: ${e instanceof Error ? e.message : String(e)}`);
+      throw e;
+    }
+  } catch {
+    // Inbox file missing — continue to allowlist
+  }
+
+  // 2) Allowlist crawl (often yields 0 for JS-rendered search pages)
   let allowlist: AllowlistEntry[] = [];
   try {
     const raw = await fs.readFile(allowlistPath, "utf8");
@@ -64,15 +104,25 @@ export async function runRobotsAllowedDiscovery(
     allowlist = [];
   }
 
+  if (allowlist.length === 0) {
+    log("No allowlist entries (or config missing); skipping crawl.");
+    return stats;
+  }
+
   for (const entry of allowlist) {
     if (!entry.searchUrlTemplate) continue;
     const maxPages = Math.min(3, entry.maxPages ?? 1);
     for (let page = 1; page <= maxPages; page += 1) {
       const url = entry.searchUrlTemplate.replace("{{page}}", String(page));
+      log(`Checking robots for ${url}`);
       const robots = await isAllowedByRobots(url);
-      if (!robots.allowed) continue;
+      if (!robots.allowed) {
+        log(`Skipping (robots): ${robots.reason}`);
+        continue;
+      }
       try {
-        const html = await fetchTextWithRetry(url, { retries: 2, timeoutMs: 15000 });
+        log(`Fetching search page (timeout ${SEARCH_PAGE_TIMEOUT_MS}ms)...`);
+        const html = await fetchTextWithRetry(url, { retries: 2, timeoutMs: SEARCH_PAGE_TIMEOUT_MS });
         const $ = cheerio.load(html);
         const urls: string[] = [];
         $("a[href]").each((_, el) => {
@@ -82,7 +132,10 @@ export async function runRobotsAllowedDiscovery(
         });
         const unique = Array.from(new Set(urls));
         stats.urlsDiscovered += unique.length;
-        for (const u of unique.slice(0, 30)) {
+        log(`Found ${unique.length} product URLs (page may be JS-rendered if 0)`);
+        const toResolve = unique.slice(0, 30);
+        for (let i = 0; i < toResolve.length; i += 1) {
+          const u = toResolve[i];
           try {
             const input: ListingInput = {
               url: u,
@@ -95,41 +148,26 @@ export async function runRobotsAllowedDiscovery(
               form: null,
               imageUrls: null,
             };
-            const res = await resolveListingToProduct(input);
+            const res = await withTimeout(
+              resolveListingToProduct(input),
+              RESOLVE_TIMEOUT_MS,
+              `resolve ${i + 1}/${toResolve.length}`
+            );
             stats.listingsUpserted += 1;
             if (!res.attachedToExistingProduct) stats.placeholdersCreated += 1;
             stats.mergeCandidatesCreated += res.mergeCandidatesCreatedCount;
-          } catch {
+          } catch (e) {
             stats.errorsCount += 1;
+            if (toResolve.length <= 5) log(`Resolve failed for ${u}: ${e instanceof Error ? e.message : String(e)}`);
           }
         }
-      } catch {
+      } catch (e) {
         stats.errorsCount += 1;
+        log(`Search page failed: ${e instanceof Error ? e.message : String(e)}`);
       }
     }
   }
 
-  try {
-    await fs.access(inboxPath);
-  } catch {
-    return stats;
-  }
-
-  const inboxDir = path.dirname(inboxPath);
-  const processedName = `listings.processed.${Date.now()}.csv`;
-  const processedPath = path.join(inboxDir, processedName);
-
-  try {
-    const result = await importListingsCsv({ csvPath: inboxPath, dryRun: false, wrapRun: false });
-    const s = result.stats;
-    stats.listingsUpserted += s.listingsProcessed ?? 0;
-    stats.placeholdersCreated += s.productsProcessed ?? 0;
-    stats.mergeCandidatesCreated += s.mergeCandidatesCreated ?? 0;
-    await fs.rename(inboxPath, processedPath);
-  } catch (e) {
-    stats.errorsCount += 1;
-    throw e;
-  }
-
+  log(`Done: urls=${stats.urlsDiscovered} listings=${stats.listingsUpserted} errors=${stats.errorsCount}`);
   return stats;
 }

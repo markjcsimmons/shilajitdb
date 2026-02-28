@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
+import { cancelIngestionRun } from "@/lib/ingestion/cancelIngestionRun";
+import { isPidAlive } from "@/lib/ingestion/pid";
+import { cancelJobRun } from "@/lib/jobs/cancelJobRun";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
 import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
@@ -243,5 +246,90 @@ export async function adminSetOfficialCanonicalUrl(formData: FormData) {
     select: { id: true },
   });
   redirect(`/admin/products/${productId}?saved=1#listings`);
+}
+
+/** Cancel a running ingestion or job run. Form fields: runId, kind (ingestion | job_run), next (redirect path). */
+export async function cancelRunAction(formData: FormData) {
+  await requireAdmin();
+  const runId = String(formData.get("runId") ?? "").trim();
+  const kind = String(formData.get("kind") ?? "").trim();
+  const nextUrl = String(formData.get("next") ?? "").trim();
+  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
+
+  if (!runId) redirect(`${redirectTo}?error=cancel_no_run_id`);
+  if (kind !== "ingestion" && kind !== "job_run") redirect(`${redirectTo}?error=cancel_invalid_kind`);
+
+  try {
+    if (kind === "ingestion") {
+      await cancelIngestionRun(runId);
+      redirect(`${redirectTo}?ran=canceled_ingestion`);
+    }
+    await cancelJobRun(runId);
+    redirect(`${redirectTo}?ran=canceled_job`);
+  } catch (e) {
+    // Next.js redirect() throws; don't treat it as a failure
+    const err = e as { digest?: string };
+    if (typeof err?.digest === "string" && err.digest.includes("NEXT_REDIRECT")) throw e;
+    const msg = e instanceof Error ? e.message : String(e);
+    redirect(`${redirectTo}?error=${encodeURIComponent(`cancel_failed: ${msg}`)}`);
+  }
+}
+
+/** Mark all stale RUNNING runs (process dead or no pid and >10 min) as FAILED. Form field: next (redirect path). */
+export async function clearStaleRunsAction(formData: FormData) {
+  await requireAdmin();
+  const nextUrl = String(formData.get("next") ?? "").trim();
+  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
+
+  const STALE_MS = 10 * 60 * 1000;
+  let cleared = 0;
+
+  const jobRuns = await prisma.jobRun.findMany({
+    where: { status: "RUNNING" },
+    select: { id: true, pid: true, startedAt: true },
+  });
+  for (const r of jobRuns) {
+    const ageMs = Date.now() - new Date(r.startedAt).getTime();
+    const stale =
+      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
+    if (stale) {
+      await prisma.jobRun.updateMany({
+        where: { id: r.id, status: "RUNNING" },
+        data: {
+          status: "FAILED",
+          finishedAt: new Date(),
+          errorText: r.pid == null
+            ? "Marked failed (stale run: no process id after 10+ min)."
+            : `Marked failed (stale run: process ${r.pid} no longer running).`,
+        },
+      });
+      cleared++;
+    }
+  }
+
+  const ingestionRuns = await prisma.ingestionRun.findMany({
+    where: { status: "RUNNING" },
+    select: { id: true, pid: true, startedAt: true },
+  });
+  for (const r of ingestionRuns) {
+    const ageMs = Date.now() - new Date(r.startedAt).getTime();
+    const stale =
+      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
+    if (stale) {
+      await prisma.ingestionRun.updateMany({
+        where: { id: r.id, status: "RUNNING" },
+        data: {
+          status: "FAILED",
+          finishedAt: new Date(),
+          errorText: r.pid == null
+            ? "Marked failed (stale run: no process id after 10+ min)."
+            : `Marked failed (stale run: process ${r.pid} no longer running).`,
+        },
+      });
+      cleared++;
+    }
+  }
+
+  redirect(`${redirectTo}?ran=stale_cleared&count=${cleared}`);
 }
 

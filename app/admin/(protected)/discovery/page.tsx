@@ -129,9 +129,9 @@ export default async function AdminDiscoveryPage({
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">Discovery</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900">Review merge queue</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Import marketplace/retailer/official product URLs as Listings, then review suggested merges.
+          Approve or reject suggested product merges from discovery. You can also upload more Listings CSV here.
         </p>
 
         {ran ? (

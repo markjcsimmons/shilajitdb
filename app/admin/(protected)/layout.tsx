@@ -20,24 +20,20 @@ export default async function AdminProtectedLayout({
             Dashboard
           </Link>
           <span className="text-slate-300">/</span>
+          <Link href="/admin/populate" className="text-slate-700 hover:text-slate-900">
+            Populate
+          </Link>
+          <span className="text-slate-300">/</span>
+          <Link href="/admin/discovery" className="text-slate-700 hover:text-slate-900">
+            Review
+          </Link>
+          <span className="text-slate-300">/</span>
           <Link href="/admin/brands" className="text-slate-700 hover:text-slate-900">
             Brands
           </Link>
           <span className="text-slate-300">/</span>
           <Link href="/admin/products" className="text-slate-700 hover:text-slate-900">
             Products
-          </Link>
-          <span className="text-slate-300">/</span>
-          <Link href="/admin/discovery" className="text-slate-700 hover:text-slate-900">
-            Discovery
-          </Link>
-          <span className="text-slate-300">/</span>
-          <Link href="/admin/ingestion" className="text-slate-700 hover:text-slate-900">
-            Ingestion
-          </Link>
-          <span className="text-slate-300">/</span>
-          <Link href="/admin/automation" className="text-slate-700 hover:text-slate-900">
-            Automation
           </Link>
         </nav>
         <form action="/admin/logout" method="POST">

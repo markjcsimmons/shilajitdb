@@ -1,6 +1,9 @@
 import { Button, Input } from "@/components/ui";
+import { AutoRefresh } from "@/components/auto-refresh";
 import { prisma } from "@/lib/db";
 import { getAdminMetrics } from "@/lib/adminMetrics";
+import { cancelRunAction } from "@/app/admin/actions";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +29,9 @@ function statsSummary(stats: unknown) {
 export default async function AdminAutomationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ started?: string; error?: string }>;
+  searchParams: Promise<{ started?: string; ran?: string; count?: string; error?: string }>;
 }) {
-  const { started, error } = await searchParams;
+  const { started, ran, count, error } = await searchParams;
 
   let jobs: Awaited<ReturnType<typeof prisma.job.findMany>> = [];
   let recentRuns: Awaited<ReturnType<typeof prisma.jobRun.findMany>> = [];
@@ -93,8 +96,36 @@ export default async function AdminAutomationPage({
     officialUrlSetCount: 0,
   };
 
+  const runningCount = recentRuns.filter((r) => r.status === "RUNNING").length;
+
   return (
     <div className="space-y-6">
+      <AutoRefresh enabled={runningCount > 0 || Boolean(started)} />
+      {runningCount > 0 && (
+        <div className="rounded-2xl border-2 border-sky-200 bg-sky-50 p-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3" aria-hidden>
+                <span className="animate-run-pulse absolute inline-flex h-full w-full rounded-full bg-sky-500" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-sky-400" />
+              </span>
+              <span className="text-sm font-medium text-sky-900">
+                {runningCount} job run{runningCount !== 1 ? "s" : ""} in progress
+              </span>
+              <span className="text-xs text-sky-700">— page auto-refreshes every 4s</span>
+            </div>
+            <form action={clearStaleRunsAction} method="POST" className="mt-2 sm:mt-0">
+              <input type="hidden" name="next" value="/admin/automation" />
+              <Button type="submit" variant="secondary" className="text-xs">
+                Clear stuck runs
+              </Button>
+            </form>
+          </div>
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-sky-200">
+            <div className="h-full w-1/4 rounded-full bg-sky-500 animate-run-indeterminate" />
+          </div>
+        </div>
+      )}
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
         <h1 className="text-xl font-semibold tracking-tight text-slate-900">Automation</h1>
         <p className="mt-1 text-sm text-slate-600">
@@ -107,6 +138,11 @@ export default async function AdminAutomationPage({
             Job started: <span className="font-medium">{started}</span>. Check recent runs below.
           </div>
         ) : null}
+        {ran === "stale_cleared" ? (
+          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+            <span className="font-medium">{count || "0"} stuck run(s) marked as failed.</span>
+          </div>
+        ) : null}
         {error ? (
           <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
             {error === "invalid_type"
@@ -115,7 +151,11 @@ export default async function AdminAutomationPage({
                 ? "Job is disabled. Enable it first."
                 : error === "missing_job"
                   ? "Missing job."
-                  : "Error."}
+                  : error === "already_running"
+                    ? "A run is already in progress for this job. Wait for it to finish or cancel it."
+                    : error === "run_failed"
+                      ? "Failed to start the job run."
+                      : "Error."}
           </div>
         ) : null}
 
@@ -130,7 +170,7 @@ export default async function AdminAutomationPage({
             <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
               Merge queue (pending)
             </div>
-            <div className="mt-1 text-xl font-semibold text-slate-900">{metrics.pendingMergeCount}</div>
+            <div className="mt-1 text-xl font-semibold text-slate-900">{metricsSafe.pendingMergeCount}</div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
             <div className="text-xs font-medium uppercase tracking-wide text-slate-500">COA public</div>
@@ -230,24 +270,59 @@ export default async function AdminAutomationPage({
             </thead>
             <tbody className="divide-y divide-slate-200">
               {recentRuns.map((r) => (
-                <tr key={r.id}>
+                <tr key={r.id} className={r.status === "RUNNING" ? "bg-sky-50/50" : undefined}>
                   <td className="py-3 pr-4 font-medium text-slate-900">
                     {r.job.name} ({r.job.type})
                   </td>
                   <td className="py-3 pr-4">
-                    <span
-                      className={
-                        r.status === "SUCCESS"
-                          ? "text-emerald-600"
-                          : r.status === "FAILED"
-                            ? "text-rose-600"
-                            : r.status === "RUNNING"
-                              ? "text-sky-600"
-                              : "text-slate-600"
-                      }
-                    >
-                      {r.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {r.status === "RUNNING" && (
+                        <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
+                          <span className="animate-run-pulse absolute inline-flex h-full w-full rounded-full bg-sky-500" />
+                          <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-400" />
+                        </span>
+                      )}
+                      <span
+                        className={
+                          r.status === "SUCCESS"
+                            ? "text-emerald-600"
+                            : r.status === "FAILED"
+                              ? "text-rose-600"
+                              : r.status === "RUNNING"
+                                ? "text-sky-600"
+                                : r.status === "CANCELED"
+                                  ? "text-slate-500"
+                                  : "text-slate-600"
+                        }
+                      >
+                        {r.status === "RUNNING" ? "Running…" : r.status}
+                      </span>
+                    </div>
+                    {r.status === "RUNNING" && (
+                      <div className="mt-2 h-1 w-32 overflow-hidden rounded-full bg-sky-200">
+                        <div className="h-full w-1/4 rounded-full bg-sky-500 animate-run-indeterminate" />
+                      </div>
+                    )}
+                    {r.status === "RUNNING" && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <Link
+                          href={`/admin/logs?type=${encodeURIComponent(r.job.type)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sky-600 underline underline-offset-2 hover:text-sky-800 text-xs"
+                        >
+                          View log
+                        </Link>
+                        <form action={cancelRunAction} method="POST" className="inline">
+                          <input type="hidden" name="runId" value={r.id} />
+                          <input type="hidden" name="kind" value="job_run" />
+                          <input type="hidden" name="next" value="/admin/automation" />
+                          <Button type="submit" variant="secondary" className="!py-1 text-xs">
+                            Cancel
+                          </Button>
+                        </form>
+                      </div>
+                    )}
                   </td>
                   <td className="py-3 pr-4 text-slate-600">{fmtDate(r.startedAt)}</td>
                   <td className="py-3 pr-4 text-slate-600">{fmtDate(r.finishedAt)}</td>

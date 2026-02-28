@@ -20,12 +20,20 @@ export async function createJobRun(jobType: JobType): Promise<{ jobRunId: string
   return { jobRunId: run.id, jobId: job.id };
 }
 
+export async function setJobRunPid(jobRunId: string, pid: number): Promise<void> {
+  await prisma.jobRun.update({
+    where: { id: jobRunId },
+    data: { pid },
+    select: { id: true },
+  });
+}
+
 export async function finishJobRunSuccess(
   jobRunId: string,
   statsJson: JobStats
 ): Promise<void> {
-  await prisma.jobRun.update({
-    where: { id: jobRunId },
+  await prisma.jobRun.updateMany({
+    where: { id: jobRunId, status: "RUNNING" },
     data: {
       status: "SUCCESS",
       finishedAt: new Date(),
@@ -40,8 +48,8 @@ export async function finishJobRunFailure(
   errorText: string,
   statsJson?: JobStats | null
 ): Promise<void> {
-  await prisma.jobRun.update({
-    where: { id: jobRunId },
+  await prisma.jobRun.updateMany({
+    where: { id: jobRunId, status: "RUNNING" },
     data: {
       status: "FAILED",
       finishedAt: new Date(),

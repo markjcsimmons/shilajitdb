@@ -30,6 +30,8 @@ export async function POST(request: Request) {
 
   const form = await request.formData();
   const job = String(form.get("job") ?? "").trim();
+  const nextUrl = String(form.get("next") ?? "").trim() || null;
+  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/ingestion";
 
   let scriptPath: string | null = null;
   const args: string[] = [];
@@ -79,10 +81,10 @@ export async function POST(request: Request) {
           },
         });
       } else {
-      return NextResponse.redirect(
-        new URL(`/admin/ingestion?started=${encodeURIComponent(`${job}_already_running`)}`, request.url),
-        303
-      );
+        return NextResponse.redirect(
+          new URL(`${redirectTo}?started=${encodeURIComponent(`${job}_already_running`)}`, request.url),
+          303
+        );
       }
     }
   }
@@ -107,7 +109,7 @@ export async function POST(request: Request) {
   child.unref();
   await out.close();
 
-  return NextResponse.redirect(new URL(`/admin/ingestion?started=${encodeURIComponent(job)}`, request.url), 303);
+  return NextResponse.redirect(new URL(`${redirectTo}?started=${encodeURIComponent(job)}`, request.url), 303);
 }
 
 export async function PATCH(request: Request) {

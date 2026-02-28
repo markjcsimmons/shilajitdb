@@ -40,6 +40,9 @@ async function main() {
   await preventConcurrentRuns(jobType);
 
   const { jobRunId } = await createJobRun(jobType);
+  if (typeof process.pid === "number" && process.pid > 0) {
+    await setJobRunPid(jobRunId, process.pid);
+  }
 
   try {
     if (jobType === "ENRICH_OFFICIAL") {

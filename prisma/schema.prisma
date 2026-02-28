@@ -324,6 +324,7 @@ model JobRun {
   finishedAt DateTime?
   statsJson  Json?
   errorText  String?   @db.Text
+  pid        Int?
   createdAt  DateTime  @default(now())
 
   @@index([jobId])

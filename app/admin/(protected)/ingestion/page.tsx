@@ -6,6 +6,7 @@ import { importBrandWebsiteCsv } from "@/scripts/ingest/discovery/importBrandWeb
 import fs from "fs/promises";
 import path from "path";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { CancelButton } from "./CancelButton";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +58,21 @@ export default async function AdminIngestionPage({
   return (
     <div className="space-y-4">
       <AutoRefresh enabled={shouldAutoRefresh} />
+      {hasRunning && (
+        <div className="rounded-2xl border-2 border-sky-200 bg-sky-50 p-4">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-3 w-3" aria-hidden>
+              <span className="animate-run-pulse absolute inline-flex h-full w-full rounded-full bg-sky-500" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-sky-400" />
+            </span>
+            <span className="text-sm font-medium text-sky-900">Run in progress</span>
+            <span className="text-xs text-sky-700">— page auto-refreshes every 4s</span>
+          </div>
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-sky-200">
+            <div className="h-full w-1/4 rounded-full bg-sky-500 animate-run-indeterminate" />
+          </div>
+        </div>
+      )}
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
         <h1 className="text-xl font-semibold tracking-tight text-slate-900">Ingestion</h1>
         <p className="mt-1 text-sm text-slate-600">
@@ -140,22 +156,48 @@ export default async function AdminIngestionPage({
           {runs.map((r) => {
             const s: unknown = r.statsJson ?? {};
             return (
-              <div key={r.id} className="px-5 py-4 text-sm text-slate-700">
+              <div
+                key={r.id}
+                className={`px-5 py-4 text-sm text-slate-700 ${r.status === "RUNNING" ? "border-l-4 border-sky-500 bg-sky-50/50" : ""}`}
+              >
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="font-medium text-slate-900">
-                    {r.type} · {r.status}
+                  <div className="flex items-center gap-2">
+                    {r.status === "RUNNING" && (
+                      <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
+                        <span className="animate-run-pulse absolute inline-flex h-full w-full rounded-full bg-sky-500" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-400" />
+                      </span>
+                    )}
+                    <div className="font-medium text-slate-900">
+                      {r.type} · {r.status === "RUNNING" ? "Running…" : r.status}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="text-xs text-slate-500">
                       {fmtDate(r.startedAt)} → {fmtDate(r.finishedAt)}
                     </div>
                     {r.status === "RUNNING" ? (
-                      <form action={cancelIngestionRunAction.bind(null, r.id)}>
-                        <CancelButton />
-                      </form>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/logs?kind=ingestion&type=${encodeURIComponent(r.type)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sky-600 underline underline-offset-2 hover:text-sky-800 text-xs"
+                        >
+                          View log
+                        </Link>
+                        <form action={cancelIngestionRunAction.bind(null, r.id)}>
+                          <CancelButton />
+                        </form>
+                      </div>
                     ) : null}
                   </div>
                 </div>
+                {r.status === "RUNNING" && (
+                  <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-sky-200">
+                    <div className="h-full w-1/4 rounded-full bg-sky-500 animate-run-indeterminate" />
+                  </div>
+                )}
                 <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-600 sm:grid-cols-6">
                   <div>brands: {numFromStats(s, "brandsProcessed")}</div>
                   <div>products: {numFromStats(s, "productsProcessed")}</div>

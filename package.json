@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "postinstall": "prisma generate",
     "dev:clean": "pkill -f \"next dev\" || true && rm -rf .next && next dev",
     "build": "next build",
     "start": "next start",

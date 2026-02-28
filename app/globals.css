@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes run-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+@keyframes run-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-run-indeterminate {
+  animation: run-indeterminate 1.8s ease-in-out infinite;
+}
+
+.animate-run-pulse {
+  animation: run-pulse 1.2s ease-in-out infinite;
+}
+
 :root {
   color-scheme: light;
 }
