@@ -308,42 +308,163 @@ To run legacy brand website import (if `DISCOVERY_CSV_PATH` is set) + then crawl
 npm run ingest:discovery:run
 ```
 
-## Automation
+## Automation Pipeline (recommended)
 
-Automation runs scheduled and on-demand jobs for **enrichment**, **link health**, and **safe discovery**. It does **not** scrape Amazon, Walmart, or Google Shopping; use CSV or approved APIs for those sources.
+The **Full Pipeline** runs three discovery and enrichment stages automatically, in sequence.
 
-### What is automated
+### What the pipeline does
 
-- **Enrich official** (nightly): Products with an OFFICIAL listing are enriched from official sites (robots.txt and rate limits respected). Evidence, COA/manufacturing fields, and grades are updated.
-- **Link health** (weekly): Product and Evidence URLs are checked (HEAD/GET). Dead OFFICIAL listing URLs can be marked INACTIVE after repeated 404s.
-- **Discovery (robots-allowed)** (nightly): Only allowlisted domains from `config/discoveryAllowlist.json` are crawled; plus optional CSV drop at `data/inbox/listings.csv`, which is imported and then renamed to `listings.processed.{timestamp}.csv`.
+1. **OCR Discovery** — downloads DSLD label images for all products with a DSLD ID, runs `tesseract.js` OCR to extract brand domains, and creates OFFICIAL listings + Evidence records (max 200 products per run).
+2. **Sitemap Harvest** — fetches `sitemap.xml` for every known official domain, classifies product-path URLs, and resolves them through the Listings → Resolver → MergeCandidate pipeline (max 50 domains × 200 URLs per run).
+3. **Enrichment** — visits official pages, extracts COA links, manufacturing claims, and ingredient snippets, stores Evidence records, and recomputes transparency grades (max 50 products per run).
 
-### Running jobs locally
+### Running the pipeline
+
+**Admin UI (recommended):**
+
+1. Go to `/admin/populate`
+2. Click **Run Full Pipeline**
+3. The pipeline runs in the background; the page auto-refreshes and shows live stage progress and final stats.
+
+**CLI:**
 
 ```bash
-# Enrich official (default max 50)
-npm run job -- --type ENRICH_OFFICIAL --max 20
+tsx scripts/jobs/runFullPipeline.ts
+```
+
+**Recommended cadence:** Run weekly (Sunday) after the DSLD import.
+
+### Individual jobs (CLI)
+
+```bash
+# OCR discovery
+npm run discover:dsld-images -- --max 200
+
+# Sitemap harvest
+npm run discover:sitemaps -- --maxDomains 50 --maxUrlsPerDomain 200
+
+# Enrich official pages (default max 50)
+npm run job -- --type ENRICH_OFFICIAL --max 50
 
 # Link health (default max 200)
 npm run job -- --type LINK_HEALTH --max 200
 
-# Discovery (robots-allowed + optional CSV inbox)
+# Discovery (robots-allowed + CSV inbox)
 npm run job -- --type DISCOVERY_ROBOTS_ALLOWED
 ```
 
 ### Scheduling with GitHub Actions
 
-Workflows in `.github/workflows/` run these jobs on a schedule (e.g. with Vercel hosting, jobs run against your database from GitHub):
+Workflows in `.github/workflows/` run on a schedule (requires `DATABASE_URL` secret in GitHub Actions):
 
-- `enrich_official.yml` — cron `0 3 * * *` (daily 03:00 UTC)
-- `link_health.yml` — cron `0 6 * * 1` (Mondays 06:00 UTC)
-- `discovery.yml` — cron `0 2 * * *` (daily 02:00 UTC)
-
-**Required secret:** In the repo’s GitHub Settings → Secrets and variables → Actions, add `DATABASE_URL` (your Postgres connection string). Workflows use it when running `npm run job`.
+- `enrich_official.yml` — daily 03:00 UTC
+- `link_health.yml` — Mondays 06:00 UTC
+- `discovery.yml` — daily 02:00 UTC
+- `discover_dsld_images.yml` — Sundays 01:00 UTC (DSLD label OCR)
+- `discover_sitemaps.yml` — Sundays 04:00 UTC (sitemap harvest)
 
 ### Admin UI
 
-- **Automation dashboard:** `/admin/automation` — view jobs, last run status, enable/disable jobs, run Enrich Official / Link Health / Discovery now, and see recent run history and stats.
+- **Populate page:** `/admin/populate` — one-click **Run Full Pipeline** with a live results panel, plus numbered individual step buttons.
+- **Automation dashboard:** `/admin/automation` — view all jobs, last run status, enable/disable, run now, full run history and stats.
+
+## Troubleshooting
+
+### "Engine is not yet connected" / `_napi_register_module_v1` deadlock
+
+**Cause:** Next.js/Turbopack/Webpack bundled `@prisma/client` through its module bundler.
+Prisma's query engine is a native N-API addon (`.node` binary) that **must** be
+loaded by Node.js `require()` directly — it cannot be bundled.
+
+**Fix (already applied):** `next.config.mjs` externalizes Prisma via:
+- `serverExternalPackages`
+- `experimental.serverComponentsExternalPackages`
+- `webpack.externals` (belt-and-suspenders)
+
+**Verify config is loaded:** On dev startup you should see:
+
+```
+[next.config] loaded; externalizing prisma
+```
+
+If that line is missing, the config is not being loaded — ensure only one
+`next.config.*` file exists (we use `next.config.mjs`).
+
+**Hard reset (clears stale build + Prisma artifacts):**
+
+```bash
+npm run reset:prisma-next
+npm run dev
+```
+
+**If the issue persists:** Try `npm run dev:webpack` to confirm whether
+Turbopack is the trigger (diagnostic only).
+
+---
+
+### Stale generated Prisma client
+
+Running `prisma generate` multiple times with different `engineType` settings
+leaves stale files in `node_modules/.prisma/client/` that can conflict.
+
+**Fix:**
+
+```bash
+npm run reset:prisma-next
+# equivalent to:
+rm -rf .next node_modules/.prisma && npx prisma generate
+```
+
+---
+
+### "DATABASE_URL is not set" on first run
+
+Copy the example env file and fill in your Postgres connection string:
+
+```bash
+cp .env.example .env
+# then edit .env and set DATABASE_URL
+```
+
+---
+
+### Pre-flight check fails before `npm run dev`
+
+`npm run dev` runs `scripts/checkPrisma.ts` automatically (via `predev` hook).
+It checks:
+1. `DATABASE_URL` is set
+2. `node_modules/.prisma/client` exists
+3. The database responds to `SELECT 1` within 5 seconds
+
+If any check fails, follow the printed instructions. To skip the check
+temporarily (not recommended):
+
+```bash
+npx next dev   # bypasses predev hook
+```
+
+---
+
+### Quick DB health check
+
+After the dev server is running, hit the health endpoint to confirm
+Prisma connects successfully:
+
+```
+GET http://localhost:3000/api/health/db
+→ {"ok":true,"latencyMs":42}
+```
+
+---
+
+### Turbopack compatibility note
+
+This project runs `next dev` with **Turbopack** (the default in Next.js 15).
+Turbopack requires `serverExternalPackages` to be set for any package that
+ships a native Node.js addon. **Do not remove `@prisma/client` from that
+list** — doing so will reintroduce the pthread deadlock.
+
+---
 
 ## Notes on DSLD API access
 

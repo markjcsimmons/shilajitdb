@@ -16,7 +16,7 @@ export default function RootError({
 
   const msg = error?.message ?? "Something went wrong.";
   const isDb =
-    /prisma|database|connection|P1001|ECONNREFUSED|connect/i.test(msg) ||
+    /prisma|database|connection|P1001|ECONNREFUSED|connect|engine is not yet connected|_napi_register_module/i.test(msg) ||
     (error?.cause && String(error.cause).includes("connect"));
 
   return (
@@ -25,19 +25,16 @@ export default function RootError({
       <p className="mt-2 text-sm text-rose-800">{msg}</p>
       {isDb && (
         <div className="mt-4 rounded-xl border border-rose-200 bg-white/60 p-4 text-sm text-rose-900">
-          <p className="font-medium">If the app is not loading, try:</p>
+          <p className="font-medium">DB / Prisma engine issue. Try:</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
             <li>
-              <strong>Wrong port?</strong> If you use <code className="rounded bg-rose-100 px-1">npm run dev</code>,
-              check the terminal — it may say <code className="rounded bg-rose-100 px-1">localhost:3002</code> if 3000 is in use. Open that URL.
+              <strong>Reset:</strong> Run <code className="rounded bg-rose-100 px-1">npm run reset:prisma-next</code> then <code className="rounded bg-rose-100 px-1">npm run dev</code>.
             </li>
             <li>
-              <strong>Database:</strong> Ensure Postgres is running and <code className="rounded bg-rose-100 px-1">.env</code> has a valid{" "}
-              <code className="rounded bg-rose-100 px-1">DATABASE_URL</code>. Run{" "}
-              <code className="rounded bg-rose-100 px-1">npx prisma migrate deploy</code> and <code className="rounded bg-rose-100 px-1">npx prisma generate</code>.
+              <strong>Health check:</strong> <Link href="/api/health/db" className="underline">/api/health/db</Link> — verify DB connectivity.
             </li>
             <li>
-              <strong>Dev server:</strong> From the project folder run <code className="rounded bg-rose-100 px-1">npm run dev</code> and open the URL it prints.
+              <strong>Webpack fallback:</strong> If using Turbopack, try <code className="rounded bg-rose-100 px-1">npm run dev:webpack</code>.
             </li>
           </ul>
         </div>

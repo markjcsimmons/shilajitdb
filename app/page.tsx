@@ -52,12 +52,9 @@ export default async function HomePage({
         },
       },
     }),
-    prisma.product.findMany({
-      distinct: ["manufacturingCountryClaim"],
-      where: { manufacturingCountryClaim: { not: null } },
-      select: { manufacturingCountryClaim: true },
-      orderBy: { manufacturingCountryClaim: "asc" },
-    }),
+    prisma.$queryRaw<
+      { manufacturingCountryClaim: string }[]
+    >`SELECT DISTINCT "manufacturingCountryClaim" FROM "Product" WHERE "isCanonical" = true AND "manufacturingCountryClaim" IS NOT NULL ORDER BY "manufacturingCountryClaim" ASC`,
   ]);
 
   const countryOptions = countries

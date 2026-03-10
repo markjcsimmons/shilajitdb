@@ -4,11 +4,32 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminBrandsPage() {
-  const brands = await prisma.brand.findMany({
-    orderBy: { name: "asc" },
-    include: { _count: { select: { products: true } } },
-  });
+const PAGE_SIZE = 50;
+
+export default async function AdminBrandsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const page = Math.max(1, parseInt((await searchParams).page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [brands, total] = await Promise.all([
+    prisma.brand.findMany({
+      orderBy: { name: "asc" },
+      skip,
+      take: PAGE_SIZE,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        _count: { select: { products: true } },
+      },
+    }),
+    prisma.brand.count(),
+  ]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="space-y-4">
@@ -51,6 +72,31 @@ export default async function AdminBrandsPage() {
           ) : null}
         </div>
       </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between gap-2 text-sm text-slate-600">
+          <span>
+            {skip + 1}–{Math.min(skip + PAGE_SIZE, total)} of {total}
+          </span>
+          <div className="flex gap-2">
+            {page > 1 ? (
+              <Link
+                href={`/admin/brands?page=${page - 1}`}
+                className="rounded-lg px-3 py-1.5 bg-slate-100 hover:bg-slate-200 transition"
+              >
+                Previous
+              </Link>
+            ) : null}
+            {page < totalPages ? (
+              <Link
+                href={`/admin/brands?page=${page + 1}`}
+                className="rounded-lg px-3 py-1.5 bg-slate-100 hover:bg-slate-200 transition"
+              >
+                Next
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

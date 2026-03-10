@@ -60,6 +60,7 @@ export default async function BrandPage({
       website: true,
       description: true,
       products: {
+        where: { isCanonical: true },
         select: {
           id: true,
           slug: true,

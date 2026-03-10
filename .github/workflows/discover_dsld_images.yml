@@ -1,0 +1,32 @@
+name: Discover official domains (DSLD label OCR) — weekly
+
+on:
+  schedule:
+    # Sundays at 01:00 UTC
+    - cron: "0 1 * * 0"
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "Max products to OCR-scan"
+        required: false
+        default: "200"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run DSLD label image OCR discovery
+        run: npm run discover:dsld-images -- --max ${{ github.event.inputs.max || '200' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

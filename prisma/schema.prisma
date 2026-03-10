@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -146,6 +147,7 @@ model Product {
   sourceDsldLabelId         String?               @unique
   sourceDsldUrl             String?
   dataCompleteness          DataCompleteness      @default(LOW)
+  isCanonical               Boolean               @default(true)
   lastVerifiedAt            DateTime?
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
@@ -156,6 +158,7 @@ model Product {
   mergeCandidates           MergeCandidate[]      @relation("CandidateProduct")
 
   @@index([brandId])
+  @@index([isCanonical])
   @@index([name])
   @@index([gtin])
   @@index([brandSku])
@@ -294,6 +297,9 @@ enum JobType {
   ENRICH_OFFICIAL
   LINK_HEALTH
   DISCOVERY_ROBOTS_ALLOWED
+  DISCOVER_OFFICIAL_FROM_DSLD_IMAGES
+  DISCOVER_OFFICIAL_FROM_SITEMAPS
+  URL_CSV_EXTRACT
 }
 
 enum JobStatus {

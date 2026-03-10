@@ -4,9 +4,13 @@ import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { fetchTextWithRetry } from "@/scripts/ingest/shared/http";
 import { DomainRateLimiter } from "@/scripts/ingest/web/rateLimit";
 import { getRobotsRulesForDomain, isUrlAllowedByRobots } from "@/scripts/ingest/web/robots";
+import { fetchSitemapUrls } from "@/scripts/ingest/discovery/sitemaps/fetchSitemap";
+import { isLikelyProductUrl } from "@/scripts/ingest/discovery/sitemaps/classifyUrl";
 import type { EnrichOfficialStats } from "@/scripts/jobs/jobTypes";
 
-function extractLinks(html: string, baseUrl: string) {
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+
+function extractLinks(html: string, baseUrl: string): string[] {
   const $ = cheerio.load(html);
   const out: string[] = [];
   $("a[href]").each((_, el) => {
@@ -22,7 +26,7 @@ function extractLinks(html: string, baseUrl: string) {
   return Array.from(new Set(out));
 }
 
-function pickCoaLinks(urls: string[]) {
+function pickCoaLinks(urls: string[]): string[] {
   const out: string[] = [];
   for (const u of urls) {
     const s = u.toLowerCase();
@@ -30,20 +34,23 @@ function pickCoaLinks(urls: string[]) {
       out.push(u);
       continue;
     }
-    if (s.endsWith(".pdf") && (s.includes("coa") || s.includes("analysis") || s.includes("lab"))) out.push(u);
+    if (s.endsWith(".pdf") && (s.includes("coa") || s.includes("analysis") || s.includes("lab"))) {
+      out.push(u);
+    }
   }
   return Array.from(new Set(out));
 }
 
-function detectRequestOnly(html: string) {
+function detectRequestOnly(html: string): boolean {
   const t = html.toLowerCase();
-  if (t.includes("available upon request")) return true;
-  if (t.includes("coa upon request")) return true;
-  if (t.includes("certificate of analysis upon request")) return true;
-  return false;
+  return (
+    t.includes("available upon request") ||
+    t.includes("coa upon request") ||
+    t.includes("certificate of analysis upon request")
+  );
 }
 
-function detectManufacturingClaim(html: string) {
+function detectManufacturingClaim(html: string): string | null {
   const text = html.replace(/\s+/g, " ");
   const m = text.match(/\b(made in|manufactured in|packaged in|sourced from)\b[^.]{0,80}/i);
   return m ? m[0].trim() : null;
@@ -53,8 +60,8 @@ async function upsertEvidence(
   productId: string,
   type: "COA" | "MANUFACTURING" | "INGREDIENTS",
   url: string,
-  quote: string
-) {
+  quote: string,
+): Promise<boolean> {
   const existing = await prisma.evidence.findFirst({
     where: { productId, type, url, sourceName: "Official Enrichment" },
     select: { id: true },
@@ -67,6 +74,53 @@ async function upsertEvidence(
   return true;
 }
 
+/**
+ * Return true if a URL looks like a product detail page (not a bare homepage).
+ * Bare homepage: pathname is "/" or "" or has no meaningful segments.
+ */
+function isProductPageUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    const p = u.pathname.replace(/\/+$/, "");
+    if (!p || p === "") return false; // bare homepage
+    return isLikelyProductUrl(url);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Given a homepage URL, try to find product-page links by:
+ *   1. Checking the sitemap first (fast, clean).
+ *   2. Scanning homepage HTML for /products/ links (max 20 links).
+ *
+ * Returns up to `maxLinks` product URLs found, or [] if none.
+ */
+async function findProductLinksFromHomepage(
+  homepageUrl: string,
+  rate: DomainRateLimiter,
+  maxLinks = 20,
+): Promise<string[]> {
+  try {
+    const domain = new URL(homepageUrl).hostname;
+
+    // Try sitemap first.
+    const sitemapUrls = await fetchSitemapUrls(domain);
+    const fromSitemap = sitemapUrls.filter(isLikelyProductUrl).slice(0, maxLinks);
+    if (fromSitemap.length > 0) return fromSitemap;
+
+    // Fall back to scanning homepage HTML.
+    await rate.wait(domain);
+    const html = await fetchTextWithRetry(homepageUrl, { retries: 1, timeoutMs: 15000 });
+    const links = extractLinks(html, homepageUrl);
+    return links.filter(isLikelyProductUrl).slice(0, maxLinks);
+  } catch {
+    return [];
+  }
+}
+
+// ─── Options & core function ──────────────────────────────────────────────────
+
 export type EnrichOfficialOptions = {
   maxProducts?: number;
   maxPagesPerDomain?: number;
@@ -74,20 +128,33 @@ export type EnrichOfficialOptions = {
 };
 
 /**
- * Core enrichment: products with OFFICIAL listing, prioritize LOW/MEDIUM, missing evidence, oldest lastVerifiedAt.
- * Respects robots.txt and rate limiting. Returns stats for job runner.
+ * Enrich products that have at least one OFFICIAL listing.
+ *
+ * Selection priority (within maxProducts cap):
+ *   1. Evidence count == 0 OR dataCompleteness == LOW — most valuable to fix first.
+ *   2. lastVerifiedAt IS NULL — never enriched.
+ *   3. lastVerifiedAt oldest first.
+ *
+ * Per-product strategy:
+ *   a. If the OFFICIAL listing is a product-detail URL → enrich directly.
+ *   b. If it's a bare homepage → attempt to find product URLs via sitemap or
+ *      homepage scan, then attach them as OFFICIAL listings before enrichment.
+ *   c. Skip if no product URL can be found after the homepage scan.
  */
 export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Promise<EnrichOfficialStats> {
   const max = Math.max(1, opts.maxProducts ?? 50);
   const dryRun = opts.dryRun ?? false;
 
-  const products = await prisma.product.findMany({
+  // ── Priority query ──────────────────────────────────────────────────────────
+  // Prisma doesn't support NULLS FIRST ordering natively; we fetch a larger
+  // pool and sort in JS to put null lastVerifiedAt at the top.
+  const pool = await prisma.product.findMany({
     where: { listings: { some: { source: "OFFICIAL" } } },
     orderBy: [
-      { dataCompleteness: "asc" },
-      { lastVerifiedAt: "asc" },
+      { dataCompleteness: "asc" }, // LOW comes before MEDIUM and HIGH alphabetically
+      { lastVerifiedAt: "asc" },   // oldest first (nulls come first in Postgres asc)
     ],
-    take: max,
+    take: max * 3, // Overfetch because some will be skipped.
     select: {
       id: true,
       form: true,
@@ -96,26 +163,94 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
       manufacturingClarity: true,
       coaStatus: true,
       dataCompleteness: true,
+      lastVerifiedAt: true,
       listings: {
         where: { source: "OFFICIAL" },
         orderBy: { updatedAt: "desc" },
-        take: 1,
-        select: { url: true },
+        take: 5, // grab a few in case the first is a homepage
+        select: { id: true, url: true },
       },
       evidence: { select: { id: true, type: true } },
     },
   });
 
+  // Sort: null lastVerifiedAt first, then oldest, then evidence count ascending.
+  const sorted = pool.sort((a, b) => {
+    const aNull = a.lastVerifiedAt === null ? 0 : 1;
+    const bNull = b.lastVerifiedAt === null ? 0 : 1;
+    if (aNull !== bNull) return aNull - bNull;
+    const aTime = a.lastVerifiedAt?.getTime() ?? 0;
+    const bTime = b.lastVerifiedAt?.getTime() ?? 0;
+    if (aTime !== bTime) return aTime - bTime;
+    return a.evidence.length - b.evidence.length;
+  });
+
+  const products = sorted.slice(0, max);
+
   const rate = new DomainRateLimiter(1000);
+  let productsSelected = products.length;
   let productsProcessed = 0;
+  let skippedNoProductUrl = 0;
   let evidenceAdded = 0;
   let coaPublicFound = 0;
   let manufacturingClearFound = 0;
   let errorsCount = 0;
 
   for (const p of products) {
-    const officialUrl = p.listings[0]?.url;
-    if (!officialUrl) continue;
+    // ── Determine which URL to enrich ────────────────────────────────────────
+    let officialUrl: string | undefined;
+
+    // Prefer a listing that is already a product-detail page.
+    for (const listing of p.listings) {
+      if (isProductPageUrl(listing.url)) {
+        officialUrl = listing.url;
+        break;
+      }
+    }
+
+    // If none is a product page, the first OFFICIAL listing is treated as a homepage.
+    if (!officialUrl) {
+      const homepageUrl = p.listings[0]?.url;
+      if (!homepageUrl) {
+        skippedNoProductUrl += 1;
+        continue;
+      }
+
+      // Try to discover product URLs from the homepage.
+      if (!dryRun) {
+        const productLinks = await findProductLinksFromHomepage(homepageUrl, rate);
+        if (productLinks.length > 0) {
+          // Attach discovered product URLs as OFFICIAL listings.
+          for (const link of productLinks.slice(0, 5)) {
+            const existing = await prisma.listing.findUnique({
+              where: { url: link },
+              select: { id: true },
+            });
+            if (!existing) {
+              await prisma.listing.create({
+                data: {
+                  productId: p.id,
+                  source: "OFFICIAL",
+                  url: link,
+                  status: "UNKNOWN",
+                  lastSeenAt: new Date(),
+                },
+                select: { id: true },
+              });
+            }
+          }
+          officialUrl = productLinks[0];
+        } else {
+          skippedNoProductUrl += 1;
+          continue;
+        }
+      } else {
+        // In dry-run mode, report as skipped.
+        skippedNoProductUrl += 1;
+        continue;
+      }
+    }
+
     productsProcessed += 1;
 
     try {
@@ -160,7 +295,10 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
 
         const updated = await prisma.product.findUnique({
           where: { id: p.id },
-          include: { evidence: { select: { id: true } } },
+          include: {
+            evidence: { select: { id: true, type: true, sourceName: true } },
+            brand: { select: { name: true, slug: true } },
+          },
         });
         if (updated) {
           const t = computeTransparencyGrade(
@@ -171,7 +309,7 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
               manufacturingClarity: updated.manufacturingClarity,
               coaStatus: updated.coaStatus,
             },
-            { count: updated.evidence.length }
+            { count: updated.evidence.length },
           );
           const q = computeQualityTier(
             {
@@ -181,11 +319,25 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
               manufacturingClarity: updated.manufacturingClarity,
               coaStatus: updated.coaStatus,
             },
-            t
+            t,
           );
+          const hasMeaningfulEvidence = updated.evidence.some(
+            (e) =>
+              ["COA", "MANUFACTURING", "INGREDIENTS", "TESTING"].includes(e.type) &&
+              !/sitemap|ocr|discovery|meta|harvest/i.test(e.sourceName ?? "")
+          );
+          const brandResolved =
+            updated.brand.name !== "Unknown Brand" &&
+            !updated.brand.slug.startsWith("domain-");
+          const shouldPromoteCanonical = hasMeaningfulEvidence && brandResolved;
+
           await prisma.product.update({
             where: { id: updated.id },
-            data: { transparencyGrade: t.grade, qualityTier: q.tier },
+            data: {
+              transparencyGrade: t.grade,
+              qualityTier: q.tier,
+              ...(shouldPromoteCanonical ? { isCanonical: true } : {}),
+            },
             select: { id: true },
           });
         }
@@ -196,7 +348,9 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
   }
 
   return {
+    productsSelected,
     productsProcessed,
+    skippedNoProductUrl,
     evidenceAdded,
     coaPublicFound,
     manufacturingClearFound,

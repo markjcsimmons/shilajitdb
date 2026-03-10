@@ -2,7 +2,7 @@ import { Button, Input } from "@/components/ui";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { prisma } from "@/lib/db";
 import { getAdminMetrics } from "@/lib/adminMetrics";
-import { cancelRunAction } from "@/app/admin/actions";
+import { cancelRunAction, clearStaleRunsAction } from "@/app/admin/actions";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -17,11 +17,20 @@ function statsSummary(stats: unknown) {
   const s = stats as Record<string, unknown>;
   const parts: string[] = [];
   if (typeof s.productsProcessed === "number") parts.push(`products: ${s.productsProcessed}`);
+  if (typeof s.productsScanned === "number") parts.push(`scanned: ${s.productsScanned}`);
   if (typeof s.evidenceAdded === "number") parts.push(`evidence: ${s.evidenceAdded}`);
+  if (typeof s.evidenceCreated === "number") parts.push(`evidence: ${s.evidenceCreated}`);
   if (typeof s.checkedCount === "number") parts.push(`checked: ${s.checkedCount}`);
   if (typeof s.deadCount === "number") parts.push(`dead: ${s.deadCount}`);
   if (typeof s.urlsDiscovered === "number") parts.push(`urls: ${s.urlsDiscovered}`);
   if (typeof s.listingsUpserted === "number") parts.push(`listings: ${s.listingsUpserted}`);
+  if (typeof s.officialListingsCreated === "number") parts.push(`listings: ${s.officialListingsCreated}`);
+  if (typeof s.domainsFound === "number") parts.push(`domains: ${s.domainsFound}`);
+  if (typeof s.domainsScanned === "number") parts.push(`domains: ${s.domainsScanned}`);
+  if (typeof s.sitemapsFetched === "number") parts.push(`sitemaps: ${s.sitemapsFetched}`);
+  if (typeof s.productUrlsFound === "number") parts.push(`productUrls: ${s.productUrlsFound}`);
+  if (typeof s.placeholdersCreated === "number") parts.push(`placeholders: ${s.placeholdersCreated}`);
+  if (typeof s.mergeCandidatesCreated === "number") parts.push(`merges: ${s.mergeCandidatesCreated}`);
   if (typeof s.errorsCount === "number") parts.push(`errors: ${s.errorsCount}`);
   return parts.length ? parts.join(", ") : "—";
 }
@@ -114,7 +123,7 @@ export default async function AdminAutomationPage({
               </span>
               <span className="text-xs text-sky-700">— page auto-refreshes every 4s</span>
             </div>
-            <form action={clearStaleRunsAction} method="POST" className="mt-2 sm:mt-0">
+            <form action={clearStaleRunsAction} className="mt-2 sm:mt-0">
               <input type="hidden" name="next" value="/admin/automation" />
               <Button type="submit" variant="secondary" className="text-xs">
                 Clear stuck runs
@@ -240,6 +249,17 @@ export default async function AdminAutomationPage({
                               <Input name="max" type="number" defaultValue={200} className="!w-20 !py-1 text-sm" />
                               <Button type="submit">Run now</Button>
                             </span>
+                          ) : job.type === "DISCOVER_OFFICIAL_FROM_DSLD_IMAGES" ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Input name="max" type="number" defaultValue={200} className="!w-20 !py-1 text-sm" title="Max products" />
+                              <Button type="submit">Run now</Button>
+                            </span>
+                          ) : job.type === "DISCOVER_OFFICIAL_FROM_SITEMAPS" ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Input name="maxDomains" type="number" defaultValue={50} className="!w-16 !py-1 text-sm" title="Max domains" />
+                              <Input name="maxUrls" type="number" defaultValue={200} className="!w-16 !py-1 text-sm" title="URLs/domain" />
+                              <Button type="submit">Run now</Button>
+                            </span>
                           ) : (
                             <Button type="submit">Run now</Button>
                           )}
@@ -313,7 +333,7 @@ export default async function AdminAutomationPage({
                         >
                           View log
                         </Link>
-                        <form action={cancelRunAction} method="POST" className="inline">
+                        <form action={cancelRunAction} className="inline">
                           <input type="hidden" name="runId" value={r.id} />
                           <input type="hidden" name="kind" value="job_run" />
                           <input type="hidden" name="next" value="/admin/automation" />

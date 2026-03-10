@@ -10,7 +10,13 @@ import type { JobType } from "@prisma/client";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const JOB_TYPES: JobType[] = ["ENRICH_OFFICIAL", "LINK_HEALTH", "DISCOVERY_ROBOTS_ALLOWED"];
+const JOB_TYPES: JobType[] = [
+  "ENRICH_OFFICIAL",
+  "LINK_HEALTH",
+  "DISCOVERY_ROBOTS_ALLOWED",
+  "DISCOVER_OFFICIAL_FROM_DSLD_IMAGES",
+  "DISCOVER_OFFICIAL_FROM_SITEMAPS",
+];
 
 function tsxCmd() {
   const bin = process.platform === "win32" ? "tsx.cmd" : "tsx";
@@ -81,6 +87,13 @@ export async function POST(request: Request) {
   if (type === "ENRICH_OFFICIAL" || type === "LINK_HEALTH") {
     const max = asPositiveInt(form.get("max")) ?? (type === "ENRICH_OFFICIAL" ? 50 : 200);
     runArgs.push("--max", String(max));
+  } else if (type === "DISCOVER_OFFICIAL_FROM_DSLD_IMAGES") {
+    const max = asPositiveInt(form.get("max")) ?? 200;
+    runArgs.push("--max", String(max));
+  } else if (type === "DISCOVER_OFFICIAL_FROM_SITEMAPS") {
+    const maxDomains = asPositiveInt(form.get("maxDomains")) ?? 50;
+    const maxUrls = asPositiveInt(form.get("maxUrls")) ?? 200;
+    runArgs.push("--maxDomains", String(maxDomains), "--maxUrls", String(maxUrls));
   }
 
   const logDir = path.join(process.cwd(), ".cache", "job-logs");

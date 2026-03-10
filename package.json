@@ -5,9 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:webpack": "next dev",
+    "predev": "tsx scripts/checkPrisma.ts",
+    "prebuild": "tsx scripts/checkPrisma.ts",
     "postinstall": "prisma generate",
+    "reset:prisma-next": "rm -rf .next node_modules/.prisma && npx prisma generate",
     "dev:clean": "pkill -f \"next dev\" || true && rm -rf .next && next dev",
     "build": "next build",
+    "prisma:reset-client": "node -e \"require('fs').rmSync('node_modules/.prisma', {recursive:true, force:true})\" && npx prisma generate",
     "start": "next start",
     "lint": "next lint",
     "prisma": "prisma",
@@ -16,6 +21,7 @@
     "db:seed": "prisma db seed",
     "db:recompute": "tsx scripts/recompute-grades.ts",
     "cleanup:dsld:nonshilajit": "tsx scripts/cleanup/removeNonShilajitDsld.ts",
+    "cleanup:brands:noproducts": "tsx scripts/cleanup/removeBrandsWithNoProducts.ts",
     "ingest:dsld:shilajit": "tsx scripts/ingest/dsld/ingestShilajitFromDsld.ts",
     "ingest:web:brands": "tsx scripts/ingest/web/crawlBrandSites.ts",
     "ingest:discovery:csv": "tsx scripts/ingest/discovery/importBrandWebsiteCsv.ts",
@@ -25,8 +31,13 @@
     "discover:csv": "tsx scripts/ingest/discovery/importCsv.ts",
     "discover:run": "tsx scripts/ingest/discovery/runDiscovery.ts",
     "enrich:official": "tsx scripts/ingest/enrich/enrichOfficial.ts",
+    "discover:dsld-images": "tsx scripts/ingest/discovery/dsld_images/discoverOfficialFromDsldImages.ts",
+    "discover:sitemaps": "tsx scripts/ingest/discovery/sitemaps/harvestOfficialProductUrlsFromSitemaps.ts",
     "job": "tsx scripts/jobs/runJob.ts",
-"sanity-check:search": "tsx scripts/sanity-check-search.ts"
+    "sanity-check:search": "tsx scripts/sanity-check-search.ts",
+    "salvage:collapse": "tsx scripts/admin/salvageCollapseUnknownPlaceholders.ts",
+    "cleanup:junk": "tsx scripts/sql/runCleanup.ts",
+    "ingest:url-csv": "tsx scripts/ingest/url_csv/runUrlCsvExtract.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.1",
@@ -34,18 +45,20 @@
     "clsx": "^2.1.1",
     "csv-parse": "^5.6.0",
     "next": "^15.5.0",
+    "p-limit": "^7.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwind-merge": "^2.6.0",
+    "tesseract.js": "^7.0.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.20.0",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.20",
     "dotenv": "^16.6.1",
     "eslint": "^9.20.1",
@@ -57,4 +70,3 @@
     "typescript": "^5.7.3"
   }
 }
-

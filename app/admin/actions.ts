@@ -211,6 +211,18 @@ export async function adminRecomputeGrades(formData: FormData) {
   redirect(`/admin/products/${productId}?recomputed=1`);
 }
 
+export async function adminPromoteToCanonical(formData: FormData) {
+  await requireAdmin();
+  const productId = String(formData.get("productId") ?? "").trim();
+  if (!productId) redirect("/admin/products");
+  await prisma.product.update({
+    where: { id: productId },
+    data: { isCanonical: true },
+    select: { id: true },
+  });
+  redirect(`/admin/products/${productId}?promoted=1`);
+}
+
 export async function adminSetOfficialCanonicalUrl(formData: FormData) {
   await requireAdmin();
   const productId = String(formData.get("productId") ?? "").trim();
@@ -331,5 +343,18 @@ export async function clearStaleRunsAction(formData: FormData) {
   }
 
   redirect(`${redirectTo}?ran=stale_cleared&count=${cleared}`);
+}
+
+/** Remove brands that have zero products (keeps DB shilajit-only). Form field: next (redirect path). */
+export async function removeBrandsWithNoProductsAction(formData: FormData) {
+  await requireAdmin();
+  const nextUrl = String(formData.get("next") ?? "").trim();
+  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin";
+
+  const count = await prisma.brand.count({ where: { products: { none: {} } } });
+  if (count > 0) {
+    await prisma.brand.deleteMany({ where: { products: { none: {} } } });
+  }
+  redirect(`${redirectTo}?ran=brands_cleaned&removed=${count}`);
 }
 

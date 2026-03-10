@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { createHash } from "crypto";
 
 import { prisma } from "@/lib/db";
 import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
@@ -15,7 +16,7 @@ async function ensureBrand(nameRaw: string) {
   const name = normalizeBrandName(nameRaw || "Unknown Brand") || "Unknown Brand";
   const existing = await prisma.brand.findFirst({
     where: { name: { equals: name, mode: "insensitive" } },
-    select: { id: true, name: true },
+    select: { id: true, name: true, slug: true },
   });
   if (existing) return existing;
 
@@ -26,18 +27,49 @@ async function ensureBrand(nameRaw: string) {
     if (!taken) break;
     slug = `${base}-${Math.random().toString(16).slice(2, 6)}`;
   }
-  return await prisma.brand.create({ data: { name, slug }, select: { id: true, name: true } });
+  return await prisma.brand.create({ data: { name, slug }, select: { id: true, name: true, slug: true } });
 }
 
-async function uniqueProductSlugForCreate(name: string) {
-  const base = slugify(name) || "product";
-  let slug = base;
-  for (let i = 0; i < 10; i += 1) {
-    const exists = await prisma.product.findUnique({ where: { slug }, select: { id: true } });
-    if (!exists) return slug;
-    slug = `${base}-${Math.random().toString(16).slice(2, 6)}`;
+/**
+ * Derive a short, URL-safe key from a canonical URL's path.
+ * "https://vitalibis.com/products/shilajit-resin-30g" → "products-shilajit-resin-30g"
+ * Truncated to 64 chars so composite slugs stay within Postgres limits.
+ */
+function urlKeyFromListing(url: string): string {
+  try {
+    const canonical = canonicalizeUrl(url);
+    const u = new URL(canonical);
+    const pathKey = u.pathname.split("/").filter(Boolean).join("-");
+    return slugify(pathKey).slice(0, 64) || "product";
+  } catch {
+    return "product";
   }
-  return `${base}-${Date.now().toString(36)}`;
+}
+
+/** 6-character deterministic hash of a canonical URL. */
+function urlHash6(url: string): string {
+  return createHash("sha256").update(url).digest("hex").slice(0, 6);
+}
+
+/**
+ * Derive a human-readable product title from the last path segment of a URL.
+ * "/products/shilajit-resin-30g" → "Shilajit Resin 30g"
+ * Used as a fallback when the caller supplies no title.
+ */
+function titleFromUrlSlug(url: string): string {
+  try {
+    const segments = new URL(url).pathname.split("/").filter(Boolean);
+    const last = segments[segments.length - 1] ?? "";
+    return (
+      last
+        .replace(/\.[a-z]{2,4}$/i, "")
+        .replace(/[-_]+/g, " ")
+        .trim()
+        .replace(/\b\w/g, (c) => c.toUpperCase()) || ""
+    );
+  } catch {
+    return "";
+  }
 }
 
 function titleSimilarity(a: string, b: string) {
@@ -121,20 +153,101 @@ async function upsertListing(args: {
   return { id: created.id, created: true };
 }
 
+/**
+ * Find-or-create a placeholder Product.
+ *
+ * Slug strategy (REF C):
+ *   primary slug = slugify("{brand.slug}-{urlKey}")  ← URL-content-addressed
+ *   If the primary slug is taken by the SAME brand → reuse the product.
+ *   If the primary slug is taken by a DIFFERENT brand → append a 6-char URL hash.
+ *
+ * This guarantees that:
+ *   - Re-runs for the same URL always land on the same product (idempotent).
+ *   - Two brands with structurally identical URL paths do not collide.
+ *   - Changing the page title does NOT create a new product (slug is URL-based,
+ *     not name-based).
+ *
+ * Name format:  "{Brand} – {Title}"  (en dash separator)
+ * Examples:
+ *   "Vitalibis – Shilajit Resin 30g"
+ *   "healthforcesuperfoods.com – Shilajit Extreme Capsules"
+ */
 async function createPlaceholderProduct(args: {
   listing: ListingInput;
   observedGtin: string | null;
   netQty: string | null;
   form: ProductForm;
 }) {
-  const brand = await ensureBrand(args.listing.brandName ?? "Unknown Brand");
-  const name = (args.listing.title?.trim() || `${brand.name} Shilajit`) as string;
-  const slug = await uniqueProductSlugForCreate(name);
+  const domain = extractDomain(args.listing.url);
+  const brandNameRaw = args.listing.brandName?.trim() || domain || "Unknown Brand";
+  const brand = await ensureBrand(brandNameRaw);
+
+  const titlePart =
+    args.listing.title?.trim() ||
+    titleFromUrlSlug(args.listing.url) ||
+    "Shilajit Product";
+
+  const name = `${brand.name} \u2013 ${titlePart}`;
+
+  // REF C: URL-keyed primary slug — collision-resistant across domains.
+  const urlKey = urlKeyFromListing(args.listing.url);
+  const primarySlug = slugify(`${brand.slug}-${urlKey}`).slice(0, 96) || "product";
+
+  const occupant = await prisma.product.findUnique({
+    where: { slug: primarySlug },
+    select: { id: true, brandId: true },
+  });
+
+  if (occupant) {
+    // Same brand → definitely the same product (same brand, same URL path).
+    if (occupant.brandId === brand.id) return { id: occupant.id };
+
+    // Different brand collision (rare) → append a 6-char URL hash to distinguish.
+    const canonical = canonicalizeUrl(args.listing.url);
+    const hashSuffix = urlHash6(canonical);
+    const fallbackSlug = `${primarySlug.slice(0, 89)}-${hashSuffix}`;
+
+    const occupant2 = await prisma.product.findUnique({
+      where: { slug: fallbackSlug },
+      select: { id: true },
+    });
+    if (occupant2) return occupant2;
+
+    return await prisma.product.create({
+      data: {
+        brandId: brand.id,
+        name,
+        slug: fallbackSlug,
+        form: args.form,
+        gtin: args.observedGtin,
+        brandSku: args.listing.observedSku?.trim() || null,
+        netQuantityText: args.netQty,
+        ingredientText: "",
+        ingredientsNormalized: [],
+        manufacturingClarity: "NOT_STATED",
+        manufacturingCountryClaim: null,
+        manufacturingClaimText: null,
+        manufacturingEvidenceUrl: null,
+        coaStatus: "UNKNOWN",
+        coaUrl: null,
+        transparencyGrade: "F",
+        qualityTier: "POOR",
+        sourceDsldLabelId: null,
+        sourceDsldUrl: null,
+        dataCompleteness: "LOW",
+        isCanonical: false,
+        lastVerifiedAt: null,
+      },
+      select: { id: true },
+    });
+  }
+
+  // Primary slug is free — create the product (discovery placeholder; isCanonical=false).
   return await prisma.product.create({
     data: {
       brandId: brand.id,
       name,
-      slug,
+      slug: primarySlug,
       form: args.form,
       gtin: args.observedGtin,
       brandSku: args.listing.observedSku?.trim() || null,
@@ -152,6 +265,7 @@ async function createPlaceholderProduct(args: {
       sourceDsldLabelId: null,
       sourceDsldUrl: null,
       dataCompleteness: "LOW",
+      isCanonical: false,
       lastVerifiedAt: null,
     },
     select: { id: true },

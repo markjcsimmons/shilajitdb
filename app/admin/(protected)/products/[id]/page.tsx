@@ -2,6 +2,7 @@ import {
   adminAddEvidence,
   adminDeleteEvidence,
   adminDeleteProduct,
+  adminPromoteToCanonical,
   adminRecomputeGrades,
   adminSetOfficialCanonicalUrl,
   adminUpsertProduct,
@@ -22,6 +23,7 @@ export default async function AdminProductEditPage({
     saved?: string;
     error?: string;
     recomputed?: string;
+    promoted?: string;
     otherId?: string;
     otherName?: string;
   }>;
@@ -106,6 +108,11 @@ export default async function AdminProductEditPage({
         {recomputed ? (
           <div className="mt-4 rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">
             Grades recomputed.
+          </div>
+        ) : null}
+        {promoted ? (
+          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+            Product promoted to canonical. It will now appear in public search.
           </div>
         ) : null}
         {error ? (

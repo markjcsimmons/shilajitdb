@@ -37,6 +37,7 @@ export async function generateMetadata({
       name: true,
       slug: true,
       dataCompleteness: true,
+      isCanonical: true,
       evidence: { select: { id: true } },
       brand: { select: { name: true } },
     },
@@ -44,7 +45,9 @@ export async function generateMetadata({
   if (!product) return { title: "Product not found" };
 
   const noIndex =
-    product.dataCompleteness === "LOW" || product.evidence.length === 0;
+    !product.isCanonical ||
+    product.dataCompleteness === "LOW" ||
+    product.evidence.length === 0;
 
   const title = `${product.name} transparency & quality`;
   const description = `View transparency grade, COA status, manufacturing claim clarity, ingredients disclosure, and evidence links for ${product.brand.name} — ${product.name}.`;
@@ -156,6 +159,7 @@ export default async function ProductPage({
   const reportEmail = process.env.NEXT_PUBLIC_REPORT_EMAIL ?? "updates@example.com";
 
   const compareOptions = await prisma.product.findMany({
+    where: { isCanonical: true },
     select: { slug: true, name: true, brand: { select: { name: true } } },
     orderBy: [{ transparencyGrade: "desc" }, { qualityTier: "desc" }, { name: "asc" }],
     take: 200,
@@ -163,6 +167,15 @@ export default async function ProductPage({
 
   return (
     <div className="space-y-6">
+      {!product.isCanonical && (
+        <div
+          className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          role="status"
+        >
+          <strong>Discovered / Needs Review.</strong> This product was discovered from a sitemap or
+          other source and has not yet been verified. It is not shown in public search.
+        </div>
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}

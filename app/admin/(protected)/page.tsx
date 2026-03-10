@@ -1,17 +1,30 @@
 import { Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
+import { removeBrandsWithNoProductsAction } from "@/app/admin/actions";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboardPage() {
-  const [brandCount, productCount, evidenceCount] = await Promise.all([
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ran?: string; removed?: string }>;
+}) {
+  const { ran, removed } = await searchParams;
+  const [brandCount, productCount, evidenceCount, brandsWithNoProducts] = await Promise.all([
     prisma.brand.count(),
     prisma.product.count(),
     prisma.evidence.count(),
+    prisma.brand.count({ where: { products: { none: {} } } }),
   ]);
 
   return (
     <div className="space-y-6">
+      {ran === "brands_cleaned" && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          Removed <strong>{removed ?? "0"}</strong> brand(s) with no products. Database now only lists brands that have at least one (shilajit) product.
+        </div>
+      )}
       <div className="rounded-2xl border-2 border-slate-900 bg-slate-900 p-6 text-white">
         <div className="text-sm font-medium uppercase tracking-wide text-slate-300">Get data in</div>
         <div className="mt-2 text-xl font-semibold">Populate database</div>
@@ -31,10 +44,21 @@ export default async function AdminDashboardPage() {
         <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           {brandCount}
         </div>
-        <div className="mt-4">
+        <p className="mt-1 text-xs text-slate-500">
+          Only shilajit: brands with no products are excluded.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
           <Button href="/admin/brands" variant="secondary">
             Manage brands
           </Button>
+          {brandsWithNoProducts > 0 && (
+            <form action={removeBrandsWithNoProductsAction} className="inline">
+              <input type="hidden" name="next" value="/admin" />
+              <Button type="submit" variant="secondary">
+                Remove {brandsWithNoProducts} brands with no products
+              </Button>
+            </form>
+          )}
         </div>
       </div>
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -43,9 +67,12 @@ export default async function AdminDashboardPage() {
           {productCount}
         </div>
         <div className="mt-4">
-          <Button href="/admin/products" variant="secondary">
+          <Link
+            href="/admin/products"
+            className="inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium bg-slate-100 text-slate-900 hover:bg-slate-200 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 cursor-pointer"
+          >
             Manage products
-          </Button>
+          </Link>
         </div>
       </div>
       <div className="rounded-2xl border border-slate-200 bg-white p-6">

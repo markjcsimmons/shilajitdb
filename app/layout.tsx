@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 
+// Force Node.js runtime for all routes — Prisma native engine requires it.
+export const runtime = "nodejs";
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
 

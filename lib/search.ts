@@ -96,7 +96,9 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
 export const PAGE_SIZE = 20;
 
 export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereInput {
-  const and: Prisma.ProductWhereInput[] = [];
+  const and: Prisma.ProductWhereInput[] = [
+    { isCanonical: true },
+  ];
 
   // When no search query (homepage default): show ONLY verified products to avoid clutter.
   // When q exists: include BOTH verified and placeholder products; ordering will put placeholders last.
