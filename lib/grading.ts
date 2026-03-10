@@ -12,6 +12,10 @@ export type ProductForGrading = {
   ingredientsNormalized: string[];
   manufacturingClarity: ManufacturingClarity;
   coaStatus: CoaStatus;
+  /** Brand slug for tier rules (e.g. Purblack → ULTRA_PREMIUM when criteria met) */
+  brandSlug?: string | null;
+  /** Has official supplement labels (DSLD or ≥2 evidence) */
+  hasOfficialLabels?: boolean;
 };
 
 export type EvidenceForGrading = { count: number };
@@ -109,7 +113,10 @@ export function computeTransparencyGrade(
 
 const proprietaryBlendRegex = /\bproprietary\s+blend\b/i;
 const blendIndicatorRegex =
-  /\b(blend|gummies|gummy|nootropic|energy|focus|proprietary)\b/i;
+  /\b(blend|gummies|gummy|nootropic|energy|focus)\b/i;
+/** "proprietary blend" etc. as a positive claim (product contains it), not negative (e.g. "no proprietary blends") */
+const proprietaryPositiveRegex =
+  /(?<!(?:no|without|free of|zero)\s)proprietary\s+(?:blend|formula|mix)s?\b/i;
 
 function onlyShilajitIngredients(ingredientsNormalized: string[], ingredientText: string) {
   const normalized = (ingredientsNormalized ?? []).map((s) => s.trim().toLowerCase()).filter(Boolean);
@@ -123,7 +130,16 @@ function onlyShilajitIngredients(ingredientsNormalized: string[], ingredientText
   const allAllowed = normalized.every((x) => allowed.has(x));
   if (!allAllowed) return false;
   if (blendIndicatorRegex.test(ingredientText ?? "")) return false;
+  if (proprietaryPositiveRegex.test(ingredientText ?? "")) return false;
   return true;
+}
+
+const PURBLACK_SLUGS = ["p-rblack", "purblack"];
+
+function isPurblack(brandSlug?: string | null): boolean {
+  if (!brandSlug) return false;
+  const slug = brandSlug.toLowerCase().replace(/ü/g, "u");
+  return PURBLACK_SLUGS.some((s) => slug === s || slug.includes(s));
 }
 
 function baselineTierForTransparency(grade: TransparencyGrade): QualityTier {
@@ -131,6 +147,43 @@ function baselineTierForTransparency(grade: TransparencyGrade): QualityTier {
   if (grade === "B") return "AVERAGE";
   if (grade === "C") return "AVERAGE";
   return "POOR";
+}
+
+/** Criteria for PREMIUM (other brands): resin, shilajit only, clear mfg, COA, official labels */
+function meetsPremiumCriteria(
+  product: ProductForGrading,
+  transparency: TransparencyResult
+): boolean {
+  const isResin = product.form === "RESIN";
+  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+  const hasClearMfg = product.manufacturingClarity === "CLEAR";
+  const simpleShilajit = onlyShilajitIngredients(
+    product.ingredientsNormalized,
+    product.ingredientText
+  );
+  const hasOfficialLabels =
+    product.hasOfficialLabels ??
+    transparency.reasons.some((r) => r.includes("At least 2 evidence"));
+
+  return isResin && hasCoa && hasClearMfg && simpleShilajit && hasOfficialLabels;
+}
+
+/** Criteria for ULTRA_PREMIUM (Purblack): COA + clear mfg + shilajit only + official labels (no resin requirement) */
+function meetsPurblackUltraCriteria(
+  product: ProductForGrading,
+  transparency: TransparencyResult
+): boolean {
+  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+  const hasClearMfg = product.manufacturingClarity === "CLEAR";
+  const simpleShilajit = onlyShilajitIngredients(
+    product.ingredientsNormalized,
+    product.ingredientText
+  );
+  const hasOfficialLabels =
+    product.hasOfficialLabels ??
+    transparency.reasons.some((r) => r.includes("At least 2 evidence"));
+
+  return hasCoa && hasClearMfg && simpleShilajit && hasOfficialLabels;
 }
 
 export function computeQualityTier(
@@ -144,17 +197,18 @@ export function computeQualityTier(
   const isResin = product.form === "RESIN";
   const isGummyOrBlend = product.form === "GUMMY" || product.form === "BLEND";
 
-  const canBoostUltra =
-    transparency.grade === "A" &&
-    isResin &&
-    product.coaStatus === "PUBLIC" &&
-    product.manufacturingClarity === "CLEAR" &&
-    onlyShilajitIngredients(product.ingredientsNormalized, product.ingredientText);
+  const meetsPurblackUltra = isPurblack(product.brandSlug) && meetsPurblackUltraCriteria(product, transparency);
+  const meetsOtherBrandPremium = meetsPremiumCriteria(product, transparency);
 
-  if (canBoostUltra) {
+  if (meetsPurblackUltra) {
     tier = "ULTRA_PREMIUM";
     reasons.push(
-      "Boosted to ULTRA_PREMIUM (A-grade resin, public COA, clear manufacturing, simple shilajit ingredients)"
+      "ULTRA_PREMIUM (Purblack with COA, clear manufacturing, simple shilajit, official labels)"
+    );
+  } else if (meetsOtherBrandPremium) {
+    tier = "PREMIUM";
+    reasons.push(
+      "PREMIUM (resin, COA, clear manufacturing, simple shilajit, official labels)"
     );
   }
 

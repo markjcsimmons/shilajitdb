@@ -218,7 +218,10 @@ async function upsertDsldEvidence(productId: string, dsldUrl: string, quote: str
 async function recomputeAndPersist(productId: string, dryRun: boolean) {
   const p = await prisma.product.findUnique({
     where: { id: productId },
-    include: { evidence: { select: { id: true } } },
+    include: {
+      evidence: { select: { id: true } },
+      brand: { select: { slug: true } },
+    },
   });
   if (!p) return;
   const t = computeTransparencyGrade(
@@ -238,6 +241,8 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       ingredientsNormalized: p.ingredientsNormalized,
       manufacturingClarity: p.manufacturingClarity,
       coaStatus: p.coaStatus,
+      brandSlug: p.brand.slug,
+      hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
     },
     t
   );

@@ -65,7 +65,10 @@ export async function adminDeleteBrand(formData: FormData) {
 async function recomputeAndSaveProductGrades(productId: string) {
   const p = await prisma.product.findUnique({
     where: { id: productId },
-    include: { evidence: { select: { id: true } } },
+    include: {
+      evidence: { select: { id: true } },
+      brand: { select: { slug: true } },
+    },
   });
   if (!p) return;
   const transparency = computeTransparencyGrade(
@@ -85,6 +88,8 @@ async function recomputeAndSaveProductGrades(productId: string) {
       ingredientsNormalized: p.ingredientsNormalized,
       manufacturingClarity: p.manufacturingClarity,
       coaStatus: p.coaStatus,
+      brandSlug: p.brand.slug,
+      hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
     },
     transparency
   );

@@ -318,6 +318,8 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
               ingredientsNormalized: updated.ingredientsNormalized,
               manufacturingClarity: updated.manufacturingClarity,
               coaStatus: updated.coaStatus,
+              brandSlug: updated.brand.slug,
+              hasOfficialLabels: updated.evidence.length >= 2 || !!updated.sourceDsldLabelId,
             },
             t,
           );

@@ -95,6 +95,8 @@ export default async function ProductPage({
       ingredientsNormalized: product.ingredientsNormalized,
       manufacturingClarity: product.manufacturingClarity,
       coaStatus: product.coaStatus,
+      brandSlug: product.brand.slug,
+      hasOfficialLabels: product.evidence.length >= 2 || !!product.sourceDsldLabelId,
     },
     transparency
   );

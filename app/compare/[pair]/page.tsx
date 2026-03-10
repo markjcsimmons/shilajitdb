@@ -105,6 +105,8 @@ export default async function ComparePage({
       ingredientsNormalized: a.ingredientsNormalized,
       manufacturingClarity: a.manufacturingClarity,
       coaStatus: a.coaStatus,
+      brandSlug: a.brand.slug,
+      hasOfficialLabels: a.evidence.length >= 2 || !!a.sourceDsldLabelId,
     },
     aT
   );
@@ -115,6 +117,8 @@ export default async function ComparePage({
       ingredientsNormalized: b.ingredientsNormalized,
       manufacturingClarity: b.manufacturingClarity,
       coaStatus: b.coaStatus,
+      brandSlug: b.brand.slug,
+      hasOfficialLabels: b.evidence.length >= 2 || !!b.sourceDsldLabelId,
     },
     bT
   );

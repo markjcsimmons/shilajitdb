@@ -5,7 +5,10 @@ import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 
 async function main() {
   const products = await prisma.product.findMany({
-    include: { evidence: { select: { id: true } } },
+    include: {
+      evidence: { select: { id: true } },
+      brand: { select: { slug: true } },
+    },
   });
 
   let updated = 0;
@@ -27,6 +30,8 @@ async function main() {
         ingredientsNormalized: p.ingredientsNormalized,
         manufacturingClarity: p.manufacturingClarity,
         coaStatus: p.coaStatus,
+        brandSlug: p.brand.slug,
+        hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
       },
       t
     );
