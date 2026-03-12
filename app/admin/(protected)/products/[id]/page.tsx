@@ -29,7 +29,7 @@ export default async function AdminProductEditPage({
   }>;
 }) {
   const { id } = await params;
-  const { saved, error, recomputed, otherId, otherName } = await searchParams;
+  const { saved, error, recomputed, promoted, otherId, otherName } = await searchParams;
 
   const [brands, product] = await Promise.all([
     prisma.brand.findMany({ orderBy: { name: "asc" } }),

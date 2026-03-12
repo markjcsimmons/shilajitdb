@@ -23,16 +23,16 @@ export default async function AdminProtectedLayout({
             Populate
           </a>
           <span className="text-slate-300">/</span>
-          <a href="/admin/discovery" className="text-slate-700 hover:text-slate-900">
-            Review
-          </a>
-          <span className="text-slate-300">/</span>
           <a href="/admin/brands" className="text-slate-700 hover:text-slate-900">
             Brands
           </a>
           <span className="text-slate-300">/</span>
           <a href="/admin/products" className="text-slate-700 hover:text-slate-900">
             Products
+          </a>
+          <span className="text-slate-300">/</span>
+          <a href="/admin/data" className="text-slate-700 hover:text-slate-900">
+            Data
           </a>
         </nav>
         <form action="/admin/logout" method="POST">

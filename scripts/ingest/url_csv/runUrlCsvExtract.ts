@@ -162,7 +162,7 @@ function toOutputRow(
   };
 }
 
-async function processRow(
+export async function processRow(
   input: CsvInputRow,
   usePlaywright: boolean
 ): Promise<{ row: EnrichedOutputRow; kind: UrlKind; failed: boolean }> {
@@ -313,18 +313,42 @@ async function main() {
   const outputPath = argValue("--output") ?? argValue("-o");
   const dryRun = argBool("--dryRun", true);
   const writeDb = argBool("--writeDb", false);
+  const crawlExisting = argBool("--crawlExisting", false);
   const jobRunId = argValue("--jobRunId");
   const maxRows = Math.max(1, parseInt(argValue("--maxRows") ?? "0", 10) || 9999);
   const usePlaywrightOfficial = argBool("--usePlaywrightOfficial", true);
   const usePlaywrightAll = argBool("--usePlaywrightAll", false);
 
-  if (!inputPath) {
-    console.error("Usage: npx tsx scripts/ingest/url_csv/runUrlCsvExtract.ts --input path/to/in.csv [--output path/to/out.csv] [--dryRun true|false] [--writeDb true|false] [--jobRunId ID] [--maxRows N] [--usePlaywrightOfficial true|false] [--usePlaywrightAll true|false]");
-    process.exit(1);
+  let inputs: CsvInputRow[];
+  let productIds: string[] | null = null;
+
+  if (crawlExisting) {
+    const { prisma } = await import("@/lib/db");
+    const products = await prisma.product.findMany({
+      where: { officialCanonicalUrl: { not: null } },
+      include: { brand: { select: { name: true } } },
+      orderBy: [{ brand: { name: "asc" } }, { name: "asc" }],
+      take: maxRows,
+    });
+    productIds = products.map((p) => p.id);
+    inputs = products.map((p) => ({
+      name: `${p.brand.name} – ${p.name}`,
+      url: p.officialCanonicalUrl!,
+    }));
+    console.log(`Crawl existing: ${inputs.length} products with officialCanonicalUrl`);
+  } else {
+    if (!inputPath) {
+      console.error("Usage: npx tsx scripts/ingest/url_csv/runUrlCsvExtract.ts --input path/to/in.csv [--output path/to/out.csv] [--dryRun true|false] [--writeDb true|false] [--crawlExisting true|false] [--jobRunId ID] [--maxRows N] [--usePlaywrightOfficial true|false] [--usePlaywrightAll true|false]");
+      process.exit(1);
+    }
+    const raw = await fs.readFile(inputPath, "utf8");
+    inputs = parseInputCsv(raw).slice(0, maxRows);
   }
 
-  const raw = await fs.readFile(inputPath, "utf8");
-  const inputs = parseInputCsv(raw).slice(0, maxRows);
+  if (!inputPath && !crawlExisting) {
+    console.error("Either --input or --crawlExisting is required.");
+    process.exit(1);
+  }
 
   console.log(`Processing ${inputs.length} rows (dryRun=${dryRun}, writeDb=${writeDb})`);
 
@@ -371,7 +395,9 @@ async function main() {
   }
 
   // Write output CSV
-  const outPath = outputPath ?? path.join(path.dirname(inputPath), "url_csv_enriched.csv");
+  const outDir = outputPath ? path.dirname(outputPath) : path.join(process.cwd(), ".cache", "uploads");
+  await fs.mkdir(outDir, { recursive: true });
+  const outPath = outputPath ?? path.join(outDir, crawlExisting ? `crawl-enriched-${Date.now()}.csv` : "url_csv_enriched.csv");
   const columns: (keyof EnrichedOutputRow)[] = [
     "input_name", "input_url", "source", "url_kind", "source_trust_level", "canonicalized_url",
     "extracted_brand", "extracted_product_name", "form", "ingredients_text",
@@ -399,6 +425,22 @@ async function main() {
 
   let listingsWritten = 0;
   if (writeDb && !dryRun) {
+    if (crawlExisting && productIds && productIds.length === outputRows.length) {
+      const { updateProductFromCrawlRow } = await import("@/lib/updateProductFromCrawlRow");
+      for (let i = 0; i < outputRows.length; i++) {
+        const row = outputRows[i];
+        const kind = row.url_kind;
+        if (
+          kind === "OFFICIAL_PRODUCT_PAGE" ||
+          kind === "RETAILER_PRODUCT_PAGE" ||
+          kind === "MARKETPLACE_PRODUCT_PAGE"
+        ) {
+          await updateProductFromCrawlRow(productIds[i], row);
+          listingsWritten += 1;
+        }
+      }
+      console.log(`\nCrawl: updated ${listingsWritten} products.`);
+    } else if (!crawlExisting) {
     const { resolveListingToProduct } = await import("@/scripts/ingest/discovery/listingResolver");
     const { inferFormFromTitle } = await import("@/scripts/ingest/discovery/normalize");
     type ListingSource = "OFFICIAL" | "AMAZON" | "WALMART" | "IHERB" | "OTHER_RETAILER";
@@ -434,6 +476,7 @@ async function main() {
       listingsWritten += 1;
     }
     console.log(`\nDB write: created/updated ${listingsWritten} listings.`);
+    }
   }
 
   if (jobRunId) {
