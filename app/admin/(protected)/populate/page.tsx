@@ -9,7 +9,13 @@ export const dynamic = "force-dynamic";
 
 function fmtDate(d: Date | null) {
   if (!d) return "—";
-  return d.toLocaleString();
+  return new Date(d).toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function jobRunStats(stats: unknown) {
@@ -93,7 +99,6 @@ export default async function AdminPopulatePage({
           form: "OTHER",
           ingredientText: "",
           ingredientsNormalized: [],
-          manufacturingClarity: "NOT_STATED",
           coaStatus: "UNKNOWN",
           transparencyGrade: "F",
           qualityTier: "POOR",
@@ -205,13 +210,24 @@ export default async function AdminPopulatePage({
             <code className="rounded bg-slate-100 px-1">PRODUCT 2</code>, etc. Creates brands and products (with URLs). Duplicate URLs are skipped.
           </p>
           <form
-            action={`/admin/import-csv?next=${encodeURIComponent("/admin/populate")}`}
-            method="POST"
+            action="/admin/import-csv?next=/admin/populate"
+            method="post"
             encType="multipart/form-data"
             className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center"
           >
-            <Input name="file" type="file" accept=".csv,text/csv" required className="max-w-xs" />
-            <Button type="submit">Import CSV</Button>
+            <input
+              name="file"
+              type="file"
+              accept=".csv,text/csv"
+              required
+              className="max-w-xs rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-1 file:text-sm file:font-medium"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            >
+              Import CSV
+            </button>
           </form>
         </div>
 
@@ -223,7 +239,7 @@ export default async function AdminPopulatePage({
           </p>
           <form
             action={`/admin/crawl?next=${encodeURIComponent("/admin/populate")}`}
-            method="POST"
+            method="post"
             className="mt-3"
           >
             <Button type="submit" variant="secondary" disabled={crawlableCount === 0}>
@@ -311,7 +327,7 @@ export default async function AdminPopulatePage({
                     {r.status === "RUNNING" ? "Running…" : r.status}
                   </span>
                   {" · "}
-                  {fmtDate(r.startedAt)}
+                  <span suppressHydrationWarning>{fmtDate(r.startedAt)}</span>
                   {r.statsJson && r.status !== "RUNNING" && (
                     <span className="ml-2 text-slate-500">— {jobRunStats(r.statsJson)}</span>
                   )}
@@ -326,6 +342,11 @@ export default async function AdminPopulatePage({
                     </Link>
                   )}
                 </div>
+                {r.status === "FAILED" && r.errorText && (
+                  <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-800">
+                    {r.errorText}
+                  </div>
+                )}
               </div>
             ))
           )}

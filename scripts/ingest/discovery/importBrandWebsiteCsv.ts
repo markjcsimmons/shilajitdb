@@ -91,7 +91,6 @@ export async function importBrandWebsiteCsv(opts: { csvPath: string; dryRun: boo
             ingredientText: "Ingredients: Unknown (placeholder from discovery import).",
             ingredientsNormalized: [],
             manufacturingCountryClaim: "Unknown",
-            manufacturingClarity: "NOT_STATED",
             manufacturingClaimText: null,
             manufacturingEvidenceUrl: row.website ?? null,
             coaStatus: "UNKNOWN",

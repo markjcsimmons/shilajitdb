@@ -261,7 +261,7 @@ export async function resolveListing(listingInput: ListingInput): Promise<Resolv
       brandSku: listingInput.observedSku?.trim() || null,
       netQuantityText: inputQty,
       ingredientText: "",
-      manufacturingClarity: "NOT_STATED",
+      manufacturingCountryClaim: null,
       coaStatus: "UNKNOWN",
       transparencyGrade: "F",
       qualityTier: "POOR",

@@ -1,16 +1,30 @@
 import type {
   CoaStatus,
-  ManufacturingClarity,
+  OverallGrade,
   ProductForm,
   QualityTier,
   TransparencyGrade,
 } from "@prisma/client";
 
+/** Country of manufacture: USA → 3 points, any other country → 1 point, none → 0 */
+export function manufacturingPointsFromCountry(country: string | null | undefined): 0 | 1 | 3 {
+  const c = (country ?? "").trim();
+  if (!c) return 0;
+  const u = c.toUpperCase();
+  if (u === "USA" || u === "US" || u === "UNITED STATES") return 3;
+  return 1;
+}
+
+export function hasManufacturingCountry(country: string | null | undefined): boolean {
+  return (country ?? "").trim().length > 0;
+}
+
 export type ProductForGrading = {
   form: ProductForm;
   ingredientText: string;
   ingredientsNormalized: string[];
-  manufacturingClarity: ManufacturingClarity;
+  /** Country of manufacture (e.g. USA, India). Used for grading: USA → 3 pts, other → 1 pt. */
+  manufacturingCountryClaim?: string | null;
   coaStatus: CoaStatus;
   /** Brand slug for tier rules (e.g. Purblack → ULTRA_PREMIUM when criteria met) */
   brandSlug?: string | null;
@@ -36,8 +50,8 @@ export const transparencyRubric = {
   score: {
     coaPublic: 3,
     coaRequestOnly: 1,
-    manufacturingClear: 2,
-    manufacturingAmbiguous: 1,
+    manufacturingCountryUSA: 3,
+    manufacturingCountryOther: 1,
     ingredientsNormalizedNonEmpty: 1,
     ingredientTextLongEnough: 1,
     evidenceAtLeast2: 1,
@@ -70,14 +84,15 @@ export function computeTransparencyGrade(
     reasons.push("COA status is unknown (+0)");
   }
 
-  if (product.manufacturingClarity === "CLEAR") {
-    score += transparencyRubric.score.manufacturingClear;
-    reasons.push("Manufacturing claim is clear (+2)");
-  } else if (product.manufacturingClarity === "AMBIGUOUS") {
-    score += transparencyRubric.score.manufacturingAmbiguous;
-    reasons.push("Manufacturing claim is ambiguous (+1)");
+  const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
+  if (mfgPoints === 3) {
+    score += transparencyRubric.score.manufacturingCountryUSA;
+    reasons.push("Country of manufacture is USA (+3)");
+  } else if (mfgPoints === 1) {
+    score += transparencyRubric.score.manufacturingCountryOther;
+    reasons.push("Country of manufacture stated (+1)");
   } else {
-    reasons.push("Manufacturing claim not stated (+0)");
+    reasons.push("Country of manufacture not stated (+0)");
   }
 
   const normalized = (product.ingredientsNormalized ?? []).map((s) => s.trim()).filter(Boolean);
@@ -118,23 +133,45 @@ const blendIndicatorRegex =
 const proprietaryPositiveRegex =
   /(?<!(?:no|without|free of|zero)\s)proprietary\s+(?:blend|formula|mix)s?\b/i;
 
+/** Inactive/filler ingredients we ignore when checking "shilajit-only" */
+const ALLOWED_INACTIVES = new Set([
+  "capsule",
+  "vegetarian capsule",
+  "cellulose",
+  "magnesium stearate",
+  "rice flour",
+  "silica",
+  "gelatin",
+  "gum acacia",
+  "starch",
+  "microcrystalline cellulose",
+  "hypromellose",
+  "pullulan",
+  "water",
+  "oleoresin",
+  "resin",
+]);
+
 function onlyShilajitIngredients(ingredientsNormalized: string[], ingredientText: string) {
   const normalized = (ingredientsNormalized ?? []).map((s) => s.trim().toLowerCase()).filter(Boolean);
   if (normalized.length === 0) return false;
-  const allowed = new Set([
+  const shilajitTerms = new Set([
     "shilajit",
     "purified shilajit",
     "himalayan shilajit",
     "shilajit resin",
   ]);
-  const allAllowed = normalized.every((x) => allowed.has(x));
-  if (!allAllowed) return false;
+  const hasShilajit = normalized.some((x) => shilajitTerms.has(x) || x.includes("shilajit"));
+  const onlyShilajitAndInactives = normalized.every(
+    (x) => shilajitTerms.has(x) || x.includes("shilajit") || ALLOWED_INACTIVES.has(x)
+  );
+  if (!hasShilajit || !onlyShilajitAndInactives) return false;
   if (blendIndicatorRegex.test(ingredientText ?? "")) return false;
   if (proprietaryPositiveRegex.test(ingredientText ?? "")) return false;
   return true;
 }
 
-const PURBLACK_SLUGS = ["p-rblack", "purblack"];
+const PURBLACK_SLUGS = ["p-rblack", "purblack", "pur-black", "pur black"];
 
 function isPurblack(brandSlug?: string | null): boolean {
   if (!brandSlug) return false;
@@ -144,19 +181,19 @@ function isPurblack(brandSlug?: string | null): boolean {
 
 function baselineTierForTransparency(grade: TransparencyGrade): QualityTier {
   if (grade === "A") return "PREMIUM";
-  if (grade === "B") return "AVERAGE";
+  if (grade === "B") return "PREMIUM";
   if (grade === "C") return "AVERAGE";
   return "POOR";
 }
 
-/** Criteria for PREMIUM (other brands): resin, shilajit only, clear mfg, COA, official labels */
+/** Criteria for PREMIUM (other brands): resin, shilajit only, country of manufacture, COA, official labels */
 function meetsPremiumCriteria(
   product: ProductForGrading,
   transparency: TransparencyResult
 ): boolean {
   const isResin = product.form === "RESIN";
   const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
-  const hasClearMfg = product.manufacturingClarity === "CLEAR";
+  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
   const simpleShilajit = onlyShilajitIngredients(
     product.ingredientsNormalized,
     product.ingredientText
@@ -165,16 +202,16 @@ function meetsPremiumCriteria(
     product.hasOfficialLabels ??
     transparency.reasons.some((r) => r.includes("At least 2 evidence"));
 
-  return isResin && hasCoa && hasClearMfg && simpleShilajit && hasOfficialLabels;
+  return isResin && hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
 }
 
-/** Criteria for ULTRA_PREMIUM (Purblack): COA + clear mfg + shilajit only + official labels (no resin requirement) */
+/** Criteria for ULTRA_PREMIUM (Purblack): COA + country of manufacture + shilajit only + official labels (no resin requirement) */
 function meetsPurblackUltraCriteria(
   product: ProductForGrading,
   transparency: TransparencyResult
 ): boolean {
   const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
-  const hasClearMfg = product.manufacturingClarity === "CLEAR";
+  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
   const simpleShilajit = onlyShilajitIngredients(
     product.ingredientsNormalized,
     product.ingredientText
@@ -183,7 +220,7 @@ function meetsPurblackUltraCriteria(
     product.hasOfficialLabels ??
     transparency.reasons.some((r) => r.includes("At least 2 evidence"));
 
-  return hasCoa && hasClearMfg && simpleShilajit && hasOfficialLabels;
+  return hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
 }
 
 export function computeQualityTier(
@@ -203,28 +240,79 @@ export function computeQualityTier(
   if (meetsPurblackUltra) {
     tier = "ULTRA_PREMIUM";
     reasons.push(
-      "ULTRA_PREMIUM (Purblack with COA, clear manufacturing, simple shilajit, official labels)"
+      "ULTRA_PREMIUM (Purblack with COA, country of manufacture, simple shilajit, official labels)"
     );
   } else if (meetsOtherBrandPremium) {
     tier = "PREMIUM";
     reasons.push(
-      "PREMIUM (resin, COA, clear manufacturing, simple shilajit, official labels)"
+      "PREMIUM (resin, COA, country of manufacture, simple shilajit, official labels)"
     );
   }
 
   const hasProprietaryBlendIndicator = proprietaryBlendRegex.test(product.ingredientText ?? "");
   const weakEvidenceCombo =
     (product.coaStatus === "NONE" || product.coaStatus === "UNKNOWN") &&
-    product.manufacturingClarity === "NOT_STATED";
+    !hasManufacturingCountry(product.manufacturingCountryClaim);
 
   if (isGummyOrBlend && hasProprietaryBlendIndicator) {
     tier = "POOR";
     reasons.push('Downgraded to POOR (gummy/blend with "proprietary blend" indicator)');
   } else if (weakEvidenceCombo) {
     tier = "POOR";
-    reasons.push("Downgraded to POOR (no/unknown COA and manufacturing not stated)");
+    reasons.push("Downgraded to POOR (no/unknown COA and country of manufacture not stated)");
   }
 
   return { tier, reasons };
+}
+
+// --- Overall grade (A+ through F) per methodology ---
+
+/**
+ * Weighted score (max 10) for overall grade. COA=3, mfg clear=2, form resin=2, purity=2, ingredients list=1.
+ * Exported for debugging / grade explanation.
+ */
+export function overallGradeScore(product: ProductForGrading): number {
+  let score = 0;
+  if (product.coaStatus === "PUBLIC") score += 3;
+  else if (product.coaStatus === "REQUEST_ONLY") score += 2;
+  score += manufacturingPointsFromCountry(product.manufacturingCountryClaim);
+  // Only resin gets form points; other forms (capsule, powder, gummy, etc.) get 0
+  if (product.form === "RESIN") score += 2;
+  const highPurity = onlyShilajitIngredients(
+    product.ingredientsNormalized ?? [],
+    product.ingredientText ?? ""
+  );
+  if (highPurity) score += 2;
+  const hasNorm = (product.ingredientsNormalized ?? []).filter(Boolean).length > 0;
+  if (hasNorm) score += 1;
+  // Some ingredient disclosure (even without normalized list) avoids zero score
+  if ((product.ingredientText ?? "").trim().length > 0) score += 1;
+  return Math.min(10, score);
+}
+
+/**
+ * Overall grade A+–F. Weighted: 7+ A/A+, 5–6 B, 4 C, 2–3 D, 1 E, 0 F. Purblack: A default; A+ if COA.
+ */
+export function computeOverallGrade(product: ProductForGrading): OverallGrade {
+  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
+  const isResin = product.form === "RESIN";
+  const highPurity = onlyShilajitIngredients(
+    product.ingredientsNormalized ?? [],
+    product.ingredientText ?? ""
+  );
+  const hasProprietaryBlend = proprietaryBlendRegex.test(product.ingredientText ?? "");
+
+  if (isPurblack(product.brandSlug)) return hasCoa ? "A_PLUS" : "A";
+  if (hasProprietaryBlend && !hasCoa && !hasMfgCountry) return "F";
+
+  const score = overallGradeScore(product);
+  // Bands: 7+ A/A+, 5–6 B, 4 C, 2–3 D, 1 E, 0 F (tuned so COA + one other signal can reach B)
+  if (score >= 7) return isResin && highPurity ? "A_PLUS" : "A";
+  if (score >= 5) return "B";
+  if (score >= 4) return "C";
+  if (score >= 2) return "D";
+  if (score >= 1) return "E";
+  return "F";
 }
 

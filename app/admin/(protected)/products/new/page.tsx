@@ -40,9 +40,17 @@ export default async function AdminProductNewPage({
           <div>
             <label className="text-xs font-medium text-slate-700">Form</label>
             <Select name="form" required defaultValue="RESIN">
-              {["RESIN", "CAPSULE", "POWDER", "GUMMY", "LIQUID", "BLEND", "OTHER"].map((v) => (
-                <option key={v} value={v}>
-                  {v}
+              {[
+                { value: "RESIN", label: "Resin" },
+                { value: "POWDER", label: "Powder" },
+                { value: "CAPSULE", label: "Capsules" },
+                { value: "GUMMY", label: "Gummies" },
+                { value: "LIQUID", label: "Liquid" },
+                { value: "BLEND", label: "Blend" },
+                { value: "OTHER", label: "Other" },
+              ].map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
                 </option>
               ))}
             </Select>
@@ -61,10 +69,31 @@ export default async function AdminProductNewPage({
         </div>
 
         <div>
+          <label className="text-xs font-medium text-slate-700">Official product URL (optional)</label>
+          <Input
+            name="officialCanonicalUrl"
+            type="url"
+            placeholder="https://… (same as in CSV)"
+            className="mt-1"
+          />
+          <p className="mt-1 text-xs text-slate-500">External product page. Used for CRAWL and linking.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-medium text-slate-700">GTIN (optional)</label>
+            <Input name="gtin" placeholder="Barcode" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-slate-700">Net quantity text (optional)</label>
+            <Input name="netQuantityText" placeholder="e.g. 60 g" />
+          </div>
+        </div>
+
+        <div>
           <label className="text-xs font-medium text-slate-700">Ingredient text</label>
           <textarea
             name="ingredientText"
-            required
             className="min-h-28 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
           />
           <p className="mt-1 text-xs text-slate-500">
@@ -85,23 +114,12 @@ export default async function AdminProductNewPage({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-medium text-slate-700">
-              Manufacturing country claim (optional)
-            </label>
-            <Input name="manufacturingCountryClaim" placeholder="USA / India / Unknown" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-slate-700">Manufacturing clarity</label>
-            <Select name="manufacturingClarity" required defaultValue="NOT_STATED">
-              {["CLEAR", "AMBIGUOUS", "NOT_STATED"].map((v) => (
-                <option key={v} value={v}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-          </div>
+        <div>
+          <label className="text-xs font-medium text-slate-700">
+            Country of manufacture (optional)
+          </label>
+          <Input name="manufacturingCountryClaim" placeholder="e.g. USA, India" />
+          <p className="mt-1 text-xs text-slate-500">USA → 3 points toward grade; other country → 1 point.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -137,6 +155,24 @@ export default async function AdminProductNewPage({
             <label className="text-xs font-medium text-slate-700">COA URL (optional)</label>
             <Input name="coaUrl" placeholder="https://…" />
           </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-slate-700">Third-party testing lab (optional)</label>
+          <textarea
+            name="thirdPartyTestingLab"
+            placeholder="e.g. Lab name, testing done (heavy metals, potency), or “tested by X”"
+            className="mt-1 min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
+          />
+          <p className="mt-1 text-xs text-slate-500">Lab name or details when COA/testing is mentioned but no document link.</p>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-slate-700">Patents</label>
+          <Select name="hasPatentClaim" required defaultValue="no">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </Select>
         </div>
 
         <div>

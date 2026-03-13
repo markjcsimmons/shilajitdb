@@ -231,7 +231,6 @@ async function ensureQuarantineProduct(domain: string, brandId: string): Promise
       form: "OTHER",
       ingredientText: "",
       ingredientsNormalized: [],
-      manufacturingClarity: "NOT_STATED",
       manufacturingCountryClaim: null,
       manufacturingClaimText: null,
       manufacturingEvidenceUrl: null,

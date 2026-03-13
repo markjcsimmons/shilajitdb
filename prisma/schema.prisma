@@ -18,12 +18,6 @@ enum ProductForm {
   OTHER
 }
 
-enum ManufacturingClarity {
-  CLEAR
-  AMBIGUOUS
-  NOT_STATED
-}
-
 enum CoaStatus {
   PUBLIC
   REQUEST_ONLY
@@ -44,6 +38,16 @@ enum QualityTier {
   AVERAGE
   PREMIUM
   ULTRA_PREMIUM
+}
+
+enum OverallGrade {
+  A_PLUS
+  A
+  B
+  C
+  D
+  E
+  F
 }
 
 enum EvidenceType {
@@ -137,13 +141,15 @@ model Product {
   ingredientText            String                @db.Text
   ingredientsNormalized     String[]              @default([]) @db.Text
   manufacturingCountryClaim String?
-  manufacturingClarity      ManufacturingClarity
   manufacturingClaimText    String?               @db.Text
   manufacturingEvidenceUrl  String?
   coaStatus                 CoaStatus
   coaUrl                    String?
+  thirdPartyTestingLab      String?               @db.Text
+  hasPatentClaim            Boolean               @default(false)
   transparencyGrade         TransparencyGrade
   qualityTier               QualityTier
+  overallGrade              OverallGrade?
   sourceDsldLabelId         String?               @unique
   sourceDsldUrl             String?
   dataCompleteness          DataCompleteness      @default(LOW)

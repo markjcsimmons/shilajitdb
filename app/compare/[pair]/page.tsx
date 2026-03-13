@@ -1,7 +1,7 @@
 import { Badge, Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
-import { labelClarity, labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
+import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -83,7 +83,7 @@ export default async function ComparePage({
       form: a.form,
       ingredientText: a.ingredientText,
       ingredientsNormalized: a.ingredientsNormalized,
-      manufacturingClarity: a.manufacturingClarity,
+      manufacturingCountryClaim: a.manufacturingCountryClaim,
       coaStatus: a.coaStatus,
     },
     { count: a.evidence.length }
@@ -93,7 +93,7 @@ export default async function ComparePage({
       form: b.form,
       ingredientText: b.ingredientText,
       ingredientsNormalized: b.ingredientsNormalized,
-      manufacturingClarity: b.manufacturingClarity,
+      manufacturingCountryClaim: b.manufacturingCountryClaim,
       coaStatus: b.coaStatus,
     },
     { count: b.evidence.length }
@@ -103,7 +103,7 @@ export default async function ComparePage({
       form: a.form,
       ingredientText: a.ingredientText,
       ingredientsNormalized: a.ingredientsNormalized,
-      manufacturingClarity: a.manufacturingClarity,
+      manufacturingCountryClaim: a.manufacturingCountryClaim,
       coaStatus: a.coaStatus,
       brandSlug: a.brand.slug,
       hasOfficialLabels: a.evidence.length >= 2 || !!a.sourceDsldLabelId,
@@ -115,7 +115,7 @@ export default async function ComparePage({
       form: b.form,
       ingredientText: b.ingredientText,
       ingredientsNormalized: b.ingredientsNormalized,
-      manufacturingClarity: b.manufacturingClarity,
+      manufacturingCountryClaim: b.manufacturingCountryClaim,
       coaStatus: b.coaStatus,
       brandSlug: b.brand.slug,
       hasOfficialLabels: b.evidence.length >= 2 || !!b.sourceDsldLabelId,
@@ -138,11 +138,6 @@ export default async function ComparePage({
       label: "Manufacturing country (claim)",
       a: a.manufacturingCountryClaim ?? "—",
       b: b.manufacturingCountryClaim ?? "—",
-    },
-    {
-      label: "Manufacturing clarity",
-      a: labelClarity(a.manufacturingClarity),
-      b: labelClarity(b.manufacturingClarity),
     },
     {
       label: "COA status",

@@ -1,14 +1,10 @@
-import type { CoaStatus, ManufacturingClarity, ProductForm, QualityTier } from "@prisma/client";
+import type { CoaStatus, ProductForm, QualityTier } from "@prisma/client";
 
 export function labelEnum(s: string) {
   return s.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
 }
 
 export function labelForm(v: ProductForm) {
-  return labelEnum(v);
-}
-
-export function labelClarity(v: ManufacturingClarity) {
   return labelEnum(v);
 }
 

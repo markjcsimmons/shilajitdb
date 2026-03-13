@@ -13,7 +13,7 @@ import {
 import { extractFromHtml, findCoa, findManufacturing, scoreUrlForCrawl } from "@/scripts/ingest/web/extract";
 import { getRobotsRulesForDomain, isUrlAllowedByRobots } from "@/scripts/ingest/web/robots";
 import { DomainRateLimiter, Semaphore } from "@/scripts/ingest/web/rateLimit";
-import type { CoaStatus, ManufacturingClarity, Product } from "@prisma/client";
+import type { CoaStatus, Product } from "@prisma/client";
 
 function parseArgs(argv: string[]) {
   const dryRun = argv.includes("--dry-run");
@@ -21,11 +21,6 @@ function parseArgs(argv: string[]) {
   const maxBrands =
     maxBrandsIdx >= 0 && argv[maxBrandsIdx + 1] ? Number(argv[maxBrandsIdx + 1]) : undefined;
   return { dryRun, maxBrands: Number.isFinite(maxBrands) ? (maxBrands as number) : undefined };
-}
-
-function bestClarity(a: ManufacturingClarity, b: ManufacturingClarity) {
-  const rank: Record<ManufacturingClarity, number> = { NOT_STATED: 0, AMBIGUOUS: 1, CLEAR: 2 };
-  return rank[b] > rank[a] ? b : a;
 }
 
 function shouldUpdateCoa(current: CoaStatus, next: CoaStatus) {
@@ -77,7 +72,7 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
     },
     { count: p.evidence.length }
@@ -87,7 +82,7 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
       brandSlug: p.brand.slug,
       hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
@@ -101,12 +96,11 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
   });
 }
 
-function computeCompleteness(p: Product, evidenceCount: number, coaStatus: CoaStatus, clarity: ManufacturingClarity) {
+function computeCompleteness(p: Product, evidenceCount: number, coaStatus: CoaStatus, hasMfgCountry: boolean) {
   const hasCoa = coaStatus !== "UNKNOWN";
-  const hasMfg = clarity !== "NOT_STATED";
   const hasIngredients = p.ingredientsNormalized.length > 0;
   const hasEvidence = evidenceCount >= 2;
-  if (hasCoa && hasMfg && hasIngredients && hasEvidence) return "HIGH" as const;
+  if (hasCoa && hasMfgCountry && hasIngredients && hasEvidence) return "HIGH" as const;
   return p.dataCompleteness === "LOW" ? ("LOW" as const) : ("MEDIUM" as const);
 }
 
@@ -161,7 +155,7 @@ export async function runBrandCrawl(opts: { dryRun: boolean; maxBrands?: number 
       queue.push(new URL("/", base).toString());
 
       let coaFinding: { status: CoaStatus; coaUrl?: string | null; quote?: string | null; evidenceUrl?: string | null } | null = null;
-      let mfgFinding: { clarity: ManufacturingClarity; country: string | null; quote?: string; evidenceUrl?: string | null } | null = null;
+      let mfgFinding: { clarity: "CLEAR" | "AMBIGUOUS" | "NOT_STATED"; country: string | null; quote?: string; evidenceUrl?: string | null } | null = null;
 
       const maxPages = 50;
       while (queue.length && visited.size < maxPages) {
@@ -235,14 +229,11 @@ export async function runBrandCrawl(opts: { dryRun: boolean; maxBrands?: number 
       for (const p of products) {
         const nextCoaStatus: CoaStatus = coaFinding?.status ?? "UNKNOWN";
         const nextCoaUrl = coaFinding?.coaUrl ?? null;
-        const nextClarity: ManufacturingClarity = mfgFinding?.clarity ?? "NOT_STATED";
-        const nextCountry = mfgFinding?.country ?? null;
-
-        const updatedClarity = bestClarity(p.manufacturingClarity, nextClarity);
-        const updatedCountry =
-          updatedClarity === "CLEAR"
-            ? (nextCountry ?? p.manufacturingCountryClaim ?? null)
-            : p.manufacturingCountryClaim ?? null;
+        const nextCountry =
+          mfgFinding?.clarity === "CLEAR" && mfgFinding?.country?.trim()
+            ? mfgFinding.country.trim()
+            : null;
+        const updatedCountry = nextCountry ?? p.manufacturingCountryClaim ?? null;
 
         const newCoaStatus = shouldUpdateCoa(p.coaStatus, nextCoaStatus) ? nextCoaStatus : p.coaStatus;
         const newCoaUrl = newCoaStatus === "PUBLIC" ? (nextCoaUrl ?? p.coaUrl ?? null) : p.coaUrl ?? null;
@@ -251,7 +242,8 @@ export async function runBrandCrawl(opts: { dryRun: boolean; maxBrands?: number 
           + (coaFinding ? 1 : 0)
           + (mfgFinding ? 1 : 0);
 
-        const dataCompleteness = computeCompleteness(p, nextEvidenceCount, newCoaStatus, updatedClarity);
+        const hasMfgCountry = !!(updatedCountry?.trim());
+        const dataCompleteness = computeCompleteness(p, nextEvidenceCount, newCoaStatus, hasMfgCountry);
 
         if (!opts.dryRun) {
           await prisma.product.update({
@@ -259,16 +251,14 @@ export async function runBrandCrawl(opts: { dryRun: boolean; maxBrands?: number 
             data: {
               coaStatus: newCoaStatus,
               coaUrl: newCoaUrl,
-              manufacturingClarity: updatedClarity,
-              manufacturingCountryClaim:
-                updatedClarity === "CLEAR"
-                  ? (updatedCountry ?? "Unknown")
-                  : (p.manufacturingCountryClaim ?? "Unknown"),
+              manufacturingCountryClaim: updatedCountry || null,
               manufacturingClaimText:
-                updatedClarity !== "NOT_STATED" ? (mfgFinding?.quote ?? p.manufacturingClaimText ?? null) : p.manufacturingClaimText,
+                mfgFinding && mfgFinding.clarity !== "NOT_STATED"
+                  ? (mfgFinding.quote ?? p.manufacturingClaimText ?? null)
+                  : p.manufacturingClaimText,
               manufacturingEvidenceUrl:
-                updatedClarity !== "NOT_STATED"
-                  ? (mfgFinding?.evidenceUrl ?? p.manufacturingEvidenceUrl ?? null)
+                mfgFinding && mfgFinding.clarity !== "NOT_STATED"
+                  ? (mfgFinding.evidenceUrl ?? p.manufacturingEvidenceUrl ?? null)
                   : p.manufacturingEvidenceUrl,
               dataCompleteness,
               lastVerifiedAt: new Date(),

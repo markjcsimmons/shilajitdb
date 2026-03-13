@@ -1,6 +1,5 @@
 import type {
   CoaStatus,
-  ManufacturingClarity,
   Prisma,
   ProductForm,
   QualityTier,
@@ -21,7 +20,6 @@ const ProductFormSchema = enumList([
   "OTHER",
 ]);
 
-const ManufacturingClaritySchema = enumList(["CLEAR", "AMBIGUOUS", "NOT_STATED"]);
 const CoaStatusSchema = enumList(["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"]);
 const TransparencyGradeSchema = enumList(["A", "B", "C", "D", "F"]);
 const QualityTierSchema = enumList(["ULTRA_PREMIUM", "PREMIUM", "AVERAGE", "POOR"]);
@@ -38,7 +36,6 @@ export type ProductFilters = {
   q?: string;
   form?: ProductForm;
   manufacturingCountryClaim?: string;
-  manufacturingClarity?: ManufacturingClarity;
   coaStatus?: CoaStatus;
   transparencyGrade?: TransparencyGrade;
   qualityTier?: QualityTier;
@@ -51,7 +48,6 @@ const SearchParamSchema = z.object({
   q: z.string().trim().min(1).max(100).optional(),
   form: ProductFormSchema.optional(),
   manufacturingCountryClaim: z.string().trim().min(1).max(60).optional(),
-  manufacturingClarity: ManufacturingClaritySchema.optional(),
   coaStatus: CoaStatusSchema.optional(),
   transparencyGrade: TransparencyGradeSchema.optional(),
   qualityTier: QualityTierSchema.optional(),
@@ -65,7 +61,6 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     q: getFirst(searchParams.q),
     form: getFirst(searchParams.form),
     manufacturingCountryClaim: getFirst(searchParams.manufacturingCountryClaim),
-    manufacturingClarity: getFirst(searchParams.manufacturingClarity),
     coaStatus: getFirst(searchParams.coaStatus),
     transparencyGrade: getFirst(searchParams.transparencyGrade),
     qualityTier: getFirst(searchParams.qualityTier),
@@ -83,7 +78,6 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     q: parsed.data.q,
     form: parsed.data.form as ProductForm | undefined,
     manufacturingCountryClaim: parsed.data.manufacturingCountryClaim,
-    manufacturingClarity: parsed.data.manufacturingClarity as ManufacturingClarity | undefined,
     coaStatus: parsed.data.coaStatus as CoaStatus | undefined,
     transparencyGrade: parsed.data.transparencyGrade as TransparencyGrade | undefined,
     qualityTier: parsed.data.qualityTier as QualityTier | undefined,
@@ -117,8 +111,6 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
   }
 
   if (filters.form) and.push({ form: filters.form });
-  if (filters.manufacturingClarity)
-    and.push({ manufacturingClarity: filters.manufacturingClarity });
   if (filters.coaStatus) and.push({ coaStatus: filters.coaStatus });
   if (filters.transparencyGrade)
     and.push({ transparencyGrade: filters.transparencyGrade });
@@ -149,7 +141,6 @@ export function buildQueryString(next: Partial<ProductFilters>) {
     ["q", next.q],
     ["form", next.form],
     ["manufacturingCountryClaim", next.manufacturingCountryClaim],
-    ["manufacturingClarity", next.manufacturingClarity],
     ["coaStatus", next.coaStatus],
     ["transparencyGrade", next.transparencyGrade],
     ["qualityTier", next.qualityTier],

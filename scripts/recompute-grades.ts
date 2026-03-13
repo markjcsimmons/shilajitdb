@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
+import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 
 async function main() {
   const products = await prisma.product.findMany({
@@ -18,26 +18,39 @@ async function main() {
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim,
         coaStatus: p.coaStatus,
       },
       { count: p.evidence.length }
     );
+    const hasCoa = p.coaStatus === "PUBLIC" || p.coaStatus === "REQUEST_ONLY";
+    const hasOfficialLabels =
+      p.evidence.length >= 2 ||
+      !!p.sourceDsldLabelId ||
+      (p.evidence.length >= 1 && hasCoa);
     const q = computeQualityTier(
       {
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim,
         coaStatus: p.coaStatus,
         brandSlug: p.brand.slug,
-        hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
+        hasOfficialLabels,
       },
       t
     );
+    const overallGrade = computeOverallGrade({
+      form: p.form,
+      ingredientText: p.ingredientText,
+      ingredientsNormalized: p.ingredientsNormalized ?? [],
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
+      coaStatus: p.coaStatus,
+      brandSlug: p.brand.slug,
+    });
     await prisma.product.update({
       where: { id: p.id },
-      data: { transparencyGrade: t.grade, qualityTier: q.tier },
+      data: { transparencyGrade: t.grade, qualityTier: q.tier, overallGrade },
     });
     updated += 1;
   }

@@ -41,7 +41,6 @@ export default async function HomePage({
         form: true,
         dataCompleteness: true,
         manufacturingCountryClaim: true,
-        manufacturingClarity: true,
         coaStatus: true,
         coaUrl: true,
         transparencyGrade: true,
@@ -144,22 +143,6 @@ export default async function HomePage({
 
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <div>
-            <label className="text-xs font-medium text-slate-700">
-              Manufacturing clarity
-            </label>
-            <Select
-              name="manufacturingClarity"
-              defaultValue={filters.manufacturingClarity ?? ""}
-            >
-              <option value="">Any</option>
-              {["CLEAR", "AMBIGUOUS", "NOT_STATED"].map((v) => (
-                <option key={v} value={v}>
-                  {labelEnum(v)}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
             <label className="text-xs font-medium text-slate-700">COA status</label>
             <Select name="coaStatus" defaultValue={filters.coaStatus ?? ""}>
               <option value="">Any</option>
@@ -259,7 +242,7 @@ export default async function HomePage({
             <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-slate-700 sm:grid-cols-3">
               <div>
                 <span className="text-slate-500">Manufacturing claim: </span>
-                {p.manufacturingCountryClaim ?? "—"} ({labelEnum(p.manufacturingClarity)})
+                {p.manufacturingCountryClaim ?? "—"}
               </div>
               <div>
                 <span className="text-slate-500">COA link: </span>

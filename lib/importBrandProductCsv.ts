@@ -62,13 +62,19 @@ export async function importBrandProductCsv(csvBuffer: Buffer): Promise<ImportBr
   }
 
   const first = rows[0];
-  if (!("BRAND" in first)) {
+  const keysLower = Object.keys(first).reduce((acc, k) => {
+    acc[k.toLowerCase().trim()] = k;
+    return acc;
+  }, {} as Record<string, string>);
+  const brandKey = keysLower["brand"];
+  if (!brandKey) {
     result.errors.push("CSV must have a BRAND column");
     return result;
   }
 
+  const brandUrlKey = keysLower["brand url"];
   const productColumns = Object.keys(first).filter(
-    (k) => k !== "BRAND" && k !== "BRAND URL" && k.toUpperCase().startsWith("PRODUCT")
+    (k) => k !== brandKey && k !== brandUrlKey && k.toUpperCase().trim().startsWith("PRODUCT")
   );
 
   const seenBrandSlug = new Map<string, { id: string; seen: boolean }>();
@@ -78,14 +84,14 @@ export async function importBrandProductCsv(csvBuffer: Buffer): Promise<ImportBr
 
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
-    const brandNameRaw = String(r.BRAND ?? "").trim();
+    const brandNameRaw = String(r[brandKey] ?? "").trim();
     if (!brandNameRaw) {
       result.errors.push(`Row ${i + 2}: empty BRAND`);
       continue;
     }
 
     const brandSlug = slugify(brandNameRaw) || `brand-${i}`;
-    const brandWebsiteRaw = String(r["BRAND URL"] ?? "").trim();
+    const brandWebsiteRaw = brandUrlKey ? String(r[brandUrlKey] ?? "").trim() : "";
     const brandWebsite = looksLikeUrl(brandWebsiteRaw) ? normalizeUrl(brandWebsiteRaw) : null;
 
     let brandId = seenBrandSlug.get(brandSlug)?.id;
@@ -132,9 +138,17 @@ export async function importBrandProductCsv(csvBuffer: Buffer): Promise<ImportBr
       const urlRaw = String(r[col] ?? "").trim();
       if (!urlRaw || !looksLikeUrl(urlRaw)) continue;
 
-      const url = normalizeUrl(urlRaw);
-      const canonicalUrl = canonicalizeUrl(url);
-      const domain = extractDomain(url);
+      let url: string;
+      let canonicalUrl: string;
+      let domain: string;
+      try {
+        url = normalizeUrl(urlRaw);
+        canonicalUrl = canonicalizeUrl(url);
+        domain = extractDomain(url);
+      } catch {
+        result.errors.push(`Row ${i + 2}, ${col}: invalid URL`);
+        continue;
+      }
 
       const existingByUrl = await prisma.product.findFirst({
         where: { officialCanonicalUrl: canonicalUrl },
@@ -168,7 +182,6 @@ export async function importBrandProductCsv(csvBuffer: Buffer): Promise<ImportBr
           form: "OTHER",
           ingredientText: "",
           ingredientsNormalized: [],
-          manufacturingClarity: "NOT_STATED",
           manufacturingCountryClaim: null,
           manufacturingClaimText: null,
           manufacturingEvidenceUrl: null,

@@ -2,7 +2,7 @@ import { ComparePicker } from "@/components/compare-picker";
 import { Badge, Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
-import { labelClarity, labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
+import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
 import type { EvidenceType, ListingSource } from "@prisma/client";
 import type { Metadata } from "next";
@@ -83,7 +83,7 @@ export default async function ProductPage({
       form: product.form,
       ingredientText: product.ingredientText,
       ingredientsNormalized: product.ingredientsNormalized,
-      manufacturingClarity: product.manufacturingClarity,
+      manufacturingCountryClaim: product.manufacturingCountryClaim,
       coaStatus: product.coaStatus,
     },
     { count: product.evidence.length }
@@ -93,7 +93,7 @@ export default async function ProductPage({
       form: product.form,
       ingredientText: product.ingredientText,
       ingredientsNormalized: product.ingredientsNormalized,
-      manufacturingClarity: product.manufacturingClarity,
+      manufacturingCountryClaim: product.manufacturingCountryClaim,
       coaStatus: product.coaStatus,
       brandSlug: product.brand.slug,
       hasOfficialLabels: product.evidence.length >= 2 || !!product.sourceDsldLabelId,
@@ -268,12 +268,6 @@ export default async function ProductPage({
               </dd>
             </div>
             <div className="flex items-start justify-between gap-6">
-              <dt className="text-slate-500">Clarity</dt>
-              <dd className="text-right text-slate-900">
-                {labelClarity(product.manufacturingClarity)}
-              </dd>
-            </div>
-            <div className="flex items-start justify-between gap-6">
               <dt className="text-slate-500">Claim text</dt>
               <dd className="text-right text-slate-900 whitespace-pre-wrap">
                 {product.manufacturingClaimText ?? "—"}
@@ -325,6 +319,14 @@ export default async function ProductPage({
                 )}
               </dd>
             </div>
+            {product.thirdPartyTestingLab ? (
+              <div className="flex items-start justify-between gap-6">
+                <dt className="text-slate-500">Third-party testing lab</dt>
+                <dd className="text-right text-slate-900 whitespace-pre-wrap">
+                  {product.thirdPartyTestingLab}
+                </dd>
+              </div>
+            ) : null}
           </dl>
           <div className="mt-4 text-sm text-slate-600">
             Transparency score: <span className="font-medium">{transparency.score}</span>

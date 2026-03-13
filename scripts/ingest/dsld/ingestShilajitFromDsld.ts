@@ -229,7 +229,7 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
     },
     { count: p.evidence.length }
@@ -239,7 +239,7 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
       brandSlug: p.brand.slug,
       hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
@@ -352,7 +352,7 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
                 ingredientText: ingredients.ingredientText,
                 ingredientsNormalized: ingredients.ingredientsNormalized,
                 manufacturingCountryClaim: manufacturing.manufacturingCountryClaim,
-                manufacturingClarity: manufacturing.manufacturingClarity,
+                manufacturingCountryClaim: manufacturing.manufacturingCountryClaim,
                 manufacturingClaimText: manufacturing.manufacturingClaimText,
                 coaStatus: "UNKNOWN",
                 coaUrl: null,
@@ -369,7 +369,7 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
                 ingredientText: ingredients.ingredientText,
                 ingredientsNormalized: ingredients.ingredientsNormalized,
                 manufacturingCountryClaim: manufacturing.manufacturingCountryClaim,
-                manufacturingClarity: manufacturing.manufacturingClarity,
+                manufacturingCountryClaim: manufacturing.manufacturingCountryClaim,
                 manufacturingClaimText: manufacturing.manufacturingClaimText,
                 manufacturingEvidenceUrl: null,
                 coaStatus: "UNKNOWN",
@@ -385,7 +385,7 @@ export async function runDsldShilajitIngest(opts: { dryRun: boolean; maxLabels?:
             });
 
         stats.productsProcessed += 1;
-        if (manufacturing.manufacturingClarity === "CLEAR") stats.manufacturingClearCount += 1;
+        if (manufacturing.manufacturingCountryClaim?.trim()) stats.manufacturingClearCount += 1;
 
         const quote =
           ingredients.ingredientText.length > 20 ? ingredients.ingredientText.slice(0, 240) : null;

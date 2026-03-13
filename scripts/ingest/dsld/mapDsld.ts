@@ -1,6 +1,6 @@
 import { deriveWebsiteDomain } from "@/lib/url";
 import { slugify } from "@/lib/slug";
-import type { ManufacturingClarity, ProductForm } from "@prisma/client";
+import type { ProductForm } from "@prisma/client";
 
 const shilajitSynonyms = new Map<string, string>([
   ["shilajeet", "shilajit"],
@@ -69,8 +69,7 @@ const manufacturedForRegex = /\bmanufactured for\b|\bdistributed by\b/i;
 const addressLikeRegex = /\b(ave|street|st\.|rd\.|road|blvd|suite|ste\.|ca|ny|tx|zip)\b/i;
 
 export function deriveManufacturingFromLabelText(labelText: string): {
-  manufacturingCountryClaim: string;
-  manufacturingClarity: ManufacturingClarity;
+  manufacturingCountryClaim: string | null;
   manufacturingClaimText: string | null;
 } {
   const m = labelText.match(madeInRegex);
@@ -78,22 +77,19 @@ export function deriveManufacturingFromLabelText(labelText: string): {
     const country = m[1].trim().replace(/\s+/g, " ");
     return {
       manufacturingCountryClaim: country,
-      manufacturingClarity: "CLEAR",
       manufacturingClaimText: m[0].trim(),
     };
   }
 
   if (manufacturedForRegex.test(labelText) || addressLikeRegex.test(labelText)) {
     return {
-      manufacturingCountryClaim: "Unknown",
-      manufacturingClarity: "AMBIGUOUS",
+      manufacturingCountryClaim: null,
       manufacturingClaimText: null,
     };
   }
 
   return {
-    manufacturingCountryClaim: "Unknown",
-    manufacturingClarity: "NOT_STATED",
+    manufacturingCountryClaim: null,
     manufacturingClaimText: null,
   };
 }

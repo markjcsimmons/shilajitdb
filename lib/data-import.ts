@@ -2,7 +2,6 @@ import { parse } from "csv-parse/sync";
 import type {
   CoaStatus,
   DataCompleteness,
-  ManufacturingClarity,
   ProductForm,
   QualityTier,
   TransparencyGrade,
@@ -21,7 +20,6 @@ const VALID_FORM: ProductForm[] = [
   "BLEND",
   "OTHER",
 ];
-const VALID_MFG: ManufacturingClarity[] = ["CLEAR", "AMBIGUOUS", "NOT_STATED"];
 const VALID_COA: CoaStatus[] = ["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"];
 const VALID_GRADE: TransparencyGrade[] = ["F", "D", "C", "B", "A"];
 const VALID_TIER: QualityTier[] = ["POOR", "AVERAGE", "PREMIUM", "ULTRA_PREMIUM"];
@@ -93,7 +91,6 @@ export async function importDataFromCsv(
     "product_slug",
     "form",
     "ingredient_text",
-    "manufacturing_clarity",
     "coa_status",
   ];
   const first = rows[0];
@@ -174,7 +171,6 @@ export async function importDataFromCsv(
         ingredientText: String(r.ingredient_text ?? "").trim() || productName,
         ingredientsNormalized,
         manufacturingCountryClaim: String(r.manufacturing_country_claim ?? "").trim() || null,
-        manufacturingClarity: coerce(r.manufacturing_clarity, VALID_MFG),
         manufacturingClaimText: String(r.manufacturing_claim_text ?? "").trim() || null,
         manufacturingEvidenceUrl: String(r.manufacturing_evidence_url ?? "").trim() || null,
         coaStatus: coerce(r.coa_status, VALID_COA),
@@ -252,7 +248,7 @@ export async function importDataFromCsv(
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim,
         coaStatus: p.coaStatus,
       },
       { count: p.evidence.length }
@@ -262,7 +258,7 @@ export async function importDataFromCsv(
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim,
         coaStatus: p.coaStatus,
         brandSlug: p.brand.slug,
         hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,

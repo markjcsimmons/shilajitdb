@@ -18,7 +18,7 @@ export default async function AdminBrandEditPage({
 
   const brand = await prisma.brand.findUnique({
     where: { id },
-    include: { products: { select: { id: true, name: true, slug: true } } },
+    include: { products: { orderBy: { name: "asc" }, select: { id: true, name: true, slug: true } } },
   });
   if (!brand) notFound();
 

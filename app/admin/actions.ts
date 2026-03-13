@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
+import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import { cancelIngestionRun } from "@/lib/ingestion/cancelIngestionRun";
 import { isPidAlive } from "@/lib/ingestion/pid";
@@ -76,28 +76,42 @@ async function recomputeAndSaveProductGrades(productId: string) {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
     },
     { count: p.evidence.length }
   );
+  const hasCoa = p.coaStatus === "PUBLIC" || p.coaStatus === "REQUEST_ONLY";
+  const hasOfficialLabels =
+    p.evidence.length >= 2 ||
+    !!p.sourceDsldLabelId ||
+    (p.evidence.length >= 1 && hasCoa);
   const quality = computeQualityTier(
     {
       form: p.form,
       ingredientText: p.ingredientText,
       ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingClarity: p.manufacturingClarity,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
       brandSlug: p.brand.slug,
-      hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
+      hasOfficialLabels,
     },
     transparency
   );
+  const overallGrade = computeOverallGrade({
+    form: p.form,
+    ingredientText: p.ingredientText,
+    ingredientsNormalized: p.ingredientsNormalized ?? [],
+    manufacturingCountryClaim: p.manufacturingCountryClaim,
+    coaStatus: p.coaStatus,
+    brandSlug: p.brand.slug,
+  });
   await prisma.product.update({
     where: { id: p.id },
     data: {
       transparencyGrade: transparency.grade,
       qualityTier: quality.tier,
+      overallGrade,
     },
   });
 }
@@ -110,37 +124,117 @@ export async function adminUpsertProduct(formData: FormData) {
     name: formData.get("name"),
     slug: formData.get("slug"),
     form: formData.get("form"),
+    gtin: formData.get("gtin"),
+    mpn: formData.get("mpn"),
+    brandSku: formData.get("brandSku"),
+    netQuantityText: formData.get("netQuantityText"),
+    servingsCount: formData.get("servingsCount"),
+    capsuleCount: formData.get("capsuleCount"),
+    flavor: formData.get("flavor"),
     ingredientText: formData.get("ingredientText"),
     ingredientsNormalizedCsv: formData.get("ingredientsNormalizedCsv"),
     manufacturingCountryClaim: formData.get("manufacturingCountryClaim"),
-    manufacturingClarity: formData.get("manufacturingClarity"),
     manufacturingClaimText: formData.get("manufacturingClaimText"),
     manufacturingEvidenceUrl: formData.get("manufacturingEvidenceUrl"),
     coaStatus: formData.get("coaStatus"),
     coaUrl: formData.get("coaUrl"),
+    thirdPartyTestingLab: formData.get("thirdPartyTestingLab"),
+    hasPatentClaim: formData.get("hasPatentClaim"),
+    officialCanonicalUrl: formData.get("officialCanonicalUrl"),
     lastVerifiedAt: formData.get("lastVerifiedAt"),
   });
   if (!parsed.success) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=validation`);
 
-  const slug = parsed.data.slug?.trim()
+  // When editing a product, brand name is editable; persist to brand database
+  const brandNameRaw = String(formData.get("brandName") ?? "").trim();
+  if (brandNameRaw.length >= 2 && brandNameRaw.length <= 120) {
+    const brand = await prisma.brand.findUnique({
+      where: { id: parsed.data.brandId },
+      select: { name: true },
+    });
+    if (brand && brand.name !== brandNameRaw) {
+      await prisma.brand.update({
+        where: { id: parsed.data.brandId },
+        data: { name: brandNameRaw },
+      });
+    }
+  }
+
+  const rawOfficialUrl = (parsed.data.officialCanonicalUrl ?? "").trim();
+  let officialCanonicalUrl: string | null = null;
+  let officialDomain: string | null = null;
+  if (rawOfficialUrl) {
+    try {
+      officialCanonicalUrl = canonicalizeUrl(rawOfficialUrl);
+      officialDomain = extractDomain(rawOfficialUrl);
+    } catch {
+      redirect(`/admin/products${id ? `/${id}` : "/new"}?error=validation`);
+    }
+  }
+
+  let slug = parsed.data.slug?.trim()
     ? parsed.data.slug.trim()
     : slugify(parsed.data.name);
+
+  let currentSlug: string | null = null;
+  let currentOfficialUrl: string | null = null;
+  if (id) {
+    const current = await prisma.product.findUnique({
+      where: { id },
+      select: { slug: true, officialCanonicalUrl: true },
+    });
+    if (current) {
+      currentSlug = current.slug;
+      currentOfficialUrl = current.officialCanonicalUrl;
+      if (!parsed.data.slug?.trim()) slug = current.slug; // keep existing when form slug empty
+    }
+  }
+
+  // Slug must be unique. On update, skip check when slug is unchanged so we don't fail on "re-save"
+  const slugChanged = !id || slug !== currentSlug;
+  if (slugChanged) {
+    const existingWithSlug = await prisma.product.findFirst({
+      where: { slug, ...(id ? { id: { not: id } } : {}) },
+      select: { id: true },
+    });
+    if (existingWithSlug) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=unique`);
+  }
+
+  // Official URL must be unique when set. Skip check when unchanged on update.
+  const officialUrlChanged = officialCanonicalUrl !== currentOfficialUrl;
+  if (officialCanonicalUrl && officialUrlChanged) {
+    const existingWithUrl = await prisma.product.findFirst({
+      where: { officialCanonicalUrl, ...(id ? { id: { not: id } } : {}) },
+      select: { id: true },
+    });
+    if (existingWithUrl) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=unique`);
+  }
 
   const ingredientsNormalized = parseCsvList(parsed.data.ingredientsNormalizedCsv);
 
   const baseData = {
-    brandId: parsed.data.brandId,
+    brand: { connect: { id: parsed.data.brandId } },
     name: parsed.data.name,
     slug,
     form: parsed.data.form,
-    ingredientText: parsed.data.ingredientText,
+    gtin: parsed.data.gtin?.trim() || null,
+    mpn: parsed.data.mpn?.trim() || null,
+    brandSku: parsed.data.brandSku?.trim() || null,
+    netQuantityText: parsed.data.netQuantityText?.trim() || null,
+    servingsCount: parsed.data.servingsCount ?? null,
+    capsuleCount: parsed.data.capsuleCount ?? null,
+    flavor: parsed.data.flavor?.trim() || null,
+    ingredientText: parsed.data.ingredientText ?? "",
     ingredientsNormalized,
     manufacturingCountryClaim: parsed.data.manufacturingCountryClaim?.trim() || null,
-    manufacturingClarity: parsed.data.manufacturingClarity,
     manufacturingClaimText: parsed.data.manufacturingClaimText?.trim() || null,
     manufacturingEvidenceUrl: parsed.data.manufacturingEvidenceUrl?.trim() || null,
     coaStatus: parsed.data.coaStatus,
     coaUrl: parsed.data.coaUrl?.trim() || null,
+    thirdPartyTestingLab: parsed.data.thirdPartyTestingLab?.trim() || null,
+    hasPatentClaim: parsed.data.hasPatentClaim,
+    officialCanonicalUrl,
+    officialDomain,
     lastVerifiedAt: toDateOrNull(parsed.data.lastVerifiedAt ?? ""),
   } as const;
 
@@ -162,8 +256,11 @@ export async function adminUpsertProduct(formData: FormData) {
 
     await recomputeAndSaveProductGrades(product.id);
     redirect(`/admin/products/${product.id}?saved=1`);
-  } catch {
-    redirect(`/admin/products${id ? `/${id}` : "/new"}?error=unique`);
+  } catch (err: unknown) {
+    const isUniqueViolation =
+      err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2002";
+    if (isUniqueViolation) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=unique`);
+    throw err;
   }
 }
 
@@ -361,5 +458,29 @@ export async function removeBrandsWithNoProductsAction(formData: FormData) {
     await prisma.brand.deleteMany({ where: { products: { none: {} } } });
   }
   redirect(`${redirectTo}?ran=brands_cleaned&removed=${count}`);
+}
+
+/** Import CSV (BRAND, BRAND URL, PRODUCT 1, PRODUCT 2, …). Form field: file (File). */
+export async function importCsvAction(formData: FormData) {
+  await requireAdmin();
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    redirect("/admin/populate?error=No+CSV+file+provided");
+  }
+  const { importBrandProductCsv } = await import("@/lib/importBrandProductCsv");
+  const buf = Buffer.from(await file.arrayBuffer());
+  const result = await importBrandProductCsv(buf);
+  if (result.errors.length > 0) {
+    redirect(`/admin/populate?error=${encodeURIComponent(result.errors.slice(0, 3).join("; "))}`);
+  }
+  const msg = [
+    result.brandsCreated && `${result.brandsCreated} brands created`,
+    result.brandsUpdated && `${result.brandsUpdated} brands updated`,
+    result.productsCreated && `${result.productsCreated} products created`,
+    result.productsSkipped && `${result.productsSkipped} products skipped (already exist)`,
+  ]
+    .filter(Boolean)
+    .join(", ");
+  redirect(`/admin/populate?ran=import&imported=${encodeURIComponent(msg || "Done")}`);
 }
 

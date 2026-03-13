@@ -1,10 +1,6 @@
 import {
-  adminAddEvidence,
-  adminDeleteEvidence,
   adminDeleteProduct,
-  adminPromoteToCanonical,
   adminRecomputeGrades,
-  adminSetOfficialCanonicalUrl,
   adminUpsertProduct,
 } from "@/app/admin/actions";
 import { Badge, Button, Input, Select } from "@/components/ui";
@@ -35,11 +31,7 @@ export default async function AdminProductEditPage({
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
     prisma.product.findUnique({
       where: { id },
-      include: {
-        brand: true,
-        evidence: { orderBy: { createdAt: "desc" } },
-        listings: { orderBy: [{ source: "asc" }, { updatedAt: "desc" }] },
-      },
+      include: { brand: true },
     }),
   ]);
   if (!product) notFound();
@@ -76,9 +68,11 @@ export default async function AdminProductEditPage({
               </Link>
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
+              <Badge variant={product.overallGrade === "A_PLUS" || product.overallGrade === "A" ? "default" : "outline"}>
+                Overall: {product.overallGrade?.replace("_PLUS", "+") ?? "—"}
+              </Badge>
               <Badge variant="outline">Transparency: {product.transparencyGrade}</Badge>
               <Badge variant="outline">Quality: {product.qualityTier}</Badge>
-              <Badge variant="muted">{product.evidence.length} evidence items</Badge>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -141,8 +135,13 @@ export default async function AdminProductEditPage({
 
         <form action={adminUpsertProduct} className="mt-6 space-y-5">
           <input type="hidden" name="id" value={product.id} />
+          <input type="hidden" name="mpn" value={product.mpn ?? ""} />
+          <input type="hidden" name="brandSku" value={product.brandSku ?? ""} />
+          <input type="hidden" name="flavor" value={product.flavor ?? ""} />
+          <input type="hidden" name="servingsCount" value={product.servingsCount ?? ""} />
+          <input type="hidden" name="capsuleCount" value={product.capsuleCount ?? ""} />
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="text-xs font-medium text-slate-700">Brand</label>
               <Select name="brandId" required defaultValue={product.brandId}>
@@ -154,11 +153,29 @@ export default async function AdminProductEditPage({
               </Select>
             </div>
             <div>
+              <label className="text-xs font-medium text-slate-700">Brand name</label>
+              <Input
+                name="brandName"
+                required
+                defaultValue={product.brand.name}
+                placeholder="Edits the selected brand"
+              />
+              <p className="mt-1 text-xs text-slate-500">Updates the selected brand above in the brand database.</p>
+            </div>
+            <div>
               <label className="text-xs font-medium text-slate-700">Form</label>
               <Select name="form" required defaultValue={product.form}>
-                {["RESIN", "CAPSULE", "POWDER", "GUMMY", "LIQUID", "BLEND", "OTHER"].map((v) => (
-                  <option key={v} value={v}>
-                    {v}
+                {[
+                  { value: "RESIN", label: "Resin" },
+                  { value: "POWDER", label: "Powder" },
+                  { value: "CAPSULE", label: "Capsules" },
+                  { value: "GUMMY", label: "Gummies" },
+                  { value: "LIQUID", label: "Liquid" },
+                  { value: "BLEND", label: "Blend" },
+                  { value: "OTHER", label: "Other" },
+                ].map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
                   </option>
                 ))}
               </Select>
@@ -177,10 +194,32 @@ export default async function AdminProductEditPage({
           </div>
 
           <div>
+            <label className="text-xs font-medium text-slate-700">Official product URL (external product page)</label>
+            <Input
+              name="officialCanonicalUrl"
+              type="url"
+              placeholder="https://…"
+              defaultValue={product.officialCanonicalUrl ?? ""}
+              className="mt-1"
+            />
+            <p className="mt-1 text-xs text-slate-500">Same URL as in the CSV. Used for CRAWL and linking to the brand’s product page.</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="text-xs font-medium text-slate-700">GTIN (optional)</label>
+              <Input name="gtin" defaultValue={product.gtin ?? ""} placeholder="Barcode" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-700">Net quantity text (optional)</label>
+              <Input name="netQuantityText" defaultValue={product.netQuantityText ?? ""} placeholder="e.g. 60 g" />
+            </div>
+          </div>
+
+          <div>
             <label className="text-xs font-medium text-slate-700">Ingredient text</label>
             <textarea
               name="ingredientText"
-              required
               defaultValue={product.ingredientText}
               className="min-h-28 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
             />
@@ -193,26 +232,16 @@ export default async function AdminProductEditPage({
             <Input name="ingredientsNormalizedCsv" defaultValue={normalizedCsv} />
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs font-medium text-slate-700">
-                Manufacturing country claim (optional)
-              </label>
-              <Input
-                name="manufacturingCountryClaim"
-                defaultValue={product.manufacturingCountryClaim ?? ""}
-              />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-slate-700">Manufacturing clarity</label>
-              <Select name="manufacturingClarity" required defaultValue={product.manufacturingClarity}>
-                {["CLEAR", "AMBIGUOUS", "NOT_STATED"].map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
-              </Select>
-            </div>
+          <div>
+            <label className="text-xs font-medium text-slate-700">
+              Country of manufacture (optional)
+            </label>
+            <Input
+              name="manufacturingCountryClaim"
+              defaultValue={product.manufacturingCountryClaim ?? ""}
+              placeholder="e.g. USA, India"
+            />
+            <p className="mt-1 text-xs text-slate-500">USA → 3 points toward grade; other country → 1 point.</p>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -255,6 +284,25 @@ export default async function AdminProductEditPage({
           </div>
 
           <div>
+            <label className="text-xs font-medium text-slate-700">Third-party testing lab (optional)</label>
+            <textarea
+              name="thirdPartyTestingLab"
+              defaultValue={product.thirdPartyTestingLab ?? ""}
+              placeholder="e.g. Lab name, testing done (heavy metals, potency), or “tested by X”"
+              className="mt-1 min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
+            />
+            <p className="mt-1 text-xs text-slate-500">Lab name or details when COA/testing is mentioned but no document link.</p>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-slate-700">Patents</label>
+            <Select name="hasPatentClaim" required defaultValue={product.hasPatentClaim ? "yes" : "no"}>
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </Select>
+          </div>
+
+          <div>
             <label className="text-xs font-medium text-slate-700">
               Last verified date (optional)
             </label>
@@ -265,155 +313,6 @@ export default async function AdminProductEditPage({
             <Button type="submit">Save changes</Button>
           </div>
         </form>
-      </div>
-
-      <div id="listings" className="rounded-2xl border border-slate-200 bg-white p-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Listings</h2>
-          <div className="text-sm text-slate-600">
-            {product.listings.length} known listing{product.listings.length === 1 ? "" : "s"}
-          </div>
-        </div>
-
-        <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-slate-500">
-              <tr className="border-b border-slate-200">
-                <th className="py-2 pr-4">Source</th>
-                <th className="py-2 pr-4">URL</th>
-                <th className="py-2 pr-4">Title</th>
-                <th className="py-2 pr-4">Last seen</th>
-                <th className="py-2 pr-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {product.listings.length ? (
-                product.listings.map((l) => (
-                  <tr key={l.id}>
-                    <td className="py-3 pr-4">
-                      <Badge variant={l.source === "OFFICIAL" ? "outline" : "muted"}>{l.source}</Badge>
-                    </td>
-                    <td className="py-3 pr-4">
-                      <a
-                        href={l.url}
-                        target="_blank"
-                        rel="nofollow"
-                        className="underline underline-offset-4"
-                      >
-                        {l.url}
-                      </a>
-                    </td>
-                    <td className="py-3 pr-4 text-slate-700">{l.title ?? "—"}</td>
-                    <td className="py-3 pr-4 text-slate-700">
-                      {l.lastSeenAt ? new Date(l.lastSeenAt).toLocaleString() : "—"}
-                    </td>
-                    <td className="py-3 pr-4">
-                      {l.source === "OFFICIAL" ? (
-                        <form action={adminSetOfficialCanonicalUrl}>
-                          <input type="hidden" name="productId" value={product.id} />
-                          <input type="hidden" name="listingId" value={l.id} />
-                          <Button type="submit" variant="secondary">
-                            Mark this Listing as Official
-                          </Button>
-                        </form>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="py-4 text-slate-700">
-                    No listings yet. Ingest official and marketplace listings to populate this section.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="evidence" className="rounded-2xl border border-slate-200 bg-white p-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900">Evidence</h2>
-          <a
-            href={`/product/${product.slug}`}
-            target="_blank"
-            className="text-sm underline underline-offset-4"
-          >
-            View public page
-          </a>
-        </div>
-
-        <form action={adminAddEvidence} className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-8">
-          <input type="hidden" name="productId" value={product.id} />
-          <div className="lg:col-span-2">
-            <label className="text-xs font-medium text-slate-700">Type</label>
-            <Select name="type" defaultValue="OTHER">
-              {["COA", "MANUFACTURING", "INGREDIENTS", "TESTING", "OTHER"].map((v) => (
-                <option key={v} value={v}>
-                  {v}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="lg:col-span-3">
-            <label className="text-xs font-medium text-slate-700">URL</label>
-            <Input name="url" placeholder="https://…" required />
-          </div>
-          <div className="lg:col-span-3">
-            <label className="text-xs font-medium text-slate-700">Quote/snippet (optional)</label>
-            <Input name="quote" placeholder="Short snippet captured from source" />
-          </div>
-          <div className="lg:col-span-8 flex items-center gap-2">
-            <Button type="submit" variant="secondary">
-              Add evidence
-            </Button>
-            <span className="text-xs text-slate-500">
-              Adding/deleting evidence triggers grade recomputation.
-            </span>
-          </div>
-        </form>
-
-        <div className="mt-6 divide-y divide-slate-200">
-          {product.evidence.length ? (
-            product.evidence.map((e) => (
-              <div key={e.id} className="py-4">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-sm font-medium text-slate-900">
-                    {e.type}{" "}
-                    <span className="font-normal text-slate-500">
-                      · {new Date(e.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={e.url}
-                      target="_blank"
-                      rel="nofollow"
-                      className="text-sm underline underline-offset-4"
-                    >
-                      Source
-                    </a>
-                    <form action={adminDeleteEvidence}>
-                      <input type="hidden" name="productId" value={product.id} />
-                      <input type="hidden" name="evidenceId" value={e.id} />
-                      <Button type="submit" variant="secondary">
-                        Delete
-                      </Button>
-                    </form>
-                  </div>
-                </div>
-                {e.quote ? (
-                  <div className="mt-2 text-sm text-slate-700 whitespace-pre-wrap">{e.quote}</div>
-                ) : null}
-              </div>
-            ))
-          ) : (
-            <div className="py-4 text-sm text-slate-700">No evidence items yet.</div>
-          )}
-        </div>
       </div>
     </div>
   );

@@ -1,12 +1,7 @@
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { slugify } from "@/lib/slug";
-import type {
-  CoaStatus,
-  EvidenceType,
-  ManufacturingClarity,
-  ProductForm,
-} from "@prisma/client";
+import type { CoaStatus, EvidenceType, ProductForm } from "@prisma/client";
 
 type SeedEvidence = {
   type: EvidenceType;
@@ -21,7 +16,6 @@ type SeedProduct = {
   ingredientText: string;
   ingredientsNormalized: string[];
   manufacturingCountryClaim?: string | null;
-  manufacturingClarity: ManufacturingClarity;
   manufacturingClaimText?: string | null;
   manufacturingEvidenceUrl?: string | null;
   coaStatus: CoaStatus;
@@ -66,7 +60,6 @@ const products: SeedProduct[] = [
       "Ingredients: Purified shilajit resin. No flavors, sweeteners, or proprietary blends. See COA for batch testing details.",
     ingredientsNormalized: ["shilajit"],
     manufacturingCountryClaim: "USA",
-    manufacturingClarity: "CLEAR",
     manufacturingClaimText: "Manufactured in the USA.",
     manufacturingEvidenceUrl: "https://purblack.com",
     coaStatus: "PUBLIC",
@@ -98,7 +91,6 @@ const products: SeedProduct[] = [
       "Ingredients: shilajit extract, vegetarian capsule. COA available upon request. Additional details may be provided by customer support.",
     ingredientsNormalized: ["shilajit", "vegetarian capsule"],
     manufacturingCountryClaim: "Unknown",
-    manufacturingClarity: "AMBIGUOUS",
     manufacturingClaimText: "Formulated in the USA. Sourced globally.",
     manufacturingEvidenceUrl: "https://example.com/summit-minerals",
     coaStatus: "REQUEST_ONLY",
@@ -125,7 +117,6 @@ const products: SeedProduct[] = [
       "Ingredients: shilajit powder. Origin: Himalayas. Manufacturing details not stated. No public lab report link found.",
     ingredientsNormalized: ["shilajit"],
     manufacturingCountryClaim: "India",
-    manufacturingClarity: "NOT_STATED",
     manufacturingClaimText: "Origin: Himalayas.",
     manufacturingEvidenceUrl: "https://example.com/himalaya-roots",
     coaStatus: "UNKNOWN",
@@ -147,7 +138,6 @@ const products: SeedProduct[] = [
       'Ingredients: proprietary blend (shilajit, herbs, vitamins), sugar, natural flavors. Manufacturing not stated. No COA link located.',
     ingredientsNormalized: ["shilajit", "herbs", "vitamins", "sugar", "natural flavors"],
     manufacturingCountryClaim: null,
-    manufacturingClarity: "NOT_STATED",
     manufacturingClaimText: null,
     manufacturingEvidenceUrl: null,
     coaStatus: "NONE",
@@ -163,7 +153,6 @@ const products: SeedProduct[] = [
       "Ingredients: shilajit extract, water, glycerin. COA status unknown. Manufacturing claim unclear.",
     ingredientsNormalized: ["shilajit", "water", "glycerin"],
     manufacturingCountryClaim: "USA",
-    manufacturingClarity: "AMBIGUOUS",
     manufacturingClaimText: "Made with ingredients sourced worldwide.",
     manufacturingEvidenceUrl: "https://example.com/summit-minerals",
     coaStatus: "UNKNOWN",
@@ -212,7 +201,7 @@ async function main() {
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
         coaStatus: p.coaStatus,
       },
       { count: p.evidence.length }
@@ -222,7 +211,7 @@ async function main() {
         form: p.form,
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingClarity: p.manufacturingClarity,
+        manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
         coaStatus: p.coaStatus,
         brandSlug: slugify(p.brandName),
         hasOfficialLabels: p.evidence.length >= 2,
@@ -239,7 +228,6 @@ async function main() {
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
         manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
-        manufacturingClarity: p.manufacturingClarity,
         manufacturingClaimText: p.manufacturingClaimText ?? null,
         manufacturingEvidenceUrl: p.manufacturingEvidenceUrl ?? null,
         coaStatus: p.coaStatus,
@@ -256,7 +244,6 @@ async function main() {
         ingredientText: p.ingredientText,
         ingredientsNormalized: p.ingredientsNormalized,
         manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
-        manufacturingClarity: p.manufacturingClarity,
         manufacturingClaimText: p.manufacturingClaimText ?? null,
         manufacturingEvidenceUrl: p.manufacturingEvidenceUrl ?? null,
         coaStatus: p.coaStatus,

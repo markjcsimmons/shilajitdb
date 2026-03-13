@@ -234,7 +234,6 @@ async function main() {
             form: "OTHER",
             ingredientText: "",
             ingredientsNormalized: [],
-            manufacturingClarity: "NOT_STATED",
             manufacturingCountryClaim: null,
             manufacturingClaimText: null,
             manufacturingEvidenceUrl: null,
