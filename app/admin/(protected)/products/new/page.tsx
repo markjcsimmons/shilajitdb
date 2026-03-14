@@ -1,4 +1,5 @@
 import { adminUpsertProduct } from "@/app/admin/actions";
+import { MetaDescriptionField } from "@/components/meta-description-field";
 import { Button, Input, Select } from "@/components/ui";
 import { prisma } from "@/lib/db";
 
@@ -7,10 +8,10 @@ export const dynamic = "force-dynamic";
 export default async function AdminProductNewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; meta_error?: string }>;
 }) {
   const brands = await prisma.brand.findMany({ orderBy: { name: "asc" } });
-  const { error } = await searchParams;
+  const { error, meta_error } = await searchParams;
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -19,7 +20,7 @@ export default async function AdminProductNewPage({
 
       {error ? (
         <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
-          {error === "unique" ? "Slug must be unique." : "Validation error."}
+          {error === "unique" ? "Slug must be unique." : meta_error || "Validation error."}
         </div>
       ) : null}
 
@@ -181,6 +182,8 @@ export default async function AdminProductNewPage({
           </label>
           <Input name="lastVerifiedAt" placeholder="YYYY-MM-DD" />
         </div>
+
+        <MetaDescriptionField name="metaDescription" errorFromServer={meta_error} />
 
         <div className="flex items-center gap-2">
           <Button type="submit">Save product</Button>

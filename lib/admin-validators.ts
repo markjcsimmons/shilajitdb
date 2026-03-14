@@ -45,6 +45,22 @@ export const ProductInputSchema = z.object({
   hasPatentClaim: z.enum(["yes", "no"]).transform((v) => v === "yes"),
   officialCanonicalUrl: z.string().trim().max(2000).optional().or(z.literal("")),
   lastVerifiedAt: z.string().trim().optional().or(z.literal("")),
+  metaDescription: z
+    .string()
+    .trim()
+    .max(160)
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (v) => !v || (v.length >= 140 && v.length <= 160),
+      (v) => ({
+        message: !v
+          ? ""
+          : (v as string).length < 140
+            ? `Write more — at least 140 characters (currently ${(v as string).length}).`
+            : `Write less — at most 160 characters (currently ${(v as string).length}).`,
+      })
+    ),
 });
 
 export const EvidenceInputSchema = z.object({

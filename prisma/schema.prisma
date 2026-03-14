@@ -159,6 +159,7 @@ model Product {
   updatedAt                 DateTime              @updatedAt
   officialCanonicalUrl      String?               @unique
   officialDomain            String?
+  metaDescription           String?               @db.VarChar(160)
   evidence                  Evidence[]
   listings                  Listing[]
   mergeCandidates           MergeCandidate[]      @relation("CandidateProduct")

@@ -54,9 +54,26 @@ export default async function AdminBrandsPage({
               key={b.id}
               className="grid grid-cols-1 gap-1 px-5 py-4 text-sm text-slate-700 sm:grid-cols-6 sm:items-center"
             >
-              <div className="font-medium text-slate-900 sm:col-span-2">{b.name}</div>
+              <div className="font-medium text-slate-900 sm:col-span-2">
+                <Link
+                  href={`/admin/brands/${b.id}`}
+                  className="text-slate-900 hover:underline underline-offset-4"
+                >
+                  {b.name}
+                </Link>
+              </div>
               <div className="sm:col-span-2">{b.slug}</div>
-              <div>{b._count.products}</div>
+              <div>
+                <Link
+                  href={`/admin/brands/${b.id}`}
+                  className="text-slate-900 font-medium hover:underline underline-offset-4"
+                >
+                  {b._count.products}
+                </Link>
+                <span className="text-slate-600">
+                  {" "}product{b._count.products !== 1 ? "s" : ""}
+                </span>
+              </div>
               <div className="text-right">
                 <Link
                   href={`/admin/brands/${b.id}`}

@@ -3,6 +3,7 @@ import {
   adminRecomputeGrades,
   adminUpsertProduct,
 } from "@/app/admin/actions";
+import { MetaDescriptionField } from "@/components/meta-description-field";
 import { Badge, Button, Input, Select } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
@@ -18,6 +19,7 @@ export default async function AdminProductEditPage({
   searchParams: Promise<{
     saved?: string;
     error?: string;
+    meta_error?: string;
     recomputed?: string;
     promoted?: string;
     otherId?: string;
@@ -25,7 +27,7 @@ export default async function AdminProductEditPage({
   }>;
 }) {
   const { id } = await params;
-  const { saved, error, recomputed, promoted, otherId, otherName } = await searchParams;
+  const { saved, error, meta_error, recomputed, promoted, otherId, otherName } = await searchParams;
 
   const [brands, product] = await Promise.all([
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
@@ -114,7 +116,7 @@ export default async function AdminProductEditPage({
             {error === "unique"
               ? "Slug must be unique."
               : error === "validation"
-                ? "Validation error. Please check fields."
+                ? meta_error || "Validation error. Please check fields."
                 : error === "official_taken" && otherId
                   ? (
                     <>
@@ -308,6 +310,12 @@ export default async function AdminProductEditPage({
             </label>
             <Input name="lastVerifiedAt" defaultValue={lastVerifiedValue} placeholder="YYYY-MM-DD" />
           </div>
+
+          <MetaDescriptionField
+            name="metaDescription"
+            defaultValue={product.metaDescription}
+            errorFromServer={meta_error}
+          />
 
           <div className="flex items-center gap-2">
             <Button type="submit">Save changes</Button>

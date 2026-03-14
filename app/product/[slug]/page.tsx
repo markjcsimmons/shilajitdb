@@ -36,6 +36,7 @@ export async function generateMetadata({
     select: {
       name: true,
       slug: true,
+      metaDescription: true,
       dataCompleteness: true,
       isCanonical: true,
       evidence: { select: { id: true } },
@@ -50,7 +51,12 @@ export async function generateMetadata({
     product.evidence.length === 0;
 
   const title = `${product.name} transparency & quality`;
-  const description = `View transparency grade, COA status, manufacturing claim clarity, ingredients disclosure, and evidence links for ${product.brand.name} — ${product.name}.`;
+  const description =
+    product.metaDescription?.trim() &&
+    product.metaDescription.length >= 140 &&
+    product.metaDescription.length <= 160
+      ? product.metaDescription.trim()
+      : `View transparency grade, COA status, manufacturing claim clarity, ingredients disclosure, and evidence links for ${product.brand.name} — ${product.name}.`;
   const canonical = absoluteUrl(`/product/${product.slug}`);
 
   return {

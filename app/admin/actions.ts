@@ -142,8 +142,14 @@ export async function adminUpsertProduct(formData: FormData) {
     hasPatentClaim: formData.get("hasPatentClaim"),
     officialCanonicalUrl: formData.get("officialCanonicalUrl"),
     lastVerifiedAt: formData.get("lastVerifiedAt"),
+    metaDescription: formData.get("metaDescription"),
   });
-  if (!parsed.success) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=validation`);
+  if (!parsed.success) {
+    const metaIssue = parsed.error.issues.find((i) => i.path.includes("metaDescription"));
+    const q = new URLSearchParams({ error: "validation" });
+    if (metaIssue?.message) q.set("meta_error", metaIssue.message);
+    redirect(`/admin/products${id ? `/${id}` : "/new"}?${q.toString()}`);
+  }
 
   // When editing a product, brand name is editable; persist to brand database
   const brandNameRaw = String(formData.get("brandName") ?? "").trim();
@@ -236,6 +242,7 @@ export async function adminUpsertProduct(formData: FormData) {
     officialCanonicalUrl,
     officialDomain,
     lastVerifiedAt: toDateOrNull(parsed.data.lastVerifiedAt ?? ""),
+    metaDescription: parsed.data.metaDescription?.trim() || null,
   } as const;
 
   try {
