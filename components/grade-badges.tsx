@@ -23,7 +23,7 @@ export function TransparencyBadge({ grade }: { grade: TransparencyGrade }) {
 export function QualityBadge({ tier }: { tier: QualityTier }) {
   const cls =
     tier === "ULTRA_PREMIUM"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+      ? "border-amber-300 bg-amber-50 text-amber-800 font-semibold"
       : tier === "PREMIUM"
         ? "border-sky-200 bg-sky-50 text-sky-800"
         : tier === "AVERAGE"
@@ -32,7 +32,7 @@ export function QualityBadge({ tier }: { tier: QualityTier }) {
 
   return (
     <span className={cn("inline-flex items-center rounded-full border px-2.5 py-1 text-xs", cls)}>
-      Quality: {tier.replaceAll("_", " ")}
+      {tier === "ULTRA_PREMIUM" ? "★ " : ""}Quality: {tier.replaceAll("_", " ")}
     </span>
   );
 }

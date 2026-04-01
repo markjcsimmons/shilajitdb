@@ -317,8 +317,8 @@ export async function enrichOfficialCore(opts: EnrichOfficialOptions = {}): Prom
               ingredientsNormalized: updated.ingredientsNormalized,
               manufacturingCountryClaim: updated.manufacturingCountryClaim,
               coaStatus: updated.coaStatus,
-              brandSlug: updated.brand.slug,
               hasOfficialLabels: updated.evidence.length >= 2 || !!updated.sourceDsldLabelId,
+              evidenceCount: updated.evidence.length,
             },
             t,
           );

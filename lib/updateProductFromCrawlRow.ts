@@ -125,8 +125,8 @@ export async function updateProductFromCrawlRow(
       ingredientsNormalized: updated.ingredientsNormalized,
       manufacturingCountryClaim: updated.manufacturingCountryClaim,
       coaStatus: updated.coaStatus,
-      brandSlug: updated.brand.slug,
       hasOfficialLabels,
+      evidenceCount: updated.evidence.length,
     },
     transparency
   );
@@ -136,7 +136,6 @@ export async function updateProductFromCrawlRow(
     ingredientsNormalized: updated.ingredientsNormalized ?? [],
     manufacturingCountryClaim: updated.manufacturingCountryClaim,
     coaStatus: updated.coaStatus,
-    brandSlug: updated.brand.slug,
   });
   await prisma.product.update({
     where: { id: productId },

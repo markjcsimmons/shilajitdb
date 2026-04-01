@@ -241,8 +241,8 @@ async function recomputeAndPersist(productId: string, dryRun: boolean) {
       ingredientsNormalized: p.ingredientsNormalized,
       manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
-      brandSlug: p.brand.slug,
       hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
+      evidenceCount: p.evidence.length,
     },
     t
   );

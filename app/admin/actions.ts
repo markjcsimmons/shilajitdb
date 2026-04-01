@@ -93,8 +93,8 @@ async function recomputeAndSaveProductGrades(productId: string) {
       ingredientsNormalized: p.ingredientsNormalized,
       manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
-      brandSlug: p.brand.slug,
       hasOfficialLabels,
+      evidenceCount: p.evidence.length,
     },
     transparency
   );
@@ -104,7 +104,6 @@ async function recomputeAndSaveProductGrades(productId: string) {
     ingredientsNormalized: p.ingredientsNormalized ?? [],
     manufacturingCountryClaim: p.manufacturingCountryClaim,
     coaStatus: p.coaStatus,
-    brandSlug: p.brand.slug,
   });
   await prisma.product.update({
     where: { id: p.id },

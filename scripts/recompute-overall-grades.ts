@@ -30,7 +30,6 @@ async function main() {
       ingredientsNormalized: p.ingredientsNormalized ?? [],
       manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
-      brandSlug: p.brand.slug,
     });
 
     distribution[grade] += 1;

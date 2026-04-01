@@ -117,11 +117,23 @@ export default async function BrandPage({
     ],
   };
 
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: brand.name,
+    url: brand.website ?? undefined,
+    ...(brand.description ? { description: brand.description } : {}),
+  };
+
   return (
     <div className="space-y-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6">

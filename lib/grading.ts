@@ -26,10 +26,10 @@ export type ProductForGrading = {
   /** Country of manufacture (e.g. USA, India). Used for grading: USA → 3 pts, other → 1 pt. */
   manufacturingCountryClaim?: string | null;
   coaStatus: CoaStatus;
-  /** Brand slug for tier rules (e.g. Purblack → ULTRA_PREMIUM when criteria met) */
-  brandSlug?: string | null;
   /** Has official supplement labels (DSLD or ≥2 evidence) */
   hasOfficialLabels?: boolean;
+  /** Number of evidence items — used for ULTRA_PREMIUM threshold (≥3 required) */
+  evidenceCount?: number;
 };
 
 export type EvidenceForGrading = { count: number };
@@ -171,14 +171,6 @@ function onlyShilajitIngredients(ingredientsNormalized: string[], ingredientText
   return true;
 }
 
-const PURBLACK_SLUGS = ["p-rblack", "purblack", "pur-black", "pur black"];
-
-function isPurblack(brandSlug?: string | null): boolean {
-  if (!brandSlug) return false;
-  const slug = brandSlug.toLowerCase().replace(/ü/g, "u");
-  return PURBLACK_SLUGS.some((s) => slug === s || slug.includes(s));
-}
-
 function baselineTierForTransparency(grade: TransparencyGrade): QualityTier {
   if (grade === "A") return "PREMIUM";
   if (grade === "B") return "PREMIUM";
@@ -205,22 +197,22 @@ function meetsPremiumCriteria(
   return isResin && hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
 }
 
-/** Criteria for ULTRA_PREMIUM (Purblack): COA + country of manufacture + shilajit only + official labels (no resin requirement) */
-function meetsPurblackUltraCriteria(
-  product: ProductForGrading,
-  transparency: TransparencyResult
-): boolean {
-  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+/**
+ * Criteria for ULTRA_PREMIUM: resin + public COA (not just request-only) + country of
+ * manufacture + shilajit-only ingredients + ≥3 evidence items.
+ * Brand-agnostic: any product meeting all criteria qualifies.
+ */
+function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
+  const isResin = product.form === "RESIN";
+  const hasPublicCoa = product.coaStatus === "PUBLIC";
   const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
   const simpleShilajit = onlyShilajitIngredients(
     product.ingredientsNormalized,
     product.ingredientText
   );
-  const hasOfficialLabels =
-    product.hasOfficialLabels ??
-    transparency.reasons.some((r) => r.includes("At least 2 evidence"));
+  const hasStrongEvidence = (product.evidenceCount ?? 0) >= 3;
 
-  return hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
+  return isResin && hasPublicCoa && hasMfgCountry && simpleShilajit && hasStrongEvidence;
 }
 
 export function computeQualityTier(
@@ -234,15 +226,15 @@ export function computeQualityTier(
   const isResin = product.form === "RESIN";
   const isGummyOrBlend = product.form === "GUMMY" || product.form === "BLEND";
 
-  const meetsPurblackUltra = isPurblack(product.brandSlug) && meetsPurblackUltraCriteria(product, transparency);
-  const meetsOtherBrandPremium = meetsPremiumCriteria(product, transparency);
+  const meetsUltraPremium = meetsUltraPremiumCriteria(product);
+  const meetsPremium = meetsPremiumCriteria(product, transparency);
 
-  if (meetsPurblackUltra) {
+  if (meetsUltraPremium) {
     tier = "ULTRA_PREMIUM";
     reasons.push(
-      "ULTRA_PREMIUM (Purblack with COA, country of manufacture, simple shilajit, official labels)"
+      "ULTRA_PREMIUM (resin, public COA, country of manufacture, simple shilajit, ≥3 evidence items)"
     );
-  } else if (meetsOtherBrandPremium) {
+  } else if (meetsPremium) {
     tier = "PREMIUM";
     reasons.push(
       "PREMIUM (resin, COA, country of manufacture, simple shilajit, official labels)"
@@ -303,7 +295,6 @@ export function computeOverallGrade(product: ProductForGrading): OverallGrade {
   );
   const hasProprietaryBlend = proprietaryBlendRegex.test(product.ingredientText ?? "");
 
-  if (isPurblack(product.brandSlug)) return hasCoa ? "A_PLUS" : "A";
   if (hasProprietaryBlend && !hasCoa && !hasMfgCountry) return "F";
 
   const score = overallGradeScore(product);

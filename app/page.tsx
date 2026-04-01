@@ -27,7 +27,7 @@ export default async function HomePage({
   const orderBy = buildDefaultOrderBy();
   const skip = (filters.page - 1) * PAGE_SIZE;
 
-  const [total, products, countries] = await Promise.all([
+  const [total, products, countries, totalTracked, gradeACount, ultraPremiumCount] = await Promise.all([
     prisma.product.count({ where }),
     prisma.product.findMany({
       where,
@@ -54,6 +54,9 @@ export default async function HomePage({
     prisma.$queryRaw<
       { manufacturingCountryClaim: string }[]
     >`SELECT DISTINCT "manufacturingCountryClaim" FROM "Product" WHERE "isCanonical" = true AND "manufacturingCountryClaim" IS NOT NULL ORDER BY "manufacturingCountryClaim" ASC`,
+    prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
+    prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" }, transparencyGrade: "A" } }),
+    prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" }, qualityTier: "ULTRA_PREMIUM" } }),
   ]);
 
   const countryOptions = countries
@@ -90,6 +93,20 @@ export default async function HomePage({
           </Link>
           .
         </p>
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
+          <span>
+            <span className="font-semibold text-slate-900">{totalTracked}</span> products tracked
+          </span>
+          <span>·</span>
+          <span>
+            <span className="font-semibold text-slate-900">{gradeACount}</span> earn a Transparency Grade A
+          </span>
+          <span>·</span>
+          <Link href="/tier/ultra-premium" className="hover:underline">
+            <span className="font-semibold text-slate-900">{ultraPremiumCount}</span>{" "}
+            earn{ultraPremiumCount === 1 ? "s" : ""} Ultra Premium
+          </Link>
+        </div>
       </div>
 
       <script
@@ -213,8 +230,13 @@ export default async function HomePage({
         {products.map((p) => (
           <div
             key={p.id}
-            className="rounded-2xl border border-slate-200 bg-white p-5"
+            className={`rounded-2xl border bg-white p-5 ${p.qualityTier === "ULTRA_PREMIUM" ? "border-amber-300 border-t-2" : "border-slate-200"}`}
           >
+            {p.qualityTier === "ULTRA_PREMIUM" && (
+              <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                Highest Rated
+              </div>
+            )}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <Link

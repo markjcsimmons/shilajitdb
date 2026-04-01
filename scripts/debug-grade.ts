@@ -64,7 +64,6 @@ async function main() {
       ingredientsNormalized: p.ingredientsNormalized ?? [],
       manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus as any,
-      brandSlug: p.brand.slug,
     };
     const grade = computeOverallGrade(input);
     const score = overallGradeScore(input);

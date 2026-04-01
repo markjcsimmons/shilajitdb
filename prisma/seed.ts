@@ -213,8 +213,8 @@ async function main() {
         ingredientsNormalized: p.ingredientsNormalized,
         manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
         coaStatus: p.coaStatus,
-        brandSlug: slugify(p.brandName),
         hasOfficialLabels: p.evidence.length >= 2,
+        evidenceCount: p.evidence.length,
       },
       transparency
     );

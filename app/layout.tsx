@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     description:
       "A neutral, evidence-based database of shilajit products sold in the United States.",
     url: siteUrl,
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Shilajit Transparency Database — fact-based product ratings",
+      },
+    ],
   },
   alternates: {
     canonical: siteUrl,

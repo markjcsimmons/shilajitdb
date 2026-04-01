@@ -101,8 +101,8 @@ export default async function ProductPage({
       ingredientsNormalized: product.ingredientsNormalized,
       manufacturingCountryClaim: product.manufacturingCountryClaim,
       coaStatus: product.coaStatus,
-      brandSlug: product.brand.slug,
       hasOfficialLabels: product.evidence.length >= 2 || !!product.sourceDsldLabelId,
+      evidenceCount: product.evidence.length,
     },
     transparency
   );
@@ -166,12 +166,24 @@ export default async function ProductPage({
   );
   const reportEmail = process.env.NEXT_PUBLIC_REPORT_EMAIL ?? "updates@example.com";
 
-  const compareOptions = await prisma.product.findMany({
-    where: { isCanonical: true },
-    select: { slug: true, name: true, brand: { select: { name: true } } },
-    orderBy: [{ transparencyGrade: "desc" }, { qualityTier: "desc" }, { name: "asc" }],
-    take: 200,
-  });
+  const [compareOptions, topProducts] = await Promise.all([
+    prisma.product.findMany({
+      where: { isCanonical: true },
+      select: { slug: true, name: true, brand: { select: { name: true } } },
+      orderBy: [{ transparencyGrade: "desc" }, { qualityTier: "desc" }, { name: "asc" }],
+      take: 200,
+    }),
+    prisma.product.findMany({
+      where: {
+        isCanonical: true,
+        dataCompleteness: { not: "LOW" },
+        slug: { not: slug },
+      },
+      orderBy: [{ qualityTier: "desc" }, { transparencyGrade: "desc" }, { name: "asc" }],
+      take: 3,
+      select: { slug: true, name: true, qualityTier: true, brand: { select: { name: true } } },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -246,10 +258,34 @@ export default async function ProductPage({
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5">
           <div className="text-sm font-medium text-slate-900">Compare</div>
-          <p className="mt-2 text-sm text-slate-600">
-            Compare this product side-by-side with another.
-          </p>
+          {topProducts.length > 0 && (
+            <div className="mt-3 space-y-2">
+              <div className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                Top-rated products
+              </div>
+              {topProducts.map((tp) => {
+                const slugs = [product.slug, tp.slug].sort();
+                return (
+                  <Link
+                    key={tp.slug}
+                    href={`/compare/${slugs[0]}-vs-${slugs[1]}`}
+                    className="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
+                  >
+                    <span className="min-w-0 truncate text-slate-900">
+                      {tp.brand.name} — {tp.name}
+                    </span>
+                    <span className="ml-2 shrink-0 text-xs text-slate-500">
+                      {tp.qualityTier.replaceAll("_", " ")}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
           <div className="mt-3">
+            <div className="mb-1 text-xs font-medium text-slate-500 uppercase tracking-wide">
+              Or pick any product
+            </div>
             <ComparePicker
               currentSlug={product.slug}
               options={compareOptions.map((p) => ({
