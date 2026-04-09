@@ -31,6 +31,18 @@ export const ProductInputSchema = z.object({
   mpn: optionalString(64),
   brandSku: optionalString(64),
   netQuantityText: optionalString(120),
+  servingSize: optionalString(80),
+  sourceRegion: z
+    .enum(["Himalayan", "Altai Mountains", "Gilgit-Baltistan", "Tibetan Plateau", "Central Asian", "Multiple", "Other", ""])
+    .optional()
+    .or(z.literal("")),
+  heavyMetalsTested: z
+    .enum(["NONE", "CLAIMED", "PASS", "FAIL", ""])
+    .optional()
+    .or(z.literal("")),
+  gmpCertified: z.string().optional(),
+  marketingClaim: optionalString(300),
+  amazonAsin: optionalString(20),
   servingsCount: optionalInt(),
   capsuleCount: optionalInt(),
   flavor: optionalString(80),
@@ -45,6 +57,11 @@ export const ProductInputSchema = z.object({
   hasPatentClaim: z.enum(["yes", "no"]).transform((v) => v === "yes"),
   officialCanonicalUrl: z.string().trim().max(2000).optional().or(z.literal("")),
   lastVerifiedAt: z.string().trim().optional().or(z.literal("")),
+  hideFromPublic: z.string().optional(),
+  bbbGrade: z
+    .enum(["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "NR", ""])
+    .optional()
+    .or(z.literal("")),
   metaDescription: z
     .string()
     .trim()
