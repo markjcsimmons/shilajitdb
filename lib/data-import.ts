@@ -21,8 +21,8 @@ const VALID_FORM: ProductForm[] = [
   "OTHER",
 ];
 const VALID_COA: CoaStatus[] = ["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"];
-const VALID_GRADE: TransparencyGrade[] = ["F", "D", "C", "B", "A"];
-const VALID_TIER: QualityTier[] = ["POOR", "AVERAGE", "PREMIUM", "ULTRA_PREMIUM"];
+const _VALID_GRADE: TransparencyGrade[] = ["F", "D", "C", "B", "A"];
+const _VALID_TIER: QualityTier[] = ["POOR", "AVERAGE", "PREMIUM", "ULTRA_PREMIUM"];
 const VALID_COMPLETENESS: DataCompleteness[] = ["LOW", "MEDIUM", "HIGH"];
 
 function coerce<T>(value: string, valid: readonly T[]): T {

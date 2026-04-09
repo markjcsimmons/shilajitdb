@@ -3,7 +3,7 @@ import { Button, Input } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cancelRunAction, clearStaleRunsAction } from "@/app/admin/actions";
+import { clearStaleRunsAction } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
 

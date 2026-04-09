@@ -231,7 +231,7 @@ export function computeQualityTier(
   let tier: QualityTier = baselineTierForTransparency(transparency.grade);
   reasons.push(`Baseline from Transparency Grade ${transparency.grade} → ${tier}`);
 
-  const isResin = product.form === "RESIN";
+  const _isResin = product.form === "RESIN";
   const isGummyOrBlend = product.form === "GUMMY" || product.form === "BLEND";
 
   const meetsPurblackUltra = isPurblack(product.brandSlug) && meetsPurblackUltraCriteria(product, transparency);

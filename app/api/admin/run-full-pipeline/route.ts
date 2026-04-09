@@ -27,7 +27,7 @@ function tsxCmd() {
   return path.join(process.cwd(), "node_modules", ".bin", bin);
 }
 
-export async function POST(request: Request) {
+export async function POST(_request: Request) {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }

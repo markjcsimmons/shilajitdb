@@ -19,7 +19,7 @@ export function MetaDescriptionField({
   const id = useId();
   const [value, setValue] = useState(defaultValue ?? "");
   const len = value.length;
-  const isEmpty = len === 0;
+  const _isEmpty = len === 0;
   const tooShort = len > 0 && len < MIN;
   const tooLong = len > MAX;
   const ok = len >= MIN && len <= MAX;
