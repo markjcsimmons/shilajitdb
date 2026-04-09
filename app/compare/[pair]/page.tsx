@@ -78,50 +78,28 @@ export default async function ComparePage({
   ]);
   if (!a || !b) notFound();
 
-  const aT = computeTransparencyGrade(
-    {
-      form: a.form,
-      ingredientText: a.ingredientText,
-      ingredientsNormalized: a.ingredientsNormalized,
-      manufacturingCountryClaim: a.manufacturingCountryClaim,
-      coaStatus: a.coaStatus,
-    },
-    { count: a.evidence.length }
-  );
-  const bT = computeTransparencyGrade(
-    {
-      form: b.form,
-      ingredientText: b.ingredientText,
-      ingredientsNormalized: b.ingredientsNormalized,
-      manufacturingCountryClaim: b.manufacturingCountryClaim,
-      coaStatus: b.coaStatus,
-    },
-    { count: b.evidence.length }
-  );
-  const aQ = computeQualityTier(
-    {
-      form: a.form,
-      ingredientText: a.ingredientText,
-      ingredientsNormalized: a.ingredientsNormalized,
-      manufacturingCountryClaim: a.manufacturingCountryClaim,
-      coaStatus: a.coaStatus,
-      brandSlug: a.brand.slug,
-      hasOfficialLabels: a.evidence.length >= 2 || !!a.sourceDsldLabelId,
-    },
-    aT
-  );
-  const bQ = computeQualityTier(
-    {
-      form: b.form,
-      ingredientText: b.ingredientText,
-      ingredientsNormalized: b.ingredientsNormalized,
-      manufacturingCountryClaim: b.manufacturingCountryClaim,
-      coaStatus: b.coaStatus,
-      brandSlug: b.brand.slug,
-      hasOfficialLabels: b.evidence.length >= 2 || !!b.sourceDsldLabelId,
-    },
-    bT
-  );
+  const aForGrading = {
+    form: a.form,
+    coaStatus: a.coaStatus,
+    manufacturingCountryClaim: a.manufacturingCountryClaim,
+    thirdPartyTestingLab: a.thirdPartyTestingLab,
+    gmpCertified: a.gmpCertified,
+    hasPatentClaim: a.hasPatentClaim,
+    brandSlug: a.brand.slug,
+  };
+  const bForGrading = {
+    form: b.form,
+    coaStatus: b.coaStatus,
+    manufacturingCountryClaim: b.manufacturingCountryClaim,
+    thirdPartyTestingLab: b.thirdPartyTestingLab,
+    gmpCertified: b.gmpCertified,
+    hasPatentClaim: b.hasPatentClaim,
+    brandSlug: b.brand.slug,
+  };
+  const aT = computeTransparencyGrade(aForGrading);
+  const bT = computeTransparencyGrade(bForGrading);
+  const aQ = computeQualityTier(aForGrading);
+  const bQ = computeQualityTier(bForGrading);
 
   const rows = [
     {

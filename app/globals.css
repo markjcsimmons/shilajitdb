@@ -30,6 +30,6 @@ body {
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased;
+  @apply bg-stone-50 text-slate-900 antialiased font-sans;
 }
 

@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { computeOverallGrade } from "@/lib/grading";
+import { computeOverallGrade, overallGradeScore } from "@/lib/grading";
 
 const GRADE_ORDER = ["A_PLUS", "A", "B", "C", "D", "E", "F"] as const;
 
@@ -10,10 +10,11 @@ async function main() {
     select: {
       id: true,
       form: true,
-      ingredientText: true,
-      ingredientsNormalized: true,
-      manufacturingCountryClaim: true,
       coaStatus: true,
+      manufacturingCountryClaim: true,
+      thirdPartyTestingLab: true,
+      gmpCertified: true,
+      hasPatentClaim: true,
       brand: { select: { slug: true } },
     },
   });
@@ -24,15 +25,16 @@ async function main() {
   }
 
   for (const p of products) {
-    const grade = computeOverallGrade({
+    const productForGrading = {
       form: p.form,
-      ingredientText: p.ingredientText,
-      ingredientsNormalized: p.ingredientsNormalized ?? [],
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
       coaStatus: p.coaStatus,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
+      thirdPartyTestingLab: p.thirdPartyTestingLab,
+      gmpCertified: p.gmpCertified,
+      hasPatentClaim: p.hasPatentClaim,
       brandSlug: p.brand.slug,
-    });
-
+    };
+    const grade = computeOverallGrade(productForGrading);
     distribution[grade] += 1;
 
     await prisma.product.update({

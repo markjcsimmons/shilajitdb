@@ -6,12 +6,16 @@ import type {
   TransparencyGrade,
 } from "@prisma/client";
 
-/** Country of manufacture: USA → 3 points, any other country → 1 point, none → 0 */
-export function manufacturingPointsFromCountry(country: string | null | undefined): 0 | 1 | 3 {
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Country of manufacture: USA → 2 points, any other stated country → 1 point, none → 0 */
+export function manufacturingPointsFromCountry(country: string | null | undefined): 0 | 1 | 2 {
   const c = (country ?? "").trim();
   if (!c) return 0;
   const u = c.toUpperCase();
-  if (u === "USA" || u === "US" || u === "UNITED STATES") return 3;
+  if (u === "USA" || u === "US" || u === "UNITED STATES") return 2;
   return 1;
 }
 
@@ -19,20 +23,23 @@ export function hasManufacturingCountry(country: string | null | undefined): boo
   return (country ?? "").trim().length > 0;
 }
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 export type ProductForGrading = {
   form: ProductForm;
-  ingredientText: string;
-  ingredientsNormalized: string[];
-  /** Country of manufacture (e.g. USA, India). Used for grading: USA → 3 pts, other → 1 pt. */
-  manufacturingCountryClaim?: string | null;
   coaStatus: CoaStatus;
-  /** Brand slug for tier rules (e.g. Purblack → ULTRA_PREMIUM when criteria met) */
+  manufacturingCountryClaim?: string | null;
+  /** Name of the 3rd-party testing lab, if any (e.g. "Cambium Analytica"). */
+  thirdPartyTestingLab?: string | null;
+  /** Whether the manufacturer claims GMP certification. */
+  gmpCertified?: boolean;
+  /** Whether the brand holds a patent on their manufacturing process. Display only — not scored. */
+  hasPatentClaim?: boolean;
+  /** Brand slug — used only to evaluate ULTRA_PREMIUM tier eligibility. */
   brandSlug?: string | null;
-  /** Has official supplement labels (DSLD or ≥2 evidence) */
-  hasOfficialLabels?: boolean;
 };
-
-export type EvidenceForGrading = { count: number };
 
 export type TransparencyResult = {
   grade: TransparencyGrade;
@@ -45,20 +52,25 @@ export type QualityResult = {
   reasons: string[];
 };
 
+// ---------------------------------------------------------------------------
+// Transparency Grade
+// Signals: how openly documented is this product's safety and origin?
+// Max score: 11 (COA public 4 + named lab 3 + USA 2 + request-only 1 + other country 1 + GMP 1)
+// Grades: A≥9, B≥6, C≥3, D≥1, F<1
+// ---------------------------------------------------------------------------
+
 export const transparencyRubric = {
-  ingredientTextLengthThreshold: 80,
   score: {
-    coaPublic: 3,
+    coaPublic: 4,
     coaRequestOnly: 1,
-    manufacturingCountryUSA: 3,
+    namedThirdPartyLab: 3,
+    manufacturingCountryUSA: 2,
     manufacturingCountryOther: 1,
-    ingredientsNormalizedNonEmpty: 1,
-    ingredientTextLongEnough: 1,
-    evidenceAtLeast2: 1,
+    gmpCertified: 1,
   },
   gradeByScore(score: number): TransparencyGrade {
-    if (score >= 7) return "A";
-    if (score >= 5) return "B";
+    if (score >= 9) return "A";
+    if (score >= 6) return "B";
     if (score >= 3) return "C";
     if (score >= 1) return "D";
     return "F";
@@ -67,252 +79,194 @@ export const transparencyRubric = {
 
 export function computeTransparencyGrade(
   product: ProductForGrading,
-  evidence: EvidenceForGrading
 ): TransparencyResult {
   const reasons: string[] = [];
   let score = 0;
 
+  // COA status
   if (product.coaStatus === "PUBLIC") {
     score += transparencyRubric.score.coaPublic;
-    reasons.push("COA is publicly available (+3)");
+    reasons.push("COA is publicly available (+4)");
   } else if (product.coaStatus === "REQUEST_ONLY") {
     score += transparencyRubric.score.coaRequestOnly;
-    reasons.push("COA is available on request (+1)");
+    reasons.push("COA available on request only — not openly published (+1)");
   } else if (product.coaStatus === "NONE") {
     reasons.push("No COA disclosed (+0)");
   } else {
-    reasons.push("COA status is unknown (+0)");
+    reasons.push("COA status unknown (+0)");
   }
 
+  // Named 3rd-party lab
+  const hasNamedLab = !!product.thirdPartyTestingLab?.trim();
+  if (hasNamedLab) {
+    score += transparencyRubric.score.namedThirdPartyLab;
+    reasons.push(`Independent testing lab named: ${product.thirdPartyTestingLab} (+3)`);
+  } else {
+    reasons.push("No named independent testing lab (+0)");
+  }
+
+  // Manufacturing country
   const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
-  if (mfgPoints === 3) {
+  if (mfgPoints === 2) {
     score += transparencyRubric.score.manufacturingCountryUSA;
-    reasons.push("Country of manufacture is USA (+3)");
+    reasons.push("Manufactured in USA — FDA 21 CFR Part 111 oversight (+2)");
   } else if (mfgPoints === 1) {
     score += transparencyRubric.score.manufacturingCountryOther;
-    reasons.push("Country of manufacture stated (+1)");
+    reasons.push(`Country of manufacture stated: ${product.manufacturingCountryClaim} (+1)`);
   } else {
-    reasons.push("Country of manufacture not stated (+0)");
+    reasons.push("Country of manufacture not disclosed (+0)");
   }
 
-  const normalized = (product.ingredientsNormalized ?? []).map((s) => s.trim()).filter(Boolean);
-  if (normalized.length > 0) {
-    score += transparencyRubric.score.ingredientsNormalizedNonEmpty;
-    reasons.push("Ingredients normalized list present (+1)");
+  // GMP certified
+  if (product.gmpCertified) {
+    score += transparencyRubric.score.gmpCertified;
+    reasons.push("GMP certified facility (+1)");
   } else {
-    reasons.push("No normalized ingredients list (+0)");
-  }
-
-  const ingredientTextLength = (product.ingredientText ?? "").trim().length;
-  if (ingredientTextLength >= transparencyRubric.ingredientTextLengthThreshold) {
-    score += transparencyRubric.score.ingredientTextLongEnough;
-    reasons.push("Ingredient disclosure text is detailed (+1)");
-  } else if (ingredientTextLength > 0) {
-    reasons.push("Ingredient disclosure text is minimal (+0)");
-  } else {
-    reasons.push("No ingredient disclosure text (+0)");
-  }
-
-  if (evidence.count >= 2) {
-    score += transparencyRubric.score.evidenceAtLeast2;
-    reasons.push("At least 2 evidence items provided (+1)");
-  } else if (evidence.count === 1) {
-    reasons.push("Only 1 evidence item provided (+0)");
-  } else {
-    reasons.push("No evidence items provided (+0)");
+    reasons.push("GMP certification not confirmed (+0)");
   }
 
   const grade = transparencyRubric.gradeByScore(score);
   return { grade, score, reasons };
 }
 
-const proprietaryBlendRegex = /\bproprietary\s+blend\b/i;
-const blendIndicatorRegex =
-  /\b(blend|gummies|gummy|nootropic|energy|focus)\b/i;
-/** "proprietary blend" etc. as a positive claim (product contains it), not negative (e.g. "no proprietary blends") */
-const proprietaryPositiveRegex =
-  /(?<!(?:no|without|free of|zero)\s)proprietary\s+(?:blend|formula|mix)s?\b/i;
+// ---------------------------------------------------------------------------
+// Quality Tier
+// Fully criteria-based — no brand-name hard-coding.
+// ULTRA_PREMIUM requires all 5 major quality signals simultaneously.
+// ---------------------------------------------------------------------------
 
-/** Inactive/filler ingredients we ignore when checking "shilajit-only" */
-const ALLOWED_INACTIVES = new Set([
-  "capsule",
-  "vegetarian capsule",
-  "cellulose",
-  "magnesium stearate",
-  "rice flour",
-  "silica",
-  "gelatin",
-  "gum acacia",
-  "starch",
-  "microcrystalline cellulose",
-  "hypromellose",
-  "pullulan",
-  "water",
-  "oleoresin",
-  "resin",
-]);
-
-function onlyShilajitIngredients(ingredientsNormalized: string[], ingredientText: string) {
-  const normalized = (ingredientsNormalized ?? []).map((s) => s.trim().toLowerCase()).filter(Boolean);
-  if (normalized.length === 0) return false;
-  const shilajitTerms = new Set([
-    "shilajit",
-    "purified shilajit",
-    "himalayan shilajit",
-    "shilajit resin",
-  ]);
-  const hasShilajit = normalized.some((x) => shilajitTerms.has(x) || x.includes("shilajit"));
-  const onlyShilajitAndInactives = normalized.every(
-    (x) => shilajitTerms.has(x) || x.includes("shilajit") || ALLOWED_INACTIVES.has(x)
+/**
+ * Criteria for ULTRA_PREMIUM: ALL of
+ *   form=RESIN + coaStatus=PUBLIC + named 3rd-party lab + mfg country stated + GMP certified
+ *
+ * This is the highest verifiable bar. Any brand meeting all 5 criteria qualifies.
+ * Pürblack is currently the only brand in the database meeting all 5.
+ */
+function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
+  return (
+    product.form === "RESIN" &&
+    product.coaStatus === "PUBLIC" &&
+    !!product.thirdPartyTestingLab?.trim() &&
+    hasManufacturingCountry(product.manufacturingCountryClaim) &&
+    !!product.gmpCertified
   );
-  if (!hasShilajit || !onlyShilajitAndInactives) return false;
-  if (blendIndicatorRegex.test(ingredientText ?? "")) return false;
-  if (proprietaryPositiveRegex.test(ingredientText ?? "")) return false;
-  return true;
 }
 
-const PURBLACK_SLUGS = ["p-rblack", "purblack", "pur-black", "pur black"];
-
-function isPurblack(brandSlug?: string | null): boolean {
-  if (!brandSlug) return false;
-  const slug = brandSlug.toLowerCase().replace(/ü/g, "u");
-  return PURBLACK_SLUGS.some((s) => slug === s || slug.includes(s));
-}
-
-function baselineTierForTransparency(grade: TransparencyGrade): QualityTier {
-  if (grade === "A") return "PREMIUM";
-  if (grade === "B") return "PREMIUM";
-  if (grade === "C") return "AVERAGE";
-  return "POOR";
-}
-
-/** Criteria for PREMIUM (other brands): resin, shilajit only, country of manufacture, COA, official labels */
-function meetsPremiumCriteria(
-  product: ProductForGrading,
-  transparency: TransparencyResult
-): boolean {
-  const isResin = product.form === "RESIN";
-  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
-  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
-  const simpleShilajit = onlyShilajitIngredients(
-    product.ingredientsNormalized,
-    product.ingredientText
+/**
+ * Criteria for PREMIUM: ALL of
+ *   coaStatus=PUBLIC + named 3rd-party lab
+ *
+ * Form and manufacturing country are NOT required — a well-documented product
+ * of any form earns PREMIUM if it has a public COA from a named independent lab.
+ * The distinction from ULTRA_PREMIUM is resin form + stated country + GMP.
+ */
+function meetsPremiumCriteria(product: ProductForGrading): boolean {
+  return (
+    product.coaStatus === "PUBLIC" &&
+    !!product.thirdPartyTestingLab?.trim()
   );
-  const hasOfficialLabels =
-    product.hasOfficialLabels ??
-    transparency.reasons.some((r) => r.includes("At least 2 evidence"));
-
-  return isResin && hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
-}
-
-/** Criteria for ULTRA_PREMIUM (Purblack): COA + country of manufacture + shilajit only + official labels (no resin requirement) */
-function meetsPurblackUltraCriteria(
-  product: ProductForGrading,
-  transparency: TransparencyResult
-): boolean {
-  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
-  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
-  const simpleShilajit = onlyShilajitIngredients(
-    product.ingredientsNormalized,
-    product.ingredientText
-  );
-  const hasOfficialLabels =
-    product.hasOfficialLabels ??
-    transparency.reasons.some((r) => r.includes("At least 2 evidence"));
-
-  return hasCoa && hasMfgCountry && simpleShilajit && hasOfficialLabels;
 }
 
 export function computeQualityTier(
   product: ProductForGrading,
-  transparency: TransparencyResult
 ): QualityResult {
   const reasons: string[] = [];
-  let tier: QualityTier = baselineTierForTransparency(transparency.grade);
-  reasons.push(`Baseline from Transparency Grade ${transparency.grade} → ${tier}`);
 
-  const _isResin = product.form === "RESIN";
-  const isGummyOrBlend = product.form === "GUMMY" || product.form === "BLEND";
-
-  const meetsPurblackUltra = isPurblack(product.brandSlug) && meetsPurblackUltraCriteria(product, transparency);
-  const meetsOtherBrandPremium = meetsPremiumCriteria(product, transparency);
-
-  if (meetsPurblackUltra) {
-    tier = "ULTRA_PREMIUM";
-    reasons.push(
-      "ULTRA_PREMIUM (Purblack with COA, country of manufacture, simple shilajit, official labels)"
-    );
-  } else if (meetsOtherBrandPremium) {
-    tier = "PREMIUM";
-    reasons.push(
-      "PREMIUM (resin, COA, country of manufacture, simple shilajit, official labels)"
-    );
+  if (meetsUltraPremiumCriteria(product)) {
+    reasons.push("ULTRA_PREMIUM: resin form + public COA + named 3rd-party lab + stated manufacturing country + GMP certified");
+    return { tier: "ULTRA_PREMIUM", reasons };
   }
 
-  const hasProprietaryBlendIndicator = proprietaryBlendRegex.test(product.ingredientText ?? "");
-  const weakEvidenceCombo =
-    (product.coaStatus === "NONE" || product.coaStatus === "UNKNOWN") &&
-    !hasManufacturingCountry(product.manufacturingCountryClaim);
-
-  if (isGummyOrBlend && hasProprietaryBlendIndicator) {
-    tier = "POOR";
-    reasons.push('Downgraded to POOR (gummy/blend with "proprietary blend" indicator)');
-  } else if (weakEvidenceCombo) {
-    tier = "POOR";
-    reasons.push("Downgraded to POOR (no/unknown COA and country of manufacture not stated)");
+  if (meetsPremiumCriteria(product)) {
+    reasons.push("PREMIUM: public COA + named 3rd-party lab (any form qualifies)");
+    if (product.form !== "RESIN") reasons.push("Not resin form — resin required for ULTRA_PREMIUM");
+    if (!hasManufacturingCountry(product.manufacturingCountryClaim)) reasons.push("Manufacturing country not stated — required for ULTRA_PREMIUM");
+    if (!product.gmpCertified) reasons.push("GMP certification not confirmed — required for ULTRA_PREMIUM");
+    return { tier: "PREMIUM", reasons };
   }
 
-  return { tier, reasons };
+  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+  const hasNamedLab = !!product.thirdPartyTestingLab?.trim();
+
+  if (hasCoa || hasNamedLab) {
+    reasons.push("AVERAGE: has some testing transparency (COA or named lab) but does not meet all PREMIUM criteria");
+    if (product.form !== "RESIN") reasons.push("Not resin form — resin required for PREMIUM or higher");
+    if (!hasCoa) reasons.push("No COA on file");
+    if (!hasNamedLab) reasons.push("No named independent testing lab");
+    if (!hasManufacturingCountry(product.manufacturingCountryClaim)) reasons.push("Manufacturing country not stated");
+    return { tier: "AVERAGE", reasons };
+  }
+
+  reasons.push("POOR: no verifiable testing transparency (no COA and no named lab)");
+  return { tier: "POOR", reasons };
 }
 
-// --- Overall grade (A+ through F) per methodology ---
+// ---------------------------------------------------------------------------
+// Overall Grade (A+ through F)
+// Weighted score out of 14 based on scientific quality signals.
+//
+// Scoring:
+//   COA PUBLIC:           +4  (FDA/FTC transparency standard; only 33% of products)
+//   Named 3rd-party lab:  +3  (names the tester — checkable & accountable; only 31%)
+//   Form = RESIN:         +2  (least processed; preserves fulvic-humic matrix — Piccolo 2002)
+//   Manufacturing USA:    +2  (FDA 21 CFR Part 111 oversight)
+//   COA REQUEST_ONLY:     +1  (tested but not openly disclosed)
+//   Mfg country other:   +1  (at least traceable)
+//   GMP certified:        +1  (documented standard; 80% of products claim it — weak signal)
+//
+// Patent claim: displayed on product page but NOT scored.
+//   (Patents protect IP, not product quality. No independent authority uses patents as quality signals.)
+//
+// Grade thresholds (max 14):
+//   A+: ≥12  (requires all top signals: public COA + named lab + resin + USA + GMP = 12)
+//   A:  ≥9
+//   B:  ≥6
+//   C:  ≥3
+//   D:  ≥2
+//   E:  ≥1
+//   F:  0
+// ---------------------------------------------------------------------------
 
-/**
- * Weighted score (max 10) for overall grade. COA=3, mfg clear=2, form resin=2, purity=2, ingredients list=1.
- * Exported for debugging / grade explanation.
- */
+export const overallRubric = {
+  score: {
+    coaPublic: 4,
+    coaRequestOnly: 1,
+    namedThirdPartyLab: 3,
+    formResin: 2,
+    manufacturingUSA: 2,
+    manufacturingOther: 1,
+    gmpCertified: 1,
+  },
+} as const;
+
+/** Compute the weighted overall grade score (max 14). Exported for debugging. */
 export function overallGradeScore(product: ProductForGrading): number {
   let score = 0;
-  if (product.coaStatus === "PUBLIC") score += 3;
-  else if (product.coaStatus === "REQUEST_ONLY") score += 2;
-  score += manufacturingPointsFromCountry(product.manufacturingCountryClaim);
-  // Only resin gets form points; other forms (capsule, powder, gummy, etc.) get 0
-  if (product.form === "RESIN") score += 2;
-  const highPurity = onlyShilajitIngredients(
-    product.ingredientsNormalized ?? [],
-    product.ingredientText ?? ""
-  );
-  if (highPurity) score += 2;
-  const hasNorm = (product.ingredientsNormalized ?? []).filter(Boolean).length > 0;
-  if (hasNorm) score += 1;
-  // Some ingredient disclosure (even without normalized list) avoids zero score
-  if ((product.ingredientText ?? "").trim().length > 0) score += 1;
-  return Math.min(10, score);
+
+  if (product.coaStatus === "PUBLIC") score += overallRubric.score.coaPublic;
+  else if (product.coaStatus === "REQUEST_ONLY") score += overallRubric.score.coaRequestOnly;
+
+  if (product.thirdPartyTestingLab?.trim()) score += overallRubric.score.namedThirdPartyLab;
+
+  if (product.form === "RESIN") score += overallRubric.score.formResin;
+
+  const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
+  if (mfgPoints === 2) score += overallRubric.score.manufacturingUSA;
+  else if (mfgPoints === 1) score += overallRubric.score.manufacturingOther;
+
+  if (product.gmpCertified) score += overallRubric.score.gmpCertified;
+
+  return score;
 }
 
-/**
- * Overall grade A+–F. Weighted: 7+ A/A+, 5–6 B, 4 C, 2–3 D, 1 E, 0 F. Purblack: A default; A+ if COA.
- */
+/** Compute the overall grade (A+ through F). */
 export function computeOverallGrade(product: ProductForGrading): OverallGrade {
-  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
-  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
-  const isResin = product.form === "RESIN";
-  const highPurity = onlyShilajitIngredients(
-    product.ingredientsNormalized ?? [],
-    product.ingredientText ?? ""
-  );
-  const hasProprietaryBlend = proprietaryBlendRegex.test(product.ingredientText ?? "");
-
-  if (isPurblack(product.brandSlug)) return hasCoa ? "A_PLUS" : "A";
-  if (hasProprietaryBlend && !hasCoa && !hasMfgCountry) return "F";
-
   const score = overallGradeScore(product);
-  // Bands: 7+ A/A+, 5–6 B, 4 C, 2–3 D, 1 E, 0 F (tuned so COA + one other signal can reach B)
-  if (score >= 7) return isResin && highPurity ? "A_PLUS" : "A";
-  if (score >= 5) return "B";
-  if (score >= 4) return "C";
+  if (score >= 12) return "A_PLUS";
+  if (score >= 9) return "A";
+  if (score >= 6) return "B";
+  if (score >= 3) return "C";
   if (score >= 2) return "D";
   if (score >= 1) return "E";
   return "F";
 }
-

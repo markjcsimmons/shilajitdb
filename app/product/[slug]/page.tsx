@@ -84,28 +84,17 @@ export default async function ProductPage({
   });
   if (!product) notFound();
 
-  const transparency = computeTransparencyGrade(
-    {
-      form: product.form,
-      ingredientText: product.ingredientText,
-      ingredientsNormalized: product.ingredientsNormalized,
-      manufacturingCountryClaim: product.manufacturingCountryClaim,
-      coaStatus: product.coaStatus,
-    },
-    { count: product.evidence.length }
-  );
-  const quality = computeQualityTier(
-    {
-      form: product.form,
-      ingredientText: product.ingredientText,
-      ingredientsNormalized: product.ingredientsNormalized,
-      manufacturingCountryClaim: product.manufacturingCountryClaim,
-      coaStatus: product.coaStatus,
-      brandSlug: product.brand.slug,
-      hasOfficialLabels: product.evidence.length >= 2 || !!product.sourceDsldLabelId,
-    },
-    transparency
-  );
+  const productForGrading = {
+    form: product.form,
+    coaStatus: product.coaStatus,
+    manufacturingCountryClaim: product.manufacturingCountryClaim,
+    thirdPartyTestingLab: product.thirdPartyTestingLab,
+    gmpCertified: product.gmpCertified,
+    hasPatentClaim: product.hasPatentClaim,
+    brandSlug: product.brand.slug,
+  };
+  const transparency = computeTransparencyGrade(productForGrading);
+  const quality = computeQualityTier(productForGrading);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -273,6 +262,24 @@ export default async function ProductPage({
                 {product.manufacturingCountryClaim ?? "—"}
               </dd>
             </div>
+            {product.sourceRegion ? (
+              <div className="flex items-start justify-between gap-6">
+                <dt className="text-slate-500">Source region</dt>
+                <dd className="text-right text-slate-900">{product.sourceRegion}</dd>
+              </div>
+            ) : null}
+            <div className="flex items-start justify-between gap-6">
+              <dt className="text-slate-500">GMP certified</dt>
+              <dd className="text-right text-slate-900">
+                {product.gmpCertified ? "Yes" : "No"}
+              </dd>
+            </div>
+            {product.hasPatentClaim ? (
+              <div className="flex items-start justify-between gap-6">
+                <dt className="text-slate-500">Patented process</dt>
+                <dd className="text-right text-slate-900">Yes</dd>
+              </div>
+            ) : null}
             <div className="flex items-start justify-between gap-6">
               <dt className="text-slate-500">Claim text</dt>
               <dd className="text-right text-slate-900 whitespace-pre-wrap">

@@ -1,39 +1,14 @@
 /**
- * Debug why a brand's products don't reach a given grade.
- * Usage: npx tsx scripts/debug-grade.ts "Cymbiotika"
+ * Debug why a brand's products reach a given grade.
+ * Usage: npx tsx scripts/debug-grade.ts "Pürblack"
  */
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { manufacturingPointsFromCountry, computeOverallGrade, overallGradeScore } from "@/lib/grading";
-
-function scoreBreakdown(product: {
-  form: string;
-  coaStatus: string;
-  manufacturingCountryClaim: string | null;
-  ingredientText: string | null;
-  ingredientsNormalized: string[] | null;
-}) {
-  const parts: string[] = [];
-  if (product.coaStatus === "PUBLIC") parts.push("COA public (+3)");
-  else if (product.coaStatus === "REQUEST_ONLY") parts.push("COA request (+2)");
-  else parts.push("COA none/unknown (+0)");
-  const mfgPts = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
-  if (mfgPts === 3) parts.push("mfg country USA (+3)");
-  else if (mfgPts === 1) parts.push("mfg country other (+1)");
-  else parts.push("mfg country not stated (+0)");
-  if (product.form === "RESIN") parts.push("form RESIN (+2)");
-  else if (product.form === "CAPSULE" || product.form === "POWDER") parts.push(`form ${product.form} (+1)`);
-  else parts.push(`form ${product.form} (+0)`);
-  const norm = (product.ingredientsNormalized ?? []).filter(Boolean);
-  const hasText = (product.ingredientText ?? "").trim().length > 0;
-  if (norm.length > 0) parts.push("ingredientsNorm (+1)");
-  if (hasText) parts.push("ingredientText (+1)");
-  return parts;
-}
+import { computeOverallGrade, computeQualityTier, computeTransparencyGrade, overallGradeScore } from "@/lib/grading";
 
 async function main() {
-  const brandName = process.argv[2] ?? "Cymbiotika";
+  const brandName = process.argv[2] ?? "Pürblack";
   const brand = await prisma.brand.findFirst({
     where: { name: { contains: brandName, mode: "insensitive" } },
     include: {
@@ -44,9 +19,13 @@ async function main() {
           form: true,
           coaStatus: true,
           manufacturingCountryClaim: true,
-          ingredientText: true,
-          ingredientsNormalized: true,
+          thirdPartyTestingLab: true,
+          gmpCertified: true,
+          hasPatentClaim: true,
+          sourceRegion: true,
           overallGrade: true,
+          qualityTier: true,
+          transparencyGrade: true,
           brand: { select: { slug: true } },
         },
       },
@@ -58,22 +37,31 @@ async function main() {
   }
   console.log(`\nBrand: ${brand.name} (slug: ${brand.slug})\nProducts: ${brand.products.length}\n`);
   for (const p of brand.products) {
-    const input = {
-      form: p.form as any,
-      ingredientText: p.ingredientText ?? "",
-      ingredientsNormalized: p.ingredientsNormalized ?? [],
+    const productForGrading = {
+      form: p.form,
+      coaStatus: p.coaStatus,
       manufacturingCountryClaim: p.manufacturingCountryClaim,
-      coaStatus: p.coaStatus as any,
+      thirdPartyTestingLab: p.thirdPartyTestingLab,
+      gmpCertified: p.gmpCertified,
+      hasPatentClaim: p.hasPatentClaim,
       brandSlug: p.brand.slug,
     };
-    const grade = computeOverallGrade(input);
-    const score = overallGradeScore(input);
-    const breakdown = scoreBreakdown(p);
+    const grade = computeOverallGrade(productForGrading);
+    const score = overallGradeScore(productForGrading);
+    const transparency = computeTransparencyGrade(productForGrading);
+    const quality = computeQualityTier(productForGrading);
+
     console.log(`  ${p.name}`);
-    console.log(`    form=${p.form} coaStatus=${p.coaStatus} manufacturingCountryClaim=${p.manufacturingCountryClaim ?? "—"}`);
-    console.log(`    ingredientsNormalized=[${(p.ingredientsNormalized ?? []).slice(0, 5).join(", ")}${(p.ingredientsNormalized ?? []).length > 5 ? "..." : ""}]`);
-    console.log(`    → ${breakdown.join(", ")}`);
-    console.log(`    → score=${score} (need 7 for A) → grade: ${grade} (stored: ${p.overallGrade ?? "null"})\n`);
+    console.log(`    form=${p.form} coaStatus=${p.coaStatus} mfgCountry=${p.manufacturingCountryClaim ?? "—"}`);
+    console.log(`    lab=${p.thirdPartyTestingLab ?? "—"} gmp=${p.gmpCertified} patent=${p.hasPatentClaim} region=${p.sourceRegion ?? "—"}`);
+    console.log(`    → Overall score=${score}/14 → grade: ${grade} (stored: ${p.overallGrade ?? "null"})`);
+    console.log(`    → Transparency score=${transparency.score} → ${transparency.grade}`);
+    console.log(`    → Quality tier: ${quality.tier}`);
+    console.log(`    Transparency reasons:`);
+    transparency.reasons.forEach((r) => console.log(`      • ${r}`));
+    console.log(`    Quality reasons:`);
+    quality.reasons.forEach((r) => console.log(`      • ${r}`));
+    console.log();
   }
 }
 

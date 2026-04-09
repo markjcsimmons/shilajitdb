@@ -1,5 +1,6 @@
 import type {
   CoaStatus,
+  OverallGrade,
   Prisma,
   ProductForm,
   QualityTier,
@@ -17,6 +18,8 @@ const ProductFormSchema = enumList([
   "GUMMY",
   "LIQUID",
   "BLEND",
+  "TABLETS",
+  "HONEY_STICKS",
   "OTHER",
 ]);
 
@@ -40,6 +43,7 @@ export type ProductFilters = {
   transparencyGrade?: TransparencyGrade;
   qualityTier?: QualityTier;
   ingredient?: string;
+  thirdPartyTested?: boolean;
   page: number;
   sort: "default";
 };
@@ -82,6 +86,7 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     transparencyGrade: parsed.data.transparencyGrade as TransparencyGrade | undefined,
     qualityTier: parsed.data.qualityTier as QualityTier | undefined,
     ingredient: parsed.data.ingredient,
+    thirdPartyTested: getFirst(searchParams.thirdPartyTested) === "true" ? true : undefined,
     page: parsed.data.page ?? 1,
     sort: "default",
   };
@@ -121,16 +126,17 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
     and.push({
       ingredientsNormalized: { has: filters.ingredient },
     });
+  if (filters.thirdPartyTested)
+    and.push({ thirdPartyTestingLab: { not: null } });
 
   return and.length ? { AND: and } : {};
 }
 
 export function buildDefaultOrderBy(): Prisma.ProductOrderByWithRelationInput[] {
-  // Verified first (dataCompleteness != LOW), then placeholders last; then grade/tier/name
+  // LOW completeness products last; then best overall grade first (A_PLUS = pos 1 in enum → "asc" = A+ first)
   return [
     { dataCompleteness: "desc" },
-    { transparencyGrade: "desc" },
-    { qualityTier: "desc" },
+    { overallGrade: "asc" },
     { name: "asc" },
   ];
 }
@@ -145,6 +151,7 @@ export function buildQueryString(next: Partial<ProductFilters>) {
     ["transparencyGrade", next.transparencyGrade],
     ["qualityTier", next.qualityTier],
     ["ingredient", next.ingredient],
+    ["thirdPartyTested", next.thirdPartyTested === true ? "true" : undefined],
     ["sort", next.sort && next.sort !== "default" ? next.sort : undefined],
     ["page", next.page && next.page > 1 ? next.page : undefined],
   ];
