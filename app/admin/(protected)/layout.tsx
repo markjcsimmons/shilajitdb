@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -15,25 +16,25 @@ export default async function AdminProtectedLayout({
     <div className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <nav className="flex flex-wrap items-center gap-2 text-sm">
-          <a href="/admin" className="text-slate-700 hover:text-slate-900">
+          <Link href="/admin" className="text-slate-700 hover:text-slate-900">
             Dashboard
-          </a>
+          </Link>
           <span className="text-slate-300">/</span>
-          <a href="/admin/populate" className="text-slate-700 hover:text-slate-900">
+          <Link href="/admin/populate" className="text-slate-700 hover:text-slate-900">
             Populate
-          </a>
+          </Link>
           <span className="text-slate-300">/</span>
-          <a href="/admin/brands" className="text-slate-700 hover:text-slate-900">
+          <Link href="/admin/brands" className="text-slate-700 hover:text-slate-900">
             Brands
-          </a>
+          </Link>
           <span className="text-slate-300">/</span>
-          <a href="/admin/products" className="text-slate-700 hover:text-slate-900">
+          <Link href="/admin/products" className="text-slate-700 hover:text-slate-900">
             Products
-          </a>
+          </Link>
           <span className="text-slate-300">/</span>
-          <a href="/admin/data" className="text-slate-700 hover:text-slate-900">
+          <Link href="/admin/data" className="text-slate-700 hover:text-slate-900">
             Data
-          </a>
+          </Link>
         </nav>
         <form action="/admin/logout" method="POST">
           <Button type="submit" variant="secondary">
