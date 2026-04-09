@@ -196,28 +196,13 @@ async function main() {
     if (!brandId) throw new Error(`Missing brandId for ${p.brandName}`);
 
     const slug = slugify(`${p.brandName} ${p.name}`);
-    const transparency = computeTransparencyGrade(
-      {
-        form: p.form,
-        ingredientText: p.ingredientText,
-        ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
-        coaStatus: p.coaStatus,
-      },
-      { count: p.evidence.length }
-    );
-    const quality = computeQualityTier(
-      {
-        form: p.form,
-        ingredientText: p.ingredientText,
-        ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
-        coaStatus: p.coaStatus,
-        brandSlug: slugify(p.brandName),
-        hasOfficialLabels: p.evidence.length >= 2,
-      },
-      transparency
-    );
+    const productForGrading = {
+      form: p.form,
+      coaStatus: p.coaStatus,
+      manufacturingCountryClaim: p.manufacturingCountryClaim ?? null,
+    };
+    const transparency = computeTransparencyGrade(productForGrading);
+    const quality = computeQualityTier(productForGrading);
 
     const product = await prisma.product.upsert({
       where: { slug },

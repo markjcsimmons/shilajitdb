@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Pagination } from "@/components/pagination";
 import { FilterBar, type FilterState } from "@/components/filter-bar";
 import { SearchBox } from "@/components/search-box";
@@ -115,9 +116,9 @@ export default async function HomePage({
             {products.length === 0 && (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600">
                 No products matched.{" "}
-                <a href="/" className="underline underline-offset-4 hover:text-slate-900">
+                <Link href="/" className="underline underline-offset-4 hover:text-slate-900">
                   Clear all filters
-                </a>
+                </Link>
               </div>
             )}
           </div>

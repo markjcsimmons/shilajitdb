@@ -19,6 +19,7 @@ export function MetaDescriptionField({
   const id = useId();
   const [value, setValue] = useState(defaultValue ?? "");
   const len = value.length;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _isEmpty = len === 0;
   const tooShort = len > 0 && len < MIN;
   const tooLong = len > MAX;

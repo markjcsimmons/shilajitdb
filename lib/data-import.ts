@@ -3,8 +3,6 @@ import type {
   CoaStatus,
   DataCompleteness,
   ProductForm,
-  QualityTier,
-  TransparencyGrade,
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
@@ -21,8 +19,6 @@ const VALID_FORM: ProductForm[] = [
   "OTHER",
 ];
 const VALID_COA: CoaStatus[] = ["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"];
-const _VALID_GRADE: TransparencyGrade[] = ["F", "D", "C", "B", "A"];
-const _VALID_TIER: QualityTier[] = ["POOR", "AVERAGE", "PREMIUM", "ULTRA_PREMIUM"];
 const VALID_COMPLETENESS: DataCompleteness[] = ["LOW", "MEDIUM", "HIGH"];
 
 function coerce<T>(value: string, valid: readonly T[]): T {
@@ -236,35 +232,20 @@ export async function importDataFromCsv(
   });
 
   const allProducts = await prisma.product.findMany({
-    include: {
-      evidence: { select: { id: true } },
-      brand: { select: { slug: true } },
-    },
+    include: { brand: { select: { slug: true } } },
   });
 
   for (const p of allProducts) {
-    const t = computeTransparencyGrade(
-      {
-        form: p.form,
-        ingredientText: p.ingredientText,
-        ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingCountryClaim: p.manufacturingCountryClaim,
-        coaStatus: p.coaStatus,
-      },
-      { count: p.evidence.length }
-    );
-    const q = computeQualityTier(
-      {
-        form: p.form,
-        ingredientText: p.ingredientText,
-        ingredientsNormalized: p.ingredientsNormalized,
-        manufacturingCountryClaim: p.manufacturingCountryClaim,
-        coaStatus: p.coaStatus,
-        brandSlug: p.brand.slug,
-        hasOfficialLabels: p.evidence.length >= 2 || !!p.sourceDsldLabelId,
-      },
-      t
-    );
+    const productForGrading = {
+      form: p.form,
+      coaStatus: p.coaStatus,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
+      thirdPartyTestingLab: p.thirdPartyTestingLab,
+      gmpCertified: p.gmpCertified,
+      brandSlug: p.brand.slug,
+    };
+    const t = computeTransparencyGrade(productForGrading);
+    const q = computeQualityTier(productForGrading);
     await prisma.product.update({
       where: { id: p.id },
       data: { transparencyGrade: t.grade, qualityTier: q.tier },

@@ -1,6 +1,5 @@
 import type {
   CoaStatus,
-  OverallGrade,
   Prisma,
   ProductForm,
   QualityTier,
