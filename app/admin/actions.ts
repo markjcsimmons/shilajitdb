@@ -3,9 +3,6 @@
 import { prisma } from "@/lib/db";
 import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
-import { cancelIngestionRun } from "@/lib/ingestion/cancelIngestionRun";
-import { isPidAlive } from "@/lib/ingestion/pid";
-import { cancelJobRun } from "@/lib/jobs/cancelJobRun";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
 import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
@@ -128,6 +125,12 @@ export async function adminUpsertProduct(formData: FormData) {
     mpn: formData.get("mpn"),
     brandSku: formData.get("brandSku"),
     netQuantityText: formData.get("netQuantityText"),
+    servingSize: formData.get("servingSize"),
+    sourceRegion: formData.get("sourceRegion"),
+    heavyMetalsTested: formData.get("heavyMetalsTested"),
+    gmpCertified: formData.get("gmpCertified") ?? undefined,
+    marketingClaim: formData.get("marketingClaim"),
+    amazonAsin: formData.get("amazonAsin"),
     servingsCount: formData.get("servingsCount"),
     capsuleCount: formData.get("capsuleCount"),
     flavor: formData.get("flavor"),
@@ -142,6 +145,8 @@ export async function adminUpsertProduct(formData: FormData) {
     hasPatentClaim: formData.get("hasPatentClaim"),
     officialCanonicalUrl: formData.get("officialCanonicalUrl"),
     lastVerifiedAt: formData.get("lastVerifiedAt"),
+    hideFromPublic: formData.get("hideFromPublic") ?? undefined,
+    bbbGrade: formData.get("bbbGrade"),
     metaDescription: formData.get("metaDescription"),
   });
   if (!parsed.success) {
@@ -151,7 +156,6 @@ export async function adminUpsertProduct(formData: FormData) {
     redirect(`/admin/products${id ? `/${id}` : "/new"}?${q.toString()}`);
   }
 
-  // When editing a product, brand name is editable; persist to brand database
   const brandNameRaw = String(formData.get("brandName") ?? "").trim();
   if (brandNameRaw.length >= 2 && brandNameRaw.length <= 120) {
     const brand = await prisma.brand.findUnique({
@@ -178,9 +182,7 @@ export async function adminUpsertProduct(formData: FormData) {
     }
   }
 
-  let slug = parsed.data.slug?.trim()
-    ? parsed.data.slug.trim()
-    : slugify(parsed.data.name);
+  let slug = parsed.data.slug?.trim() ? parsed.data.slug.trim() : slugify(parsed.data.name);
 
   let currentSlug: string | null = null;
   let currentOfficialUrl: string | null = null;
@@ -192,11 +194,10 @@ export async function adminUpsertProduct(formData: FormData) {
     if (current) {
       currentSlug = current.slug;
       currentOfficialUrl = current.officialCanonicalUrl;
-      if (!parsed.data.slug?.trim()) slug = current.slug; // keep existing when form slug empty
+      if (!parsed.data.slug?.trim()) slug = current.slug;
     }
   }
 
-  // Slug must be unique. On update, skip check when slug is unchanged so we don't fail on "re-save"
   const slugChanged = !id || slug !== currentSlug;
   if (slugChanged) {
     const existingWithSlug = await prisma.product.findFirst({
@@ -206,7 +207,6 @@ export async function adminUpsertProduct(formData: FormData) {
     if (existingWithSlug) redirect(`/admin/products${id ? `/${id}` : "/new"}?error=unique`);
   }
 
-  // Official URL must be unique when set. Skip check when unchanged on update.
   const officialUrlChanged = officialCanonicalUrl !== currentOfficialUrl;
   if (officialCanonicalUrl && officialUrlChanged) {
     const existingWithUrl = await prisma.product.findFirst({
@@ -227,6 +227,12 @@ export async function adminUpsertProduct(formData: FormData) {
     mpn: parsed.data.mpn?.trim() || null,
     brandSku: parsed.data.brandSku?.trim() || null,
     netQuantityText: parsed.data.netQuantityText?.trim() || null,
+    servingSize: parsed.data.servingSize?.trim() || null,
+    sourceRegion: parsed.data.sourceRegion?.trim() || null,
+    heavyMetalsTested: parsed.data.heavyMetalsTested?.trim() || null,
+    gmpCertified: parsed.data.gmpCertified === "on",
+    marketingClaim: parsed.data.marketingClaim?.trim() || null,
+    amazonAsin: parsed.data.amazonAsin?.trim() || null,
     servingsCount: parsed.data.servingsCount ?? null,
     capsuleCount: parsed.data.capsuleCount ?? null,
     flavor: parsed.data.flavor?.trim() || null,
@@ -242,22 +248,16 @@ export async function adminUpsertProduct(formData: FormData) {
     officialCanonicalUrl,
     officialDomain,
     lastVerifiedAt: toDateOrNull(parsed.data.lastVerifiedAt ?? ""),
+    isCanonical: parsed.data.hideFromPublic !== "on",
+    bbbGrade: parsed.data.bbbGrade?.trim() || null,
     metaDescription: parsed.data.metaDescription?.trim() || null,
   } as const;
 
   try {
     const product = id
-      ? await prisma.product.update({
-          where: { id },
-          data: baseData,
-          select: { id: true },
-        })
+      ? await prisma.product.update({ where: { id }, data: baseData, select: { id: true } })
       : await prisma.product.create({
-          data: {
-            ...baseData,
-            transparencyGrade: "F",
-            qualityTier: "POOR",
-          },
+          data: { ...baseData, isCanonical: true, transparencyGrade: "F", qualityTier: "POOR" },
           select: { id: true },
         });
 
@@ -347,12 +347,8 @@ export async function adminSetOfficialCanonicalUrl(formData: FormData) {
   const officialCanonicalUrl = canonicalizeUrl(listing.url);
   const officialDomain = extractDomain(listing.url);
 
-  // Ensure canonical URL is only assigned to ONE product: if another product already has it, do not overwrite.
   const existing = await prisma.product.findFirst({
-    where: {
-      officialCanonicalUrl,
-      id: { not: productId },
-    },
+    where: { officialCanonicalUrl, id: { not: productId } },
     select: { id: true, name: true, slug: true },
   });
   if (existing) {
@@ -369,92 +365,6 @@ export async function adminSetOfficialCanonicalUrl(formData: FormData) {
   redirect(`/admin/products/${productId}?saved=1#listings`);
 }
 
-/** Cancel a running ingestion or job run. Form fields: runId, kind (ingestion | job_run), next (redirect path). */
-export async function cancelRunAction(formData: FormData) {
-  await requireAdmin();
-  const runId = String(formData.get("runId") ?? "").trim();
-  const kind = String(formData.get("kind") ?? "").trim();
-  const nextUrl = String(formData.get("next") ?? "").trim();
-  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
-
-  if (!runId) redirect(`${redirectTo}?error=cancel_no_run_id`);
-  if (kind !== "ingestion" && kind !== "job_run") redirect(`${redirectTo}?error=cancel_invalid_kind`);
-
-  try {
-    if (kind === "ingestion") {
-      await cancelIngestionRun(runId);
-      redirect(`${redirectTo}?ran=canceled_ingestion`);
-    }
-    await cancelJobRun(runId);
-    redirect(`${redirectTo}?ran=canceled_job`);
-  } catch (e) {
-    // Next.js redirect() throws; don't treat it as a failure
-    const err = e as { digest?: string };
-    if (typeof err?.digest === "string" && err.digest.includes("NEXT_REDIRECT")) throw e;
-    const msg = e instanceof Error ? e.message : String(e);
-    redirect(`${redirectTo}?error=${encodeURIComponent(`cancel_failed: ${msg}`)}`);
-  }
-}
-
-/** Mark all stale RUNNING runs (process dead or no pid and >10 min) as FAILED. Form field: next (redirect path). */
-export async function clearStaleRunsAction(formData: FormData) {
-  await requireAdmin();
-  const nextUrl = String(formData.get("next") ?? "").trim();
-  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
-
-  const STALE_MS = 10 * 60 * 1000;
-  let cleared = 0;
-
-  const jobRuns = await prisma.jobRun.findMany({
-    where: { status: "RUNNING" },
-    select: { id: true, pid: true, startedAt: true },
-  });
-  for (const r of jobRuns) {
-    const ageMs = Date.now() - new Date(r.startedAt).getTime();
-    const stale =
-      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
-    if (stale) {
-      await prisma.jobRun.updateMany({
-        where: { id: r.id, status: "RUNNING" },
-        data: {
-          status: "FAILED",
-          finishedAt: new Date(),
-          errorText: r.pid == null
-            ? "Marked failed (stale run: no process id after 10+ min)."
-            : `Marked failed (stale run: process ${r.pid} no longer running).`,
-        },
-      });
-      cleared++;
-    }
-  }
-
-  const ingestionRuns = await prisma.ingestionRun.findMany({
-    where: { status: "RUNNING" },
-    select: { id: true, pid: true, startedAt: true },
-  });
-  for (const r of ingestionRuns) {
-    const ageMs = Date.now() - new Date(r.startedAt).getTime();
-    const stale =
-      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
-    if (stale) {
-      await prisma.ingestionRun.updateMany({
-        where: { id: r.id, status: "RUNNING" },
-        data: {
-          status: "FAILED",
-          finishedAt: new Date(),
-          errorText: r.pid == null
-            ? "Marked failed (stale run: no process id after 10+ min)."
-            : `Marked failed (stale run: process ${r.pid} no longer running).`,
-        },
-      });
-      cleared++;
-    }
-  }
-
-  redirect(`${redirectTo}?ran=stale_cleared&count=${cleared}`);
-}
-
-/** Remove brands that have zero products (keeps DB shilajit-only). Form field: next (redirect path). */
 export async function removeBrandsWithNoProductsAction(formData: FormData) {
   await requireAdmin();
   const nextUrl = String(formData.get("next") ?? "").trim();
@@ -467,16 +377,20 @@ export async function removeBrandsWithNoProductsAction(formData: FormData) {
   redirect(`${redirectTo}?ran=brands_cleaned&removed=${count}`);
 }
 
-/** Import CSV (BRAND, BRAND URL, PRODUCT 1, PRODUCT 2, …). Form field: file (File). */
+export async function clearStaleRunsAction(_formData: FormData) {
+  await requireAdmin();
+  redirect("/admin/populate?ran=stale_cleared&count=0");
+}
+
 export async function importCsvAction(formData: FormData) {
   await requireAdmin();
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     redirect("/admin/populate?error=No+CSV+file+provided");
   }
-  const { importBrandProductCsv } = await import("@/lib/importBrandProductCsv");
+  const { importManualCsv } = await import("@/lib/importManualCsv");
   const buf = Buffer.from(await file.arrayBuffer());
-  const result = await importBrandProductCsv(buf);
+  const result = await importManualCsv(buf);
   if (result.errors.length > 0) {
     redirect(`/admin/populate?error=${encodeURIComponent(result.errors.slice(0, 3).join("; "))}`);
   }
@@ -490,4 +404,3 @@ export async function importCsvAction(formData: FormData) {
     .join(", ");
   redirect(`/admin/populate?ran=import&imported=${encodeURIComponent(msg || "Done")}`);
 }
-
