@@ -1,0 +1,3 @@
+-- AlterEnum
+ALTER TYPE "ProductForm" ADD VALUE 'TABLETS';
+ALTER TYPE "ProductForm" ADD VALUE 'HONEY_STICKS';

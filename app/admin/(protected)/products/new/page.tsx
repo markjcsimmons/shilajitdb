@@ -43,9 +43,11 @@ export default async function AdminProductNewPage({
             <Select name="form" required defaultValue="RESIN">
               {[
                 { value: "RESIN", label: "Resin" },
-                { value: "POWDER", label: "Powder" },
                 { value: "CAPSULE", label: "Capsules" },
+                { value: "POWDER", label: "Powder" },
+                { value: "TABLETS", label: "Tablets" },
                 { value: "GUMMY", label: "Gummies" },
+                { value: "HONEY_STICKS", label: "Honey Sticks" },
                 { value: "LIQUID", label: "Liquid" },
                 { value: "BLEND", label: "Blend" },
                 { value: "OTHER", label: "Other" },

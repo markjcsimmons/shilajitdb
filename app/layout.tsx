@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Inter } from "next/font/google";
+import { prisma } from "@/lib/db";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 // Force Node.js runtime for all routes — Prisma native engine requires it.
 export const runtime = "nodejs";
@@ -28,12 +32,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const productCount = await prisma.product.count({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
+  });
+
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body>
         <div className="min-h-dvh">
-          <header className="border-b border-slate-200">
+          <header className="border-b border-slate-200 bg-white">
             <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
               <div className="min-w-0">
                 <Link
@@ -42,8 +50,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 >
                   Shilajit Transparency Database
                 </Link>
-                <p className="mt-1 hidden text-sm text-slate-600 sm:block">
-                  Fact-based product transparency &amp; quality signals
+                <p className="mt-0.5 hidden text-sm text-slate-500 sm:block">
+                  {productCount} products independently graded on quality, testing, and transparency.
                 </p>
               </div>
               <nav className="flex items-center gap-3 text-sm text-slate-700">
@@ -56,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
           <footer className="border-t border-slate-200">
             <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-600">
               <p>

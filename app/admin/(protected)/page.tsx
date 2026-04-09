@@ -29,7 +29,7 @@ export default async function AdminDashboardPage({
         <div className="text-sm font-medium uppercase tracking-wide text-slate-300">Get data in</div>
         <div className="mt-2 text-xl font-semibold">Populate database</div>
         <p className="mt-2 text-sm text-slate-300">
-          Upload a CSV (BRAND, BRAND URL, PRODUCT 1, PRODUCT 2…) then run CRAWL to pull details from each product page. Or add entries manually and CRAWL.
+          Upload the product data entry CSV to create brands, products, and listings — or add entries manually via the admin forms.
         </p>
         <div className="mt-4">
           <Button href="/admin/populate" className="bg-white text-slate-900 hover:bg-slate-100">

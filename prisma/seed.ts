@@ -271,7 +271,6 @@ async function main() {
 
 main()
   .then(async () => {
-    await seedDefaultJobs();
     await prisma.$disconnect();
   })
   .catch(async (e) => {
@@ -279,23 +278,4 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
-async function seedDefaultJobs() {
-  const defaults: Array<{ type: "ENRICH_OFFICIAL" | "LINK_HEALTH" | "DISCOVERY_ROBOTS_ALLOWED" | "DISCOVER_OFFICIAL_FROM_DSLD_IMAGES" | "DISCOVER_OFFICIAL_FROM_SITEMAPS" | "URL_CSV_EXTRACT"; name: string; schedule: string | null }> = [
-    { type: "ENRICH_OFFICIAL", name: "Enrich official pages", schedule: "0 3 * * *" },
-    { type: "LINK_HEALTH", name: "Check link health", schedule: "0 6 * * 1" },
-    { type: "DISCOVERY_ROBOTS_ALLOWED", name: "Discover robots-allowed sources", schedule: "0 2 * * *" },
-    { type: "DISCOVER_OFFICIAL_FROM_DSLD_IMAGES", name: "Discover official domains (DSLD label OCR)", schedule: "0 1 * * 0" },
-    { type: "DISCOVER_OFFICIAL_FROM_SITEMAPS", name: "Harvest product URLs from sitemaps", schedule: "0 4 * * 0" },
-    { type: "URL_CSV_EXTRACT", name: "URL CSV extract", schedule: null },
-  ];
-  for (const d of defaults) {
-    await prisma.job.upsert({
-      where: { type: d.type },
-      update: { name: d.name, schedule: d.schedule },
-      create: { type: d.type, name: d.name, schedule: d.schedule, isEnabled: true },
-      select: { id: true },
-    });
-  }
-}
 

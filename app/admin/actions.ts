@@ -3,9 +3,6 @@
 import { prisma } from "@/lib/db";
 import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
-import { cancelIngestionRun } from "@/lib/ingestion/cancelIngestionRun";
-import { isPidAlive } from "@/lib/ingestion/pid";
-import { cancelJobRun } from "@/lib/jobs/cancelJobRun";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
 import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
@@ -65,49 +62,34 @@ export async function adminDeleteBrand(formData: FormData) {
 async function recomputeAndSaveProductGrades(productId: string) {
   const p = await prisma.product.findUnique({
     where: { id: productId },
-    include: {
-      evidence: { select: { id: true } },
+    select: {
+      form: true,
+      coaStatus: true,
+      manufacturingCountryClaim: true,
+      thirdPartyTestingLab: true,
+      gmpCertified: true,
+      hasPatentClaim: true,
       brand: { select: { slug: true } },
     },
   });
   if (!p) return;
-  const transparency = computeTransparencyGrade(
-    {
-      form: p.form,
-      ingredientText: p.ingredientText,
-      ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      coaStatus: p.coaStatus,
-    },
-    { count: p.evidence.length }
-  );
-  const hasCoa = p.coaStatus === "PUBLIC" || p.coaStatus === "REQUEST_ONLY";
-  const hasOfficialLabels =
-    p.evidence.length >= 2 ||
-    !!p.sourceDsldLabelId ||
-    (p.evidence.length >= 1 && hasCoa);
-  const quality = computeQualityTier(
-    {
-      form: p.form,
-      ingredientText: p.ingredientText,
-      ingredientsNormalized: p.ingredientsNormalized,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      coaStatus: p.coaStatus,
-      brandSlug: p.brand.slug,
-      hasOfficialLabels,
-    },
-    transparency
-  );
-  const overallGrade = computeOverallGrade({
+
+  const productForGrading = {
     form: p.form,
-    ingredientText: p.ingredientText,
-    ingredientsNormalized: p.ingredientsNormalized ?? [],
-    manufacturingCountryClaim: p.manufacturingCountryClaim,
     coaStatus: p.coaStatus,
+    manufacturingCountryClaim: p.manufacturingCountryClaim,
+    thirdPartyTestingLab: p.thirdPartyTestingLab,
+    gmpCertified: p.gmpCertified,
+    hasPatentClaim: p.hasPatentClaim,
     brandSlug: p.brand.slug,
-  });
+  };
+
+  const transparency = computeTransparencyGrade(productForGrading);
+  const quality = computeQualityTier(productForGrading);
+  const overallGrade = computeOverallGrade(productForGrading);
+
   await prisma.product.update({
-    where: { id: p.id },
+    where: { id: productId },
     data: {
       transparencyGrade: transparency.grade,
       qualityTier: quality.tier,
@@ -369,90 +351,6 @@ export async function adminSetOfficialCanonicalUrl(formData: FormData) {
   redirect(`/admin/products/${productId}?saved=1#listings`);
 }
 
-/** Cancel a running ingestion or job run. Form fields: runId, kind (ingestion | job_run), next (redirect path). */
-export async function cancelRunAction(formData: FormData) {
-  await requireAdmin();
-  const runId = String(formData.get("runId") ?? "").trim();
-  const kind = String(formData.get("kind") ?? "").trim();
-  const nextUrl = String(formData.get("next") ?? "").trim();
-  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
-
-  if (!runId) redirect(`${redirectTo}?error=cancel_no_run_id`);
-  if (kind !== "ingestion" && kind !== "job_run") redirect(`${redirectTo}?error=cancel_invalid_kind`);
-
-  try {
-    if (kind === "ingestion") {
-      await cancelIngestionRun(runId);
-      redirect(`${redirectTo}?ran=canceled_ingestion`);
-    }
-    await cancelJobRun(runId);
-    redirect(`${redirectTo}?ran=canceled_job`);
-  } catch (e) {
-    // Next.js redirect() throws; don't treat it as a failure
-    const err = e as { digest?: string };
-    if (typeof err?.digest === "string" && err.digest.includes("NEXT_REDIRECT")) throw e;
-    const msg = e instanceof Error ? e.message : String(e);
-    redirect(`${redirectTo}?error=${encodeURIComponent(`cancel_failed: ${msg}`)}`);
-  }
-}
-
-/** Mark all stale RUNNING runs (process dead or no pid and >10 min) as FAILED. Form field: next (redirect path). */
-export async function clearStaleRunsAction(formData: FormData) {
-  await requireAdmin();
-  const nextUrl = String(formData.get("next") ?? "").trim();
-  const redirectTo = nextUrl && nextUrl.startsWith("/admin") ? nextUrl : "/admin/populate";
-
-  const STALE_MS = 10 * 60 * 1000;
-  let cleared = 0;
-
-  const jobRuns = await prisma.jobRun.findMany({
-    where: { status: "RUNNING" },
-    select: { id: true, pid: true, startedAt: true },
-  });
-  for (const r of jobRuns) {
-    const ageMs = Date.now() - new Date(r.startedAt).getTime();
-    const stale =
-      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
-    if (stale) {
-      await prisma.jobRun.updateMany({
-        where: { id: r.id, status: "RUNNING" },
-        data: {
-          status: "FAILED",
-          finishedAt: new Date(),
-          errorText: r.pid == null
-            ? "Marked failed (stale run: no process id after 10+ min)."
-            : `Marked failed (stale run: process ${r.pid} no longer running).`,
-        },
-      });
-      cleared++;
-    }
-  }
-
-  const ingestionRuns = await prisma.ingestionRun.findMany({
-    where: { status: "RUNNING" },
-    select: { id: true, pid: true, startedAt: true },
-  });
-  for (const r of ingestionRuns) {
-    const ageMs = Date.now() - new Date(r.startedAt).getTime();
-    const stale =
-      (typeof r.pid === "number" && !isPidAlive(r.pid)) || (r.pid == null && ageMs > STALE_MS);
-    if (stale) {
-      await prisma.ingestionRun.updateMany({
-        where: { id: r.id, status: "RUNNING" },
-        data: {
-          status: "FAILED",
-          finishedAt: new Date(),
-          errorText: r.pid == null
-            ? "Marked failed (stale run: no process id after 10+ min)."
-            : `Marked failed (stale run: process ${r.pid} no longer running).`,
-        },
-      });
-      cleared++;
-    }
-  }
-
-  redirect(`${redirectTo}?ran=stale_cleared&count=${cleared}`);
-}
 
 /** Remove brands that have zero products (keeps DB shilajit-only). Form field: next (redirect path). */
 export async function removeBrandsWithNoProductsAction(formData: FormData) {
@@ -467,27 +365,4 @@ export async function removeBrandsWithNoProductsAction(formData: FormData) {
   redirect(`${redirectTo}?ran=brands_cleaned&removed=${count}`);
 }
 
-/** Import CSV (BRAND, BRAND URL, PRODUCT 1, PRODUCT 2, …). Form field: file (File). */
-export async function importCsvAction(formData: FormData) {
-  await requireAdmin();
-  const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) {
-    redirect("/admin/populate?error=No+CSV+file+provided");
-  }
-  const { importBrandProductCsv } = await import("@/lib/importBrandProductCsv");
-  const buf = Buffer.from(await file.arrayBuffer());
-  const result = await importBrandProductCsv(buf);
-  if (result.errors.length > 0) {
-    redirect(`/admin/populate?error=${encodeURIComponent(result.errors.slice(0, 3).join("; "))}`);
-  }
-  const msg = [
-    result.brandsCreated && `${result.brandsCreated} brands created`,
-    result.brandsUpdated && `${result.brandsUpdated} brands updated`,
-    result.productsCreated && `${result.productsCreated} products created`,
-    result.productsSkipped && `${result.productsSkipped} products skipped (already exist)`,
-  ]
-    .filter(Boolean)
-    .join(", ");
-  redirect(`/admin/populate?ran=import&imported=${encodeURIComponent(msg || "Done")}`);
-}
 

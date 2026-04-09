@@ -15,6 +15,8 @@ enum ProductForm {
   GUMMY
   LIQUID
   BLEND
+  TABLETS
+  HONEY_STICKS
   OTHER
 }
 
@@ -64,30 +66,6 @@ enum DataCompleteness {
   HIGH
 }
 
-enum IngestionRunType {
-  DSLD
-  BRAND_CRAWL
-  DISCOVERY
-  REFRESH
-}
-
-enum IngestionRunStatus {
-  RUNNING
-  SUCCESS
-  FAILED
-  CANCELED
-}
-
-enum CompanyRole {
-  UNKNOWN
-  MANUFACTURER
-  DISTRIBUTOR
-  MARKETER
-  PACKAGER
-  RESELLER
-  OTHER
-}
-
 enum ListingSource {
   OFFICIAL
   AMAZON
@@ -104,65 +82,58 @@ enum ListingStatus {
   UNKNOWN
 }
 
-enum MergeCandidateStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 model Brand {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
-  website     String?
+  id            String    @id @default(cuid())
+  name          String    @unique
+  slug          String    @unique
+  website       String?
   websiteDomain String?
-  description String?   @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[]
-  aliases     BrandAlias[]
-  companies   BrandCompany[]
+  description   String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  products      Product[]
 }
 
 model Product {
-  id                        String                @id @default(cuid())
+  id                        String            @id @default(cuid())
   brandId                   String
-  brand                     Brand                 @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brand                     Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade)
   name                      String
-  slug                      String                @unique
+  slug                      String            @unique
   form                      ProductForm
-  gtin                      String?               @unique
+  gtin                      String?           @unique
   mpn                       String?
   brandSku                  String?
   netQuantityText           String?
   servingsCount             Int?
   capsuleCount              Int?
   flavor                    String?
-  ingredientText            String                @db.Text
-  ingredientsNormalized     String[]              @default([]) @db.Text
+  ingredientText            String            @db.Text
+  ingredientsNormalized     String[]          @default([]) @db.Text
   manufacturingCountryClaim String?
-  manufacturingClaimText    String?               @db.Text
+  manufacturingClaimText    String?           @db.Text
   manufacturingEvidenceUrl  String?
   coaStatus                 CoaStatus
   coaUrl                    String?
-  thirdPartyTestingLab      String?               @db.Text
-  hasPatentClaim            Boolean               @default(false)
+  thirdPartyTestingLab      String?           @db.Text
+  hasPatentClaim            Boolean           @default(false)
+  gmpCertified              Boolean           @default(false)
+  sourceRegion              String?
   transparencyGrade         TransparencyGrade
   qualityTier               QualityTier
   overallGrade              OverallGrade?
-  sourceDsldLabelId         String?               @unique
+  sourceDsldLabelId         String?           @unique
   sourceDsldUrl             String?
-  dataCompleteness          DataCompleteness      @default(LOW)
-  isCanonical               Boolean               @default(true)
+  dataCompleteness          DataCompleteness  @default(LOW)
+  isCanonical               Boolean           @default(true)
   lastVerifiedAt            DateTime?
-  createdAt                 DateTime              @default(now())
-  updatedAt                 DateTime              @updatedAt
-  officialCanonicalUrl      String?               @unique
+  createdAt                 DateTime          @default(now())
+  updatedAt                 DateTime          @updatedAt
+  officialCanonicalUrl      String?           @unique
   officialDomain            String?
-  metaDescription           String?               @db.VarChar(160)
+  metaDescription           String?           @db.VarChar(160)
   evidence                  Evidence[]
   listings                  Listing[]
-  mergeCandidates           MergeCandidate[]      @relation("CandidateProduct")
 
   @@index([brandId])
   @@index([isCanonical])
@@ -173,175 +144,41 @@ model Product {
 }
 
 model Listing {
-  id            String        @id @default(cuid())
-
-  productId     String
-  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  source        ListingSource
-
-  url           String        @unique
-
-  title         String?
-
-  seller        String?
-
-  priceCents    Int?
-
-  currency      String?
-
-  inStock       Boolean?
-
-  shipsToUS     Boolean?
-
-  observedGtin  String?
-
-  observedSku   String?
-
-  imageUrls     String[]      @default([]) @db.Text
-
-  status        ListingStatus @default(UNKNOWN)
-
-  lastSeenAt    DateTime?
-
-  createdAt     DateTime      @default(now())
-
-  updatedAt     DateTime      @updatedAt
-
-  mergeCandidates MergeCandidate[]
+  id           String        @id @default(cuid())
+  productId    String
+  product      Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  source       ListingSource
+  url          String        @unique
+  title        String?
+  seller       String?
+  priceCents   Int?
+  currency     String?
+  inStock      Boolean?
+  shipsToUS    Boolean?
+  observedGtin String?
+  observedSku  String?
+  imageUrls    String[]      @default([]) @db.Text
+  status       ListingStatus @default(UNKNOWN)
+  lastSeenAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@index([productId])
-
   @@index([source])
-
   @@index([observedGtin])
 }
 
-model MergeCandidate {
-  id                 String               @id @default(cuid())
-  listingId           String
-  listing             Listing              @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  candidateProductId  String
-  candidateProduct    Product              @relation("CandidateProduct", fields: [candidateProductId], references: [id], onDelete: Cascade)
-
-  confidence          Float
-  reasons             String[]             @default([]) @db.Text
-  status              MergeCandidateStatus @default(PENDING)
-
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-
-  @@index([listingId])
-  @@index([candidateProductId])
-  @@index([status])
-  @@unique([listingId, candidateProductId])
-}
-
 model Evidence {
-  id        String       @id @default(cuid())
-  productId String
-  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  type      EvidenceType
-  url       String
+  id         String       @id @default(cuid())
+  productId  String
+  product    Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type       EvidenceType
+  url        String
   sourceName String?
-  quote     String?      @db.Text
-  fetchedAt DateTime     @default(now())
-  hash      String?
-  createdAt DateTime     @default(now())
+  quote      String?      @db.Text
+  fetchedAt  DateTime     @default(now())
+  hash       String?
+  createdAt  DateTime     @default(now())
 
   @@index([productId])
 }
-
-model BrandAlias {
-  id        String   @id @default(cuid())
-  brandId   String
-  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  alias     String
-  source    String?
-  createdAt DateTime @default(now())
-
-  @@unique([brandId, alias])
-  @@index([alias])
-}
-
-model CompanyEntity {
-  id             String   @id @default(cuid())
-  name           String
-  normalizedName String   @unique
-  website        String?
-  websiteDomain  String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  brands         BrandCompany[]
-}
-
-model BrandCompany {
-  id            String       @id @default(cuid())
-  brandId       String
-  brand         Brand         @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  companyId     String
-  company       CompanyEntity @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  role          CompanyRole   @default(UNKNOWN)
-  sourceDsldId  String?
-  createdAt     DateTime      @default(now())
-
-  @@unique([brandId, companyId, role])
-  @@index([companyId])
-}
-
-model IngestionRun {
-  id        String             @id @default(cuid())
-  type      IngestionRunType
-  startedAt DateTime           @default(now())
-  finishedAt DateTime?
-  status    IngestionRunStatus @default(RUNNING)
-  statsJson Json?
-  errorText String?            @db.Text
-  pid       Int?
-}
-
-enum JobType {
-  ENRICH_OFFICIAL
-  LINK_HEALTH
-  DISCOVERY_ROBOTS_ALLOWED
-  DISCOVER_OFFICIAL_FROM_DSLD_IMAGES
-  DISCOVER_OFFICIAL_FROM_SITEMAPS
-  URL_CSV_EXTRACT
-}
-
-enum JobStatus {
-  QUEUED
-  RUNNING
-  SUCCESS
-  FAILED
-  CANCELED
-}
-
-model Job {
-  id        String   @id @default(cuid())
-  type      JobType  @unique
-  name      String
-  isEnabled Boolean  @default(true)
-  schedule  String?  // cron string e.g. "0 3 * * *" (UTC), display only
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  runs      JobRun[]
-}
-
-model JobRun {
-  id         String    @id @default(cuid())
-  jobId      String
-  job        Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  status     JobStatus @default(QUEUED)
-  startedAt  DateTime  @default(now())
-  finishedAt DateTime?
-  statsJson  Json?
-  errorText  String?   @db.Text
-  pid        Int?
-  createdAt  DateTime  @default(now())
-
-  @@index([jobId])
-  @@index([status])
-  @@index([startedAt])
-}
-
