@@ -23,7 +23,7 @@ export default function RootError({
     <div className="rounded-2xl border-2 border-rose-200 bg-rose-50 p-6">
       <h1 className="text-lg font-semibold text-rose-900">Something went wrong</h1>
       <p className="mt-2 text-sm text-rose-800">{msg}</p>
-      {isDb && (
+      {isDb ? (
         <div className="mt-4 rounded-xl border border-rose-200 bg-white/60 p-4 text-sm text-rose-900">
           <p className="font-medium">DB / Prisma engine issue. Try:</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
@@ -38,7 +38,7 @@ export default function RootError({
             </li>
           </ul>
         </div>
-      )}
+      ) : null}
       <div className="mt-6 flex flex-wrap gap-3">
         <button
           type="button"
