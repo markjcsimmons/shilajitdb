@@ -9,6 +9,8 @@ export function labelForm(v: ProductForm) {
 }
 
 export function labelCoaStatus(v: CoaStatus) {
+  if (v === "PUBLIC_EMBEDDED") return "Public (page-embedded)";
+  if (v === "REQUEST_ONLY") return "On request";
   return labelEnum(v);
 }
 

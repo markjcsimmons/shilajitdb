@@ -22,6 +22,7 @@ enum ProductForm {
 
 enum CoaStatus {
   PUBLIC
+  PUBLIC_EMBEDDED
   REQUEST_ONLY
   NONE
   UNKNOWN

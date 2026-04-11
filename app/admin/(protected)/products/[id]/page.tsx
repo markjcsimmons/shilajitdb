@@ -274,16 +274,36 @@ export default async function AdminProductEditPage({
             <div>
               <label className="text-xs font-medium text-slate-700">COA status</label>
               <Select name="coaStatus" required defaultValue={product.coaStatus}>
-                {["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"].map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
-                ))}
+                <option value="PUBLIC">Public — standalone document (+4)</option>
+                <option value="PUBLIC_EMBEDDED">Public — page-embedded image (+2)</option>
+                <option value="REQUEST_ONLY">On request only (+1)</option>
+                <option value="NONE">None (+0)</option>
+                <option value="UNKNOWN">Unknown (+0)</option>
               </Select>
+              <p className="mt-1 text-xs text-slate-500">
+                Use <strong>page-embedded</strong> when the COA is shown as an image on the brand&apos;s product page rather than a dedicated, downloadable document.
+              </p>
             </div>
             <div className="sm:col-span-2">
               <label className="text-xs font-medium text-slate-700">COA URL (optional)</label>
               <Input name="coaUrl" defaultValue={product.coaUrl ?? ""} />
+              {(() => {
+                if (!product.coaUrl) return null;
+                try {
+                  const coaDomain = new URL(product.coaUrl).hostname.replace(/^www\./, "");
+                  const brandDomain = (product.brand.websiteDomain ?? product.officialDomain ?? "").replace(/^www\./, "");
+                  if (brandDomain && coaDomain === brandDomain) {
+                    return (
+                      <p className="mt-1 text-xs text-amber-700 font-medium">
+                        ⚠ COA URL is on the brand&apos;s own domain ({coaDomain}). Confirm this links to a standalone document — if it&apos;s an image embedded on a product page, use &quot;page-embedded&quot; status above.
+                      </p>
+                    );
+                  }
+                } catch {
+                  // invalid URL — ignore
+                }
+                return null;
+              })()}
             </div>
           </div>
 

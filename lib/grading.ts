@@ -62,6 +62,7 @@ export type QualityResult = {
 export const transparencyRubric = {
   score: {
     coaPublic: 4,
+    coaPublicEmbedded: 2,
     coaRequestOnly: 1,
     namedThirdPartyLab: 3,
     manufacturingCountryUSA: 2,
@@ -86,7 +87,10 @@ export function computeTransparencyGrade(
   // COA status
   if (product.coaStatus === "PUBLIC") {
     score += transparencyRubric.score.coaPublic;
-    reasons.push("COA is publicly available (+4)");
+    reasons.push("COA is publicly available as a standalone document (+4)");
+  } else if (product.coaStatus === "PUBLIC_EMBEDDED") {
+    score += transparencyRubric.score.coaPublicEmbedded;
+    reasons.push("COA visible on product page (embedded image) — not an independently auditable document (+2)");
   } else if (product.coaStatus === "REQUEST_ONLY") {
     score += transparencyRubric.score.coaRequestOnly;
     reasons.push("COA available on request only — not openly published (+1)");
@@ -185,12 +189,16 @@ export function computeQualityTier(
     return { tier: "PREMIUM", reasons };
   }
 
-  const hasCoa = product.coaStatus === "PUBLIC" || product.coaStatus === "REQUEST_ONLY";
+  const hasCoa =
+    product.coaStatus === "PUBLIC" ||
+    product.coaStatus === "PUBLIC_EMBEDDED" ||
+    product.coaStatus === "REQUEST_ONLY";
   const hasNamedLab = !!product.thirdPartyTestingLab?.trim();
 
   if (hasCoa || hasNamedLab) {
     reasons.push("AVERAGE: has some testing transparency (COA or named lab) but does not meet all PREMIUM criteria");
     if (product.form !== "RESIN") reasons.push("Not resin form — resin required for PREMIUM or higher");
+    if (product.coaStatus === "PUBLIC_EMBEDDED") reasons.push("COA is page-embedded only — a standalone document is required for PREMIUM");
     if (!hasCoa) reasons.push("No COA on file");
     if (!hasNamedLab) reasons.push("No named independent testing lab");
     if (!hasManufacturingCountry(product.manufacturingCountryClaim)) reasons.push("Manufacturing country not stated");
@@ -230,6 +238,7 @@ export function computeQualityTier(
 export const overallRubric = {
   score: {
     coaPublic: 4,
+    coaPublicEmbedded: 2,
     coaRequestOnly: 1,
     namedThirdPartyLab: 3,
     formResin: 2,
@@ -244,6 +253,7 @@ export function overallGradeScore(product: ProductForGrading): number {
   let score = 0;
 
   if (product.coaStatus === "PUBLIC") score += overallRubric.score.coaPublic;
+  else if (product.coaStatus === "PUBLIC_EMBEDDED") score += overallRubric.score.coaPublicEmbedded;
   else if (product.coaStatus === "REQUEST_ONLY") score += overallRubric.score.coaRequestOnly;
 
   if (product.thirdPartyTestingLab?.trim()) score += overallRubric.score.namedThirdPartyLab;

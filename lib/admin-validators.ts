@@ -51,7 +51,7 @@ export const ProductInputSchema = z.object({
   manufacturingCountryClaim: optionalString(60),
   manufacturingClaimText: z.string().trim().max(2000).optional().or(z.literal("")),
   manufacturingEvidenceUrl: optionalString(2000),
-  coaStatus: z.enum(["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"]),
+  coaStatus: z.enum(["PUBLIC", "PUBLIC_EMBEDDED", "REQUEST_ONLY", "NONE", "UNKNOWN"]),
   coaUrl: optionalString(2000),
   thirdPartyTestingLab: z.string().trim().max(1000).optional().or(z.literal("")),
   hasPatentClaim: z.enum(["yes", "no"]).transform((v) => v === "yes"),

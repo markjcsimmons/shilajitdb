@@ -1,0 +1,2 @@
+-- AlterEnum: Add PUBLIC_EMBEDDED value to CoaStatus
+ALTER TYPE "CoaStatus" ADD VALUE 'PUBLIC_EMBEDDED' AFTER 'PUBLIC';

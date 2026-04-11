@@ -32,10 +32,11 @@ function qualityTierLabel(tier: QualityTier): string {
 
 function coaLabel(status: CoaStatus): string {
   switch (status) {
-    case "PUBLIC":       return "Public";
-    case "REQUEST_ONLY": return "On request";
-    case "NONE":         return "None";
-    case "UNKNOWN":      return "Unknown";
+    case "PUBLIC":          return "Public";
+    case "PUBLIC_EMBEDDED": return "Page-embedded";
+    case "REQUEST_ONLY":    return "On request";
+    case "NONE":            return "None";
+    case "UNKNOWN":         return "Unknown";
   }
 }
 

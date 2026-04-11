@@ -47,9 +47,10 @@ export function qualityTierClasses(tier: QualityTier): string {
 /** Tailwind border + bg + text classes for COA status pill. */
 export function coaStatusClasses(status: CoaStatus): string {
   switch (status) {
-    case "PUBLIC":       return "border-emerald-200 bg-emerald-50 text-emerald-800";
-    case "REQUEST_ONLY": return "border-amber-200 bg-amber-50 text-amber-900";
+    case "PUBLIC":          return "border-emerald-200 bg-emerald-50 text-emerald-800";
+    case "PUBLIC_EMBEDDED": return "border-amber-200 bg-amber-50 text-amber-900";
+    case "REQUEST_ONLY":    return "border-amber-200 bg-amber-50 text-amber-900";
     case "NONE":
-    case "UNKNOWN":      return "border-slate-200 bg-slate-50 text-slate-600";
+    case "UNKNOWN":         return "border-slate-200 bg-slate-50 text-slate-600";
   }
 }
