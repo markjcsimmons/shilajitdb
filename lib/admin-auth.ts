@@ -99,10 +99,19 @@ export async function clearAdminSessionCookie() {
 
 export function checkAdminPassword(password: string) {
   if (isAuthDisabled()) return true;
-  const expected = getSecretOrThrow();
   const a = Buffer.from(password);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
+
+  const candidates = [
+    process.env.ADMIN_PASSWORD,
+    process.env.ADMIN_PASSWORD_2,
+  ].filter(Boolean) as string[];
+
+  if (candidates.length === 0) throw new Error("No ADMIN_PASSWORD env var set");
+
+  return candidates.some((expected) => {
+    const b = Buffer.from(expected);
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  });
 }
 
