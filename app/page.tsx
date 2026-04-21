@@ -56,6 +56,7 @@ export default async function HomePage({
             overallGrade: true,
             thirdPartyTestingLab: true,
             lastVerifiedAt: true,
+            pricePerServingCents: true,
             brand: {
               select: { name: true, slug: true },
             },

@@ -151,6 +151,10 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const priceRaw = parseFloat((r.price ?? "").replace(/[^0-9.]/g, ""));
     const priceCents = Number.isFinite(priceRaw) && priceRaw > 0 ? Math.round(priceRaw * 100) : null;
 
+    // Price per serving: stored in cents on the product
+    const pricePerServingRaw = parseFloat((r.price_per_serving ?? "").replace(/[^0-9.]/g, ""));
+    const pricePerServingCents = Number.isFinite(pricePerServingRaw) && pricePerServingRaw > 0 ? Math.round(pricePerServingRaw * 100) : null;
+
     // Classify official_url
     const officialUrlSource = looksLikeUrl(officialUrlRaw) ? classifyUrl(officialUrlRaw) : null;
     let officialCanonicalUrl: string | null = null;
@@ -248,6 +252,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       overallGrade,
       dataCompleteness: "HIGH" as const,
       isCanonical: true,
+      ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
     };
 
     // Check if product already exists (by officialCanonicalUrl or slug)

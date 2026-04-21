@@ -127,6 +127,7 @@ model Product {
   sourceDsldUrl             String?
   dataCompleteness          DataCompleteness  @default(LOW)
   isCanonical               Boolean           @default(true)
+  pricePerServingCents      Int?
   lastVerifiedAt            DateTime?
   createdAt                 DateTime          @default(now())
   updatedAt                 DateTime          @updatedAt

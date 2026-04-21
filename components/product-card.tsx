@@ -23,6 +23,7 @@ export type ProductCardData = {
   overallGrade: OverallGrade | null;
   thirdPartyTestingLab: string | null;
   lastVerifiedAt: Date | null;
+  pricePerServingCents: number | null;
   brand: { name: string; slug: string };
 };
 
@@ -105,6 +106,12 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
 
           {/* Meta row */}
           <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500">
+            {p.pricePerServingCents !== null && p.pricePerServingCents !== undefined && (
+              <span>
+                <span className="text-stone-400">Per serving:</span>{" "}
+                <span className="font-medium text-stone-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
+              </span>
+            )}
             {p.manufacturingCountryClaim && (
               <span>
                 <span className="text-stone-400">Made in:</span>{" "}
