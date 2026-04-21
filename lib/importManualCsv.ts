@@ -14,8 +14,10 @@ export type ImportManualCsvResult = {
   brandsCreated: number;
   brandsUpdated: number;
   productsCreated: number;
+  productsUpdated: number;
   productsSkipped: number;
   listingsCreated: number;
+  listingsUpdated: number;
   errors: string[];
 };
 
@@ -75,8 +77,10 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     brandsCreated: 0,
     brandsUpdated: 0,
     productsCreated: 0,
+    productsUpdated: 0,
     productsSkipped: 0,
     listingsCreated: 0,
+    listingsUpdated: 0,
     errors: [],
   };
 
@@ -143,6 +147,10 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const lastVerifiedAt = parseVerifiedDate(r.last_verified_date ?? "");
     const bbbGradeRaw = (r.bbb_grade ?? "").trim();
 
+    // Price: stored in cents on the listing
+    const priceRaw = parseFloat((r.price ?? "").replace(/[^0-9.]/g, ""));
+    const priceCents = Number.isFinite(priceRaw) && priceRaw > 0 ? Math.round(priceRaw * 100) : null;
+
     // Classify official_url
     const officialUrlSource = looksLikeUrl(officialUrlRaw) ? classifyUrl(officialUrlRaw) : null;
     let officialCanonicalUrl: string | null = null;
@@ -206,38 +214,6 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       }
     }
 
-    // Dedup by officialCanonicalUrl
-    if (officialCanonicalUrl) {
-      const existing = await prisma.product.findFirst({
-        where: { officialCanonicalUrl },
-        select: { id: true },
-      });
-      if (existing) {
-        result.productsSkipped++;
-        continue;
-      }
-    }
-
-    // Resolve unique slug (append counter if collision)
-    const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
-    let productSlug = baseSlug;
-    {
-      const existingBySlug = await prisma.product.findUnique({ where: { slug: productSlug }, select: { id: true } });
-      if (existingBySlug) {
-        // Try numbered suffixes
-        let found = false;
-        for (let n = 2; n <= 9; n++) {
-          const candidate = `${baseSlug}-${n}`;
-          const ex = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
-          if (!ex) { productSlug = candidate; found = true; break; }
-        }
-        if (!found) {
-          result.errors.push(`Row ${rowNum}: could not find unique slug for "${productNameRaw}"`);
-          continue;
-        }
-      }
-    }
-
     const productForGrading = {
       form,
       manufacturingCountryClaim: countryOfManufacture,
@@ -252,42 +228,76 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const qualityResult = computeQualityTier(productForGrading);
     const overallGrade = computeOverallGrade(productForGrading);
 
+    const productData = {
+      brandId,
+      name: productNameRaw,
+      form,
+      manufacturingCountryClaim: countryOfManufacture,
+      coaStatus,
+      coaUrl,
+      thirdPartyTestingLab: thirdPartyLab,
+      hasPatentClaim,
+      gmpCertified,
+      sourceRegion,
+      metaDescription,
+      officialCanonicalUrl,
+      officialDomain,
+      lastVerifiedAt,
+      transparencyGrade: transparencyResult.grade,
+      qualityTier: qualityResult.tier,
+      overallGrade,
+      dataCompleteness: "HIGH" as const,
+      isCanonical: true,
+    };
+
+    // Check if product already exists (by officialCanonicalUrl or slug)
     let product: { id: string };
-    try {
-      product = await prisma.product.create({
-        data: {
-          brandId,
-          name: productNameRaw,
-          slug: productSlug,
-          form,
-          ingredientText: "",
-          ingredientsNormalized: [],
-          manufacturingCountryClaim: countryOfManufacture,
-          coaStatus,
-          coaUrl,
-          thirdPartyTestingLab: thirdPartyLab,
-          hasPatentClaim,
-          gmpCertified,
-          sourceRegion,
-          metaDescription,
-          officialCanonicalUrl,
-          officialDomain,
-          lastVerifiedAt,
-          transparencyGrade: transparencyResult.grade,
-          qualityTier: qualityResult.tier,
-          overallGrade,
-          dataCompleteness: "HIGH",
-          isCanonical: true,
-        },
-        select: { id: true },
-      });
-    } catch (err) {
-      result.errors.push(
-        `Row ${rowNum}: product create failed — ${err instanceof Error ? err.message : String(err)}`
-      );
-      continue;
+    const existingByUrl = officialCanonicalUrl
+      ? await prisma.product.findFirst({ where: { officialCanonicalUrl }, select: { id: true } })
+      : null;
+
+    if (existingByUrl) {
+      // Update existing product with latest data from CSV
+      try {
+        product = await prisma.product.update({
+          where: { id: existingByUrl.id },
+          data: productData,
+          select: { id: true },
+        });
+        result.productsUpdated++;
+      } catch (err) {
+        result.errors.push(`Row ${rowNum}: product update failed — ${err instanceof Error ? err.message : String(err)}`);
+        continue;
+      }
+    } else {
+      // Create new product — resolve unique slug first
+      const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
+      let productSlug = baseSlug;
+      const existingBySlug = await prisma.product.findUnique({ where: { slug: productSlug }, select: { id: true } });
+      if (existingBySlug) {
+        let found = false;
+        for (let n = 2; n <= 9; n++) {
+          const candidate = `${baseSlug}-${n}`;
+          const ex = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
+          if (!ex) { productSlug = candidate; found = true; break; }
+        }
+        if (!found) {
+          result.errors.push(`Row ${rowNum}: could not find unique slug for "${productNameRaw}"`);
+          continue;
+        }
+      }
+
+      try {
+        product = await prisma.product.create({
+          data: { ...productData, slug: productSlug, ingredientText: "", ingredientsNormalized: [] },
+          select: { id: true },
+        });
+        result.productsCreated++;
+      } catch (err) {
+        result.errors.push(`Row ${rowNum}: product create failed — ${err instanceof Error ? err.message : String(err)}`);
+        continue;
+      }
     }
-    result.productsCreated++;
 
     // Evidence
     try {
@@ -337,20 +347,31 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
           where: { url: listing.url },
           select: { id: true },
         });
-        if (!existing) {
+        if (existing) {
+          // Update price if we now have it
+          if (priceCents !== null) {
+            await prisma.listing.update({
+              where: { id: existing.id },
+              data: { priceCents, currency: "USD", status: "ACTIVE" },
+            });
+            result.listingsUpdated++;
+          }
+        } else {
           await prisma.listing.create({
             data: {
               productId: product.id,
               source: listing.source,
               url: listing.url,
               observedSku: listing.observedSku,
+              priceCents,
+              currency: priceCents ? "USD" : null,
               status: "ACTIVE",
             },
           });
           result.listingsCreated++;
         }
       } catch (err) {
-        result.errors.push(`Row ${rowNum}: listing create failed (${listing.url}) — ${err instanceof Error ? err.message : String(err)}`);
+        result.errors.push(`Row ${rowNum}: listing upsert failed (${listing.url}) — ${err instanceof Error ? err.message : String(err)}`);
       }
     }
   }

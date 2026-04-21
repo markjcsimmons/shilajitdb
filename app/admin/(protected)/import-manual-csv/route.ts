@@ -38,8 +38,10 @@ export async function POST(request: Request) {
       result.brandsCreated && `${result.brandsCreated} brands created`,
       result.brandsUpdated && `${result.brandsUpdated} brands updated`,
       result.productsCreated && `${result.productsCreated} products created`,
-      result.productsSkipped && `${result.productsSkipped} skipped (already exist)`,
+      result.productsUpdated && `${result.productsUpdated} products updated`,
+      result.productsSkipped && `${result.productsSkipped} skipped`,
       result.listingsCreated && `${result.listingsCreated} listings created`,
+      result.listingsUpdated && `${result.listingsUpdated} listings updated`,
     ]
       .filter(Boolean)
       .join(", ");
