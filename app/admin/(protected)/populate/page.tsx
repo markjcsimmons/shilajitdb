@@ -1,3 +1,4 @@
+import { ImportCsvForm } from "@/components/import-csv-form";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 
@@ -75,26 +76,7 @@ export default async function AdminPopulatePage({
             ))}{" "}
             and more. Duplicate products (by slug or official URL) are skipped.
           </p>
-          <form
-            action="/admin/import-manual-csv?next=/admin/populate"
-            method="post"
-            encType="multipart/form-data"
-            className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center"
-          >
-            <input
-              name="file"
-              type="file"
-              accept=".csv,text/csv"
-              required
-              className="max-w-xs rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 file:mr-2 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-1 file:text-sm file:font-medium"
-            />
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            >
-              Import
-            </button>
-          </form>
+          <ImportCsvForm action="/admin/import-manual-csv?next=/admin/populate" />
         </div>
 
         <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
