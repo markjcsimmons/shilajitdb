@@ -255,17 +255,24 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
     };
 
-    // Check if product already exists (by officialCanonicalUrl or slug)
+    // Check if product already exists — match by officialCanonicalUrl first, then fall back to slug
     let product: { id: string };
+    const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
+
     const existingByUrl = officialCanonicalUrl
       ? await prisma.product.findFirst({ where: { officialCanonicalUrl }, select: { id: true } })
       : null;
+    const existingBySlug = !existingByUrl
+      ? await prisma.product.findUnique({ where: { slug: baseSlug }, select: { id: true } })
+      : null;
 
-    if (existingByUrl) {
+    const existing = existingByUrl ?? existingBySlug;
+
+    if (existing) {
       // Update existing product with latest data from CSV
       try {
         product = await prisma.product.update({
-          where: { id: existingByUrl.id },
+          where: { id: existing.id },
           data: productData,
           select: { id: true },
         });
@@ -275,26 +282,10 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
         continue;
       }
     } else {
-      // Create new product — resolve unique slug first
-      const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
-      let productSlug = baseSlug;
-      const existingBySlug = await prisma.product.findUnique({ where: { slug: productSlug }, select: { id: true } });
-      if (existingBySlug) {
-        let found = false;
-        for (let n = 2; n <= 9; n++) {
-          const candidate = `${baseSlug}-${n}`;
-          const ex = await prisma.product.findUnique({ where: { slug: candidate }, select: { id: true } });
-          if (!ex) { productSlug = candidate; found = true; break; }
-        }
-        if (!found) {
-          result.errors.push(`Row ${rowNum}: could not find unique slug for "${productNameRaw}"`);
-          continue;
-        }
-      }
-
+      // Create new product — slug is available (confirmed above)
       try {
         product = await prisma.product.create({
-          data: { ...productData, slug: productSlug, ingredientText: "", ingredientsNormalized: [] },
+          data: { ...productData, slug: baseSlug, ingredientText: "", ingredientsNormalized: [] },
           select: { id: true },
         });
         result.productsCreated++;
