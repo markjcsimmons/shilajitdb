@@ -155,6 +155,17 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const pricePerServingRaw = parseFloat((r.price_per_serving ?? "").replace(/[^0-9.]/g, ""));
     const pricePerServingCents = Number.isFinite(pricePerServingRaw) && pricePerServingRaw > 0 ? Math.round(pricePerServingRaw * 100) : null;
 
+    // Price per gram: only meaningful for RESIN and POWDER (pure shilajit by weight)
+    let pricePerGramCents: number | null = null;
+    if ((form === "RESIN" || form === "POWDER") && priceCents !== null) {
+      const unitSizeRaw = (r.unit_size ?? "").trim();
+      const gramsMatch = unitSizeRaw.match(/^(\d+(?:\.\d+)?)\s*g$/i);
+      if (gramsMatch) {
+        const grams = parseFloat(gramsMatch[1]);
+        if (grams > 0) pricePerGramCents = Math.round((priceCents / grams));
+      }
+    }
+
     // Classify official_url
     const officialUrlSource = looksLikeUrl(officialUrlRaw) ? classifyUrl(officialUrlRaw) : null;
     let officialCanonicalUrl: string | null = null;
@@ -253,6 +264,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       dataCompleteness: "HIGH" as const,
       isCanonical: true,
       ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
+      ...(pricePerGramCents !== null ? { pricePerGramCents } : {}),
     };
 
     // Check if product already exists — match by officialCanonicalUrl first, then fall back to slug

@@ -541,6 +541,14 @@ export default async function ProductPage({
               </span>
             </span>
           )}
+          {typeof product.pricePerGramCents === "number" && (
+            <span>
+              Price per gram:{" "}
+              <span className="font-medium text-stone-700">
+                ${(product.pricePerGramCents / 100).toFixed(2)}
+              </span>
+            </span>
+          )}
           {product.evidence.length > 0 && (
             <span>
               {product.evidence.length} evidence source{product.evidence.length !== 1 ? "s" : ""}

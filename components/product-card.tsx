@@ -24,6 +24,7 @@ export type ProductCardData = {
   thirdPartyTestingLab: string | null;
   lastVerifiedAt: Date | null;
   pricePerServingCents: number | null;
+  pricePerGramCents: number | null;
   brand: { name: string; slug: string };
 };
 
@@ -110,6 +111,12 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               <span>
                 <span className="text-stone-400">Per serving:</span>{" "}
                 <span className="font-medium text-stone-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
+              </span>
+            )}
+            {p.pricePerGramCents !== null && p.pricePerGramCents !== undefined && (
+              <span>
+                <span className="text-stone-400">Per gram:</span>{" "}
+                <span className="font-medium text-stone-700">${(p.pricePerGramCents / 100).toFixed(2)}</span>
               </span>
             )}
             {p.manufacturingCountryClaim && (
