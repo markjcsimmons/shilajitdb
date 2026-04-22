@@ -45,6 +45,7 @@ function joinList(items: string[]): string {
 
 function buildGradeSummary(
   product: ProductForGrading & { name: string },
+  brandName: string,
   score: number,
   maxScore: number,
   grade: OverallGrade | null,
@@ -55,7 +56,7 @@ function buildGradeSummary(
   const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
 
   // Sentence 1 — verdict
-  const s1 = `${product.name} scores ${score} out of ${maxScore} points, earning a ${gradeTxt} grade and ${tierTxt} quality tier.`;
+  const s1 = `${brandName}'s ${product.name} scores ${score} out of ${maxScore} points, earning a ${gradeTxt} grade and ${tierTxt} quality tier.`;
 
   // Strengths
   const strengths: string[] = [];
@@ -262,6 +263,7 @@ export default async function ProductPage({
   const MAX_SCORE = 14;
   const gradeSummary = buildGradeSummary(
     { ...productForGrading, name: product.name },
+    product.brand.name,
     score,
     MAX_SCORE,
     product.overallGrade,
