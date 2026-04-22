@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useState, useEffect } from "react";
 import type { FilterState } from "@/components/filter-bar";
 
 type Props = {
@@ -18,22 +18,40 @@ function buildUrl(params: Record<string, string | undefined>): string {
   return qs ? `/?${qs}` : "/";
 }
 
+function filtersToParams(f: FilterState, q: string | undefined): Record<string, string | undefined> {
+  return {
+    q,
+    qualityTier: f.qualityTier,
+    coaStatus: f.coaStatus,
+    thirdPartyTested: f.thirdPartyTested ? "true" : undefined,
+    form: f.form,
+    manufacturingCountryClaim: f.manufacturingCountryClaim,
+  };
+}
+
 export function SearchBox({ initialQ, filters }: Props) {
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(initialQ ?? "");
+
+  // Keep input in sync when URL changes (e.g. filter chip clears q)
+  useEffect(() => {
+    setValue(initialQ ?? "");
+  }, [initialQ]);
+
+  function navigate(q: string | undefined) {
+    router.push(buildUrl(filtersToParams(filters, q)), { scroll: false });
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = e.target.value;
+    setValue(v);
+    // If the field is cleared (native × button or select-all+delete), remove q from URL immediately
+    if (v === "") navigate(undefined);
+  }
 
   function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
-      const q = inputRef.current?.value.trim() || undefined;
-      const url = buildUrl({
-        q,
-        qualityTier: filters.qualityTier,
-        coaStatus: filters.coaStatus,
-        thirdPartyTested: filters.thirdPartyTested ? "true" : undefined,
-        form: filters.form,
-        manufacturingCountryClaim: filters.manufacturingCountryClaim,
-      });
-      router.push(url, { scroll: false });
+      navigate(value.trim() || undefined);
     }
   }
 
@@ -49,10 +67,10 @@ export function SearchBox({ initialQ, filters }: Props) {
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" />
       </svg>
       <input
-        ref={inputRef}
         type="search"
-        defaultValue={initialQ ?? ""}
+        value={value}
         placeholder="Search brand or product name…"
+        onChange={handleChange}
         onKeyDown={handleKey}
         className="w-full rounded-xl border border-stone-200 bg-white py-3.5 pl-12 pr-20 text-base text-slate-900 shadow-sm placeholder:text-stone-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:shadow-md"
       />
