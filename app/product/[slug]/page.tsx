@@ -460,6 +460,14 @@ export default async function ProductPage({
               Patented process: <span className="font-medium text-stone-700">Yes</span>
             </span>
           )}
+          {typeof product.pricePerServingCents === "number" && (
+            <span>
+              Price per serving:{" "}
+              <span className="font-medium text-stone-700">
+                ${(product.pricePerServingCents / 100).toFixed(2)}
+              </span>
+            </span>
+          )}
           {product.evidence.length > 0 && (
             <span>
               {product.evidence.length} evidence source{product.evidence.length !== 1 ? "s" : ""}
