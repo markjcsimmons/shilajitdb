@@ -99,6 +99,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
     optimistic.q;
 
   return (
+    <div className="space-y-2">
     <div className="flex flex-wrap items-center gap-2 py-1">
       {/* Quality */}
       <Chip active={optimistic.qualityTier === "ULTRA_PREMIUM"} activeClass="bg-emerald-600" onClick={() => toggle("qualityTier", "ULTRA_PREMIUM")}>
@@ -158,6 +159,49 @@ export function FilterBar({ filters, total, active = false }: Props) {
           )}
         </span>
       )}
+    </div>
+
+    {/* Glossary strip */}
+    <details className="group rounded-xl border border-stone-200 bg-stone-50 text-xs text-stone-600">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3.5 py-2 hover:text-stone-900">
+        <svg className="h-3.5 w-3.5 shrink-0 text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+        What do these filters mean?
+      </summary>
+      <div className="grid grid-cols-1 gap-x-8 gap-y-3 border-t border-stone-200 px-4 py-4 sm:grid-cols-2 lg:grid-cols-3">
+
+        <div>
+          <div className="font-semibold text-stone-700 mb-1">Quality Tier</div>
+          <ul className="space-y-1 text-stone-500">
+            <li><span className="font-medium text-emerald-700">Ultra Premium</span> — standalone, verifiable COA from a named third-party lab; GMP certified</li>
+            <li><span className="font-medium text-sky-700">Premium</span> — public COA and at least one other major transparency signal</li>
+            <li><span className="font-medium text-amber-600">Average</span> — some transparency signals present but gaps remain (e.g. no named lab, embedded-only COA)</li>
+            <li><span className="font-medium text-rose-600">Poor</span> — little or no verifiable transparency information</li>
+          </ul>
+        </div>
+
+        <div>
+          <div className="font-semibold text-stone-700 mb-1">COA Status</div>
+          <ul className="space-y-1 text-stone-500">
+            <li><span className="font-medium text-stone-700">Public</span> — a downloadable or directly linkable Certificate of Analysis is publicly available</li>
+            <li><span className="font-medium text-stone-700">Page-embedded</span> — COA is shown as an image on the product page but is not independently downloadable</li>
+            <li><span className="font-medium text-stone-700">On request</span> — brand states a COA exists but you must contact them to receive it</li>
+            <li><span className="font-medium text-stone-700">None / Unknown</span> — no COA evidence found</li>
+          </ul>
+        </div>
+
+        <div>
+          <div className="font-semibold text-stone-700 mb-1">Other filters</div>
+          <ul className="space-y-1 text-stone-500">
+            <li><span className="font-medium text-stone-700">Named lab</span> — the brand publicly identifies the third-party testing laboratory by name (e.g. Eurofins, NSF)</li>
+            <li><span className="font-medium text-stone-700">Form</span> — the physical format of the supplement (resin, capsule, powder, etc.)</li>
+            <li><span className="font-medium text-stone-700">US Made</span> — brand claims the product is manufactured in the United States</li>
+          </ul>
+        </div>
+
+      </div>
+    </details>
     </div>
   );
 }
