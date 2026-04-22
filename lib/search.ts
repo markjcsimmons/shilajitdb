@@ -106,12 +106,14 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
   }
 
   if (filters.q) {
+    // Normalize the query (strip diacritics) for slug matching so e.g. "pürblack" matches slug "purblack"
+    const qNorm = filters.q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     and.push({
       OR: [
         { name: { contains: filters.q, mode: "insensitive" } },
-        { slug: { contains: filters.q, mode: "insensitive" } },
+        { slug: { contains: qNorm, mode: "insensitive" } },
         { brand: { name: { contains: filters.q, mode: "insensitive" } } },
-        { brand: { slug: { contains: filters.q, mode: "insensitive" } } },
+        { brand: { slug: { contains: qNorm, mode: "insensitive" } } },
       ],
     });
   }
