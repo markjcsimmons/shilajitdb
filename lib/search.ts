@@ -109,7 +109,9 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
     and.push({
       OR: [
         { name: { contains: filters.q, mode: "insensitive" } },
+        { slug: { contains: filters.q, mode: "insensitive" } },
         { brand: { name: { contains: filters.q, mode: "insensitive" } } },
+        { brand: { slug: { contains: filters.q, mode: "insensitive" } } },
       ],
     });
   }
