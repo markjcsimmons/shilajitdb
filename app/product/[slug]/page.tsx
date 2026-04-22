@@ -5,6 +5,8 @@ import {
   computeQualityTier,
   computeTransparencyGrade,
   overallGradeScore,
+  manufacturingPointsFromCountry,
+  type ProductForGrading,
 } from "@/lib/grading";
 import {
   gradeBadgeClasses,
@@ -15,7 +17,7 @@ import {
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
 import { cn } from "@/components/ui";
-import type { EvidenceType, ListingSource } from "@prisma/client";
+import type { EvidenceType, ListingSource, OverallGrade, QualityTier } from "@prisma/client";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,6 +30,64 @@ export const dynamic = "force-dynamic";
 
 function labelEvidenceType(t: EvidenceType) {
   return t.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
+}
+
+// ---------------------------------------------------------------------------
+// Grade summary generator
+// ---------------------------------------------------------------------------
+
+function joinList(items: string[]): string {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+}
+
+function buildGradeSummary(
+  product: ProductForGrading & { name: string },
+  score: number,
+  maxScore: number,
+  grade: OverallGrade | null,
+  tier: QualityTier,
+): string {
+  const gradeTxt = gradeLabel(grade);
+  const tierTxt = labelQualityTier(tier);
+  const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
+
+  // Sentence 1 — verdict
+  const s1 = `${product.name} scores ${score} out of ${maxScore} points, earning a ${gradeTxt} grade and ${tierTxt} quality tier.`;
+
+  // Strengths
+  const strengths: string[] = [];
+  if (product.coaStatus === "PUBLIC") strengths.push("a publicly available, independently auditable COA");
+  else if (product.coaStatus === "PUBLIC_EMBEDDED") strengths.push("a COA visible on the product page");
+  else if (product.coaStatus === "REQUEST_ONLY") strengths.push("a COA available on request");
+  if (product.thirdPartyTestingLab?.trim()) strengths.push(`independent testing by ${product.thirdPartyTestingLab}`);
+  if (product.form === "RESIN") strengths.push("resin form — the least processed format");
+  if (mfgPoints === 2) strengths.push("US manufacture under FDA 21 CFR Part 111 oversight");
+  else if (mfgPoints === 1) strengths.push(`stated country of manufacture (${product.manufacturingCountryClaim})`);
+  if (product.gmpCertified) strengths.push("GMP-certified production");
+
+  // Gaps
+  const gaps: string[] = [];
+  if (product.coaStatus === "NONE" || product.coaStatus === "UNKNOWN") {
+    gaps.push("no COA is publicly available");
+  } else if (product.coaStatus === "REQUEST_ONLY") {
+    gaps.push("the COA is not openly published — it must be requested directly from the brand");
+  } else if (product.coaStatus === "PUBLIC_EMBEDDED") {
+    gaps.push("the COA is an embedded page image rather than a standalone downloadable document");
+  }
+  if (!product.thirdPartyTestingLab?.trim()) gaps.push("no named independent testing laboratory");
+  if (product.form !== "RESIN") gaps.push(`${labelForm(product.form).toLowerCase()} form rather than resin`);
+  if (mfgPoints === 0) gaps.push("country of manufacture not disclosed");
+  if (!product.gmpCertified) gaps.push("GMP certification not confirmed");
+
+  const s2 = strengths.length > 0 ? `Strengths include ${joinList(strengths)}.` : "";
+  const s3 = gaps.length > 0
+    ? `The main gap${gaps.length > 1 ? "s" : ""} ${gaps.length > 1 ? "are" : "is"} ${joinList(gaps)}.`
+    : "It meets all major transparency criteria.";
+
+  return [s1, s2, s3].filter(Boolean).join(" ");
 }
 
 function labelListingSource(s: ListingSource) {
@@ -200,6 +260,13 @@ export default async function ProductPage({
   const quality = computeQualityTier(productForGrading);
   const score = overallGradeScore(productForGrading);
   const MAX_SCORE = 14;
+  const gradeSummary = buildGradeSummary(
+    { ...productForGrading, name: product.name },
+    score,
+    MAX_SCORE,
+    product.overallGrade,
+    quality.tier,
+  );
 
   // JSON-LD structured data
   const breadcrumbJsonLd = {
@@ -316,6 +383,10 @@ export default async function ProductPage({
           <span className="mx-1.5">/</span>
           <span className="text-stone-600">{product.name}</span>
         </nav>
+
+        {/* Two-column layout on desktop: left = existing content, right = grade summary */}
+        <div className="md:grid md:grid-cols-[2fr_1fr] md:gap-8">
+        <div>
 
         {/* Grade badge + name row */}
         <div className="flex items-start gap-4 sm:gap-5">
@@ -474,6 +545,23 @@ export default async function ProductPage({
             </span>
           )}
         </div>
+        </div>{/* end left column */}
+
+        {/* Right column — grade summary */}
+        <div className="mt-5 md:mt-0 md:flex md:items-start">
+          <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Why this grade?</p>
+            <p className="text-sm text-stone-600 leading-relaxed">{gradeSummary}</p>
+            <Link
+              href="/methodology"
+              className="mt-3 inline-block text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600"
+            >
+              See full methodology →
+            </Link>
+          </div>
+        </div>
+
+        </div>{/* end two-column grid */}
       </div>
 
       {/* ── ACCORDION SECTIONS ────────────────────────────────────────────────── */}
