@@ -163,12 +163,12 @@ export default async function HomePage({
         <div className="pointer-events-none absolute -left-8 bottom-0 h-40 w-40 rounded-full bg-amber-500/5 blur-2xl" />
 
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-3">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
             Unbiased. Comprehensive. Free.
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl max-w-xl leading-snug">
+          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl max-w-xl leading-tight">
             Shilajit transparency database
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-lg leading-relaxed">

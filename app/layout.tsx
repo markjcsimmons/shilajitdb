@@ -42,33 +42,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <div className="min-h-dvh flex flex-col">
           {/* ── Header ── */}
-          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-sm">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-              <Link href="/" className="flex items-center gap-2.5 min-w-0">
-                {/* Amber dot accent */}
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-xs font-black text-white shadow-sm">
-                  S
-                </span>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold tracking-tight text-slate-900">
-                    Shilajit Transparency Database
-                  </div>
-                  <div className="hidden text-[11px] text-slate-400 sm:block">
-                    {productCount} products independently graded
-                  </div>
-                </div>
+          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2.5">
+              {/* Wordmark: "Shilajit" slate + "DB" amber */}
+              <Link href="/" className="flex items-center gap-0 min-w-0 select-none">
+                <span className="text-[15px] font-bold tracking-tight text-slate-900">Shilajit</span>
+                <span className="text-[15px] font-black tracking-tight text-amber-500">DB</span>
               </Link>
-              <nav className="flex items-center gap-1 text-sm text-slate-600">
-                <Link href="/learn" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+              <nav className="flex items-center gap-0.5 text-[13px] text-slate-600">
+                <Link href="/learn" className="rounded-md px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Learn
                 </Link>
-                <Link href="/updates" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                <Link href="/updates" className="rounded-md px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Updates
                 </Link>
-                <Link href="/methodology" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                <Link href="/methodology" className="rounded-md px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Methodology
                 </Link>
-                <Link href="/about" className="hidden sm:block rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                <Link href="/about" className="hidden sm:block rounded-md px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   About
                 </Link>
               </nav>
@@ -76,16 +67,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </header>
 
           {/* ── Main ── */}
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4">{children}</main>
 
           {/* ── Footer ── */}
           <footer className="border-t border-slate-200 bg-white mt-12">
             <div className="mx-auto max-w-6xl px-4 py-10">
               <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
                 <div className="col-span-2 sm:col-span-1">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500 text-[10px] font-black text-white">S</span>
-                    <span className="text-sm font-semibold text-slate-900">ShilajitDB</span>
+                  <div className="flex items-center gap-0 mb-3">
+                    <span className="text-sm font-bold tracking-tight text-slate-900">Shilajit</span>
+                    <span className="text-sm font-black tracking-tight text-amber-500">DB</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
                     A neutral, evidence-based database of shilajit products graded on testing, transparency, and safety.
