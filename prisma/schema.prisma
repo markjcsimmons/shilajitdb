@@ -28,6 +28,12 @@ enum CoaStatus {
   UNKNOWN
 }
 
+enum HeavyMetalsTested {
+  CONFIRMED
+  CLAIMED
+  NONE
+}
+
 enum TransparencyGrade {
   F
   D
@@ -127,6 +133,8 @@ model Product {
   sourceDsldUrl             String?
   dataCompleteness          DataCompleteness  @default(LOW)
   isCanonical               Boolean           @default(true)
+  bestForTags               String[]          @default([])
+  heavyMetalsTested         HeavyMetalsTested?
   pricePerServingCents      Int?
   pricePerGramCents         Int?
   lastVerifiedAt            DateTime?

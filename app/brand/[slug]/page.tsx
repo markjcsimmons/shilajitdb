@@ -70,6 +70,8 @@ export default async function BrandPage({
           coaStatus: true,
           transparencyGrade: true,
           qualityTier: true,
+          overallGrade: true,
+          thirdPartyTestingLab: true,
           manufacturingCountryClaim: true,
         },
       },
@@ -99,6 +101,26 @@ export default async function BrandPage({
 
   const gradeCounts = countBy(products.map((p) => p.transparencyGrade));
   const coaCounts = countBy(products.map((p) => p.coaStatus));
+
+  // Aggregate stats
+  const verifiedProducts = products.filter(p => p.dataCompleteness !== "LOW");
+  const publicCoaPct = verifiedProducts.length
+    ? Math.round((verifiedProducts.filter(p => p.coaStatus === "PUBLIC").length / verifiedProducts.length) * 100)
+    : 0;
+  const namedLabCount = verifiedProducts.filter(p => p.thirdPartyTestingLab?.trim()).length;
+  const gradeScoreMap: Record<string, number> = { A_PLUS: 7, A: 6, B: 5, C: 4, D: 3, E: 2, F: 1 };
+  const gradedProducts = verifiedProducts.filter(p => p.overallGrade);
+  const avgGradeScore = gradedProducts.length
+    ? gradedProducts.reduce((sum, p) => sum + (gradeScoreMap[p.overallGrade!] ?? 0), 0) / gradedProducts.length
+    : null;
+  const avgGradeLetter = avgGradeScore === null ? null
+    : avgGradeScore >= 6.5 ? "A+"
+    : avgGradeScore >= 5.5 ? "A"
+    : avgGradeScore >= 4.5 ? "B"
+    : avgGradeScore >= 3.5 ? "C"
+    : avgGradeScore >= 2.5 ? "D"
+    : avgGradeScore >= 1.5 ? "E"
+    : "F";
   const countries = Array.from(
     new Set(products.map((p) => p.manufacturingCountryClaim).filter(Boolean))
   ) as string[];
@@ -156,6 +178,24 @@ export default async function BrandPage({
           </div>
         </div>
       </div>
+
+      {/* Aggregate stat chips */}
+      {verifiedProducts.length > 0 && (
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+            <div className="text-2xl font-bold text-slate-900">{avgGradeLetter ?? "—"}</div>
+            <div className="mt-1 text-xs text-slate-500">Avg overall grade</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+            <div className="text-2xl font-bold text-slate-900">{publicCoaPct}%</div>
+            <div className="mt-1 text-xs text-slate-500">Products with public COA</div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+            <div className="text-2xl font-bold text-slate-900">{namedLabCount}</div>
+            <div className="mt-1 text-xs text-slate-500">Products with named lab</div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-5">

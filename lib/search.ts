@@ -43,6 +43,7 @@ export type ProductFilters = {
   qualityTier?: QualityTier;
   ingredient?: string;
   thirdPartyTested?: boolean;
+  heavyMetalsTested?: boolean;
   page: number;
   sort: "default";
 };
@@ -86,6 +87,7 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     qualityTier: parsed.data.qualityTier as QualityTier | undefined,
     ingredient: parsed.data.ingredient,
     thirdPartyTested: getFirst(searchParams.thirdPartyTested) === "true" ? true : undefined,
+    heavyMetalsTested: getFirst(searchParams.heavyMetalsTested) === "true" ? true : undefined,
     page: parsed.data.page ?? 1,
     sort: "default",
   };
@@ -131,6 +133,8 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
     });
   if (filters.thirdPartyTested)
     and.push({ thirdPartyTestingLab: { not: null } });
+  if (filters.heavyMetalsTested)
+    and.push({ heavyMetalsTested: { in: ["CONFIRMED", "CLAIMED"] } });
 
   return and.length ? { AND: and } : {};
 }
@@ -155,6 +159,7 @@ export function buildQueryString(next: Partial<ProductFilters>) {
     ["qualityTier", next.qualityTier],
     ["ingredient", next.ingredient],
     ["thirdPartyTested", next.thirdPartyTested === true ? "true" : undefined],
+    ["heavyMetalsTested", next.heavyMetalsTested === true ? "true" : undefined],
     ["sort", next.sort && next.sort !== "default" ? next.sort : undefined],
     ["page", next.page && next.page > 1 ? next.page : undefined],
   ];

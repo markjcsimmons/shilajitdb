@@ -55,6 +55,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </p>
               </div>
               <nav className="flex items-center gap-3 text-sm text-slate-700">
+                <Link href="/updates" className="hover:text-slate-900">
+                  Updates
+                </Link>
                 <Link href="/methodology" className="hover:text-slate-900">
                   Methodology
                 </Link>

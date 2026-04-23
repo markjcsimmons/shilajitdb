@@ -26,6 +26,7 @@ export default async function HomePage({
     filters.qualityTier ||
     filters.coaStatus ||
     filters.thirdPartyTested ||
+    filters.heavyMetalsTested ||
     filters.form ||
     filters.manufacturingCountryClaim
   );
@@ -56,6 +57,8 @@ export default async function HomePage({
             overallGrade: true,
             thirdPartyTestingLab: true,
             lastVerifiedAt: true,
+            heavyMetalsTested: true,
+            bestForTags: true,
             pricePerServingCents: true,
             pricePerGramCents: true,
             brand: {
@@ -91,6 +94,7 @@ export default async function HomePage({
           qualityTier: filters.qualityTier,
           coaStatus: filters.coaStatus,
           thirdPartyTested: filters.thirdPartyTested,
+          heavyMetalsTested: filters.heavyMetalsTested,
           form: filters.form,
           manufacturingCountryClaim: filters.manufacturingCountryClaim,
           q: filters.q,

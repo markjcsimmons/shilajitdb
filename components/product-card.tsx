@@ -1,4 +1,4 @@
-import type { CoaStatus, OverallGrade, QualityTier, ProductForm } from "@prisma/client";
+import type { CoaStatus, OverallGrade, QualityTier, ProductForm, HeavyMetalsTested } from "@prisma/client";
 import Link from "next/link";
 import { cn } from "@/components/ui";
 import {
@@ -23,6 +23,8 @@ export type ProductCardData = {
   overallGrade: OverallGrade | null;
   thirdPartyTestingLab: string | null;
   lastVerifiedAt: Date | null;
+  heavyMetalsTested: HeavyMetalsTested | null;
+  bestForTags: string[];
   pricePerServingCents: number | null;
   pricePerGramCents: number | null;
   brand: { name: string; slug: string };
@@ -97,6 +99,16 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               >
                 COA: {coaLabel(p.coaStatus)}
               </span>
+              {p.heavyMetalsTested === "CONFIRMED" && (
+                <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  Heavy metals ✓
+                </span>
+              )}
+              {p.heavyMetalsTested === "CLAIMED" && (
+                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-700">
+                  Heavy metals (claimed)
+                </span>
+              )}
               {p.dataCompleteness === "LOW" && (
                 <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500">
                   Unverified
@@ -104,6 +116,19 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               )}
             </div>
           </div>
+
+          {/* Best-for tags */}
+          {p.bestForTags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {p.bestForTags.map(tag => (
+                <a key={tag} href={`/best/${tag.replace(/_/g, "-")}`}
+                  className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-medium text-amber-800 hover:bg-amber-100"
+                >
+                  ★ {tag.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                </a>
+              ))}
+            </div>
+          )}
 
           {/* Meta row */}
           <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500">

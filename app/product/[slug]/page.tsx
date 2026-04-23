@@ -261,6 +261,19 @@ export default async function ProductPage({
   const quality = computeQualityTier(productForGrading);
   const score = overallGradeScore(productForGrading);
   const MAX_SCORE = 14;
+
+  // Category rank — how does this product sit among same-form peers?
+  const gradeOrder: Record<string, number> = { A_PLUS: 0, A: 1, B: 2, C: 3, D: 4, E: 5, F: 6 };
+  const formPeers = product.overallGrade
+    ? await prisma.product.findMany({
+        where: { form: product.form, isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
+        select: { id: true, overallGrade: true },
+      })
+    : [];
+  const currentOrder = product.overallGrade ? (gradeOrder[product.overallGrade] ?? 99) : 99;
+  const categoryRank = formPeers.length
+    ? { rank: formPeers.filter(p => (gradeOrder[p.overallGrade!] ?? 99) < currentOrder).length + 1, total: formPeers.length }
+    : null;
   const gradeSummary = buildGradeSummary(
     { ...productForGrading, name: product.name },
     product.brand.name,
@@ -409,6 +422,11 @@ export default async function ProductPage({
             >
               {score} / {MAX_SCORE} pts
             </Link>
+            {categoryRank && (
+              <span className="text-[11px] leading-tight text-stone-400 text-center">
+                #{categoryRank.rank} of {categoryRank.total}
+              </span>
+            )}
           </div>
 
           {/* Name + meta */}
@@ -517,6 +535,12 @@ export default async function ProductPage({
 
         {/* Secondary meta strip */}
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-stone-500 px-0.5">
+          {product.heavyMetalsTested === "CONFIRMED" && (
+            <span className="font-medium text-emerald-700">Heavy metals tested ✓</span>
+          )}
+          {product.heavyMetalsTested === "CLAIMED" && (
+            <span className="text-amber-600">Heavy metals tested (brand claim)</span>
+          )}
           <span>
             GMP certified:{" "}
             <span className={cn("font-medium", product.gmpCertified ? "text-emerald-700" : "text-stone-700")}>

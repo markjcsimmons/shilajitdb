@@ -9,6 +9,7 @@ export type FilterState = {
   qualityTier?: string;
   coaStatus?: string;
   thirdPartyTested?: boolean;
+  heavyMetalsTested?: boolean;
   form?: string;
   manufacturingCountryClaim?: string;
   q?: string;
@@ -35,6 +36,7 @@ function filtersToParams(f: FilterState): Record<string, string | undefined> {
     qualityTier: f.qualityTier,
     coaStatus: f.coaStatus,
     thirdPartyTested: f.thirdPartyTested ? "true" : undefined,
+    heavyMetalsTested: f.heavyMetalsTested ? "true" : undefined,
     form: f.form,
     manufacturingCountryClaim: f.manufacturingCountryClaim,
     q: f.q || undefined,
@@ -94,6 +96,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
     optimistic.qualityTier ||
     optimistic.coaStatus ||
     optimistic.thirdPartyTested ||
+    optimistic.heavyMetalsTested ||
     optimistic.form ||
     optimistic.manufacturingCountryClaim ||
     optimistic.q;
@@ -123,6 +126,9 @@ export function FilterBar({ filters, total, active = false }: Props) {
       </Chip>
       <Chip active={!!optimistic.thirdPartyTested} activeClass="bg-slate-700" onClick={() => update({ thirdPartyTested: optimistic.thirdPartyTested ? undefined : true })}>
         Named lab
+      </Chip>
+      <Chip active={!!optimistic.heavyMetalsTested} activeClass="bg-slate-700" onClick={() => update({ heavyMetalsTested: optimistic.heavyMetalsTested ? undefined : true })}>
+        Heavy metals tested
       </Chip>
 
       <span className="text-stone-300" aria-hidden>·</span>
@@ -195,6 +201,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <div className="font-semibold text-stone-700 mb-1">Other filters</div>
           <ul className="space-y-1 text-stone-500">
             <li><span className="font-medium text-stone-700">Named lab</span> — the brand publicly identifies the third-party testing laboratory by name (e.g. Eurofins, NSF)</li>
+            <li><span className="font-medium text-stone-700">Heavy metals tested</span> — the product has been tested for lead, mercury, arsenic, and cadmium. "Confirmed" = verifiable evidence; "Claimed" = brand states testing but no independent verification</li>
             <li><span className="font-medium text-stone-700">Form</span> — the physical format of the supplement (resin, capsule, powder, etc.)</li>
             <li><span className="font-medium text-stone-700">US Made</span> — brand claims the product is manufactured in the United States</li>
           </ul>

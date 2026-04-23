@@ -141,6 +141,20 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const hasPatentClaim = (r.has_patent_claim ?? "").trim().toUpperCase() === "YES";
     const gmpCertified = (r.gmp_certified ?? "").trim().toUpperCase() === "YES";
     const sourceRegion = (r.source_region ?? "").trim() || null;
+
+    // Heavy metals tested
+    const heavyMetalsRaw = (r.heavy_metals_tested ?? "").trim().toUpperCase();
+    const heavyMetalsTested =
+      heavyMetalsRaw === "YES" ? "CONFIRMED" as const :
+      heavyMetalsRaw === "CLAIMED" ? "CLAIMED" as const :
+      heavyMetalsRaw === "NO" ? "NONE" as const : null;
+
+    // Best-for tags (comma-separated, e.g. "best_value,best_tested")
+    const VALID_TAGS = ["best_value","best_tested","best_resin","best_us_made","best_beginners","editors_pick"] as const;
+    const bestForTags = (r.best_for ?? "")
+      .split(",")
+      .map((t: string) => t.trim().toLowerCase())
+      .filter((t: string) => (VALID_TAGS as readonly string[]).includes(t));
     const metaDescription = (r.meta_description ?? "").trim().slice(0, 160) || null;
     const officialUrlRaw = (r.official_url ?? "").trim();
     const amazonAsinRaw = (r.amazon_asin ?? "").trim();
@@ -263,6 +277,8 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       overallGrade,
       dataCompleteness: "HIGH" as const,
       isCanonical: true,
+      ...(heavyMetalsTested !== null ? { heavyMetalsTested } : {}),
+      ...(bestForTags.length > 0 ? { bestForTags } : {}),
       ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
       ...(pricePerGramCents !== null ? { pricePerGramCents } : {}),
     };
