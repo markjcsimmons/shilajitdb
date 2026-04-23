@@ -173,7 +173,8 @@ export default async function HomePage({
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-lg leading-relaxed">
             Every product graded on COA quality, testing lab credibility, heavy metal safety,
-            and manufacturing transparency — so you can buy with confidence.
+            and manufacturing transparency — so you can buy with confidence. We do not earn
+            revenue from this site; our goal is to educate and inform.
           </p>
 
           {/* Stat chips */}
