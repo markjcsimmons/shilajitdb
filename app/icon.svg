@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Amber rounded square background -->
+  <rect width="32" height="32" rx="7" fill="#f59e0b"/>
+  <!-- White S, vertically and horizontally centred -->
+  <text
+    x="16"
+    y="23.5"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+    font-weight="900"
+    font-size="22"
+    fill="white"
+    letter-spacing="-0.5"
+  >S</text>
+</svg>
