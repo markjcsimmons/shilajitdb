@@ -36,11 +36,11 @@ function qualityTierLabel(tier: QualityTier): string {
 
 function coaLabel(status: CoaStatus): string {
   switch (status) {
-    case "PUBLIC":          return "Public";
-    case "PUBLIC_EMBEDDED": return "Page-embedded";
-    case "REQUEST_ONLY":    return "On request";
-    case "NONE":            return "None";
-    case "UNKNOWN":         return "Unknown";
+    case "PUBLIC":          return "Public COA";
+    case "PUBLIC_EMBEDDED": return "COA embedded";
+    case "REQUEST_ONLY":    return "COA on request";
+    case "NONE":            return "No COA";
+    case "UNKNOWN":         return "COA unknown";
   }
 }
 
@@ -50,42 +50,56 @@ function formLabel(form: ProductForm): string {
 
 export function ProductCard({ product: p }: { product: ProductCardData }) {
   return (
-    <div className={cn("rounded-2xl border border-stone-200 border-l-4 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md", gradeAccentClass(p.overallGrade))}>
-      <div className="flex items-start gap-4">
-        {/* Overall Grade badge */}
-        <div
-          className={cn(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-bold",
-            gradeBadgeClasses(p.overallGrade)
-          )}
-        >
-          {gradeLabel(p.overallGrade)}
+    <Link
+      href={`/product/${p.slug}`}
+      className={cn(
+        "group block rounded-2xl border border-stone-200 border-l-4 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-stone-300",
+        gradeAccentClass(p.overallGrade)
+      )}
+    >
+      <div className="flex items-stretch gap-0">
+        {/* Grade badge column */}
+        <div className="flex w-16 shrink-0 flex-col items-center justify-center px-2 py-4">
+          <div
+            className={cn(
+              "flex h-14 w-14 items-center justify-center rounded-xl text-xl font-black tracking-tight shadow-sm",
+              gradeBadgeClasses(p.overallGrade)
+            )}
+          >
+            {gradeLabel(p.overallGrade)}
+          </div>
         </div>
 
+        {/* Divider */}
+        <div className="w-px bg-stone-100 my-3" />
+
         {/* Main content */}
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1 px-4 py-4">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
+            {/* Name + brand */}
             <div className="min-w-0">
-              <Link
-                href={`/product/${p.slug}`}
-                className="text-base font-semibold tracking-tight text-stone-900 hover:underline"
-              >
-                {p.name}
-              </Link>
-              <div className="mt-0.5 text-sm text-slate-500">
-                <Link href={`/brand/${p.brand.slug}`} className="hover:underline">
-                  {p.brand.name}
-                </Link>
-                {" · "}
-                {formLabel(p.form)}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[15px] font-bold tracking-tight text-slate-900 group-hover:text-slate-700 transition-colors leading-snug">
+                  {p.name}
+                </span>
+                {p.dataCompleteness === "LOW" && (
+                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-400">
+                    Unverified
+                  </span>
+                )}
+              </div>
+              <div className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="font-medium text-slate-600">{p.brand.name}</span>
+                <span className="text-stone-300">·</span>
+                <span>{formLabel(p.form)}</span>
               </div>
             </div>
 
             {/* Tier + COA badges */}
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
+                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold",
                   qualityTierClasses(p.qualityTier)
                 )}
               >
@@ -93,25 +107,21 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               </span>
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs",
+                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium",
                   coaStatusClasses(p.coaStatus)
                 )}
               >
-                COA: {coaLabel(p.coaStatus)}
+                {coaLabel(p.coaStatus)}
               </span>
               {p.heavyMetalsTested === "CONFIRMED" && (
-                <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-                  Heavy metals ✓
+                <span className="inline-flex items-center gap-0.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700">
+                  <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-5"/></svg>
+                  Heavy metals
                 </span>
               )}
               {p.heavyMetalsTested === "CLAIMED" && (
-                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-700">
+                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] text-amber-700">
                   Heavy metals (claimed)
-                </span>
-              )}
-              {p.dataCompleteness === "LOW" && (
-                <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500">
-                  Unverified
                 </span>
               )}
             </div>
@@ -121,63 +131,62 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
           {p.bestForTags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {p.bestForTags.map(tag => (
-                <a key={tag} href={`/best/${tag.replace(/_/g, "-")}`}
-                  className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-medium text-amber-800 hover:bg-amber-100"
+                <span
+                  key={tag}
+                  className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-800"
                 >
                   ★ {tag.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                </a>
+                </span>
               ))}
             </div>
           )}
 
           {/* Meta row */}
-          <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500">
-            {p.pricePerServingCents !== null && p.pricePerServingCents !== undefined && (
-              <span>
-                <span className="text-stone-400">Per serving:</span>{" "}
-                <span className="font-medium text-stone-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-stone-500">
+            {p.pricePerServingCents != null && (
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">Per serving</span>
+                <span className="font-semibold text-slate-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
               </span>
             )}
-            {p.pricePerGramCents !== null && p.pricePerGramCents !== undefined && (
-              <span>
-                <span className="text-stone-400">Per gram:</span>{" "}
-                <span className="font-medium text-stone-700">${(p.pricePerGramCents / 100).toFixed(2)}</span>
+            {p.pricePerGramCents != null && (
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">Per gram</span>
+                <span className="font-semibold text-slate-700">${(p.pricePerGramCents / 100).toFixed(2)}</span>
               </span>
             )}
             {p.manufacturingCountryClaim && (
-              <span>
-                <span className="text-stone-400">Made in:</span>{" "}
-                <span className="text-stone-700">{p.manufacturingCountryClaim}</span>
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">Made in</span>
+                <span className="text-slate-600">{p.manufacturingCountryClaim}</span>
               </span>
             )}
             {p.thirdPartyTestingLab && (
-              <span>
-                <span className="text-stone-400">Lab:</span>{" "}
-                <span className="text-stone-700">{p.thirdPartyTestingLab}</span>
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">Lab</span>
+                <span className="text-slate-600">{p.thirdPartyTestingLab}</span>
+              </span>
+            )}
+            {p.lastVerifiedAt && (
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">Verified</span>
+                <span className="text-slate-600">
+                  {new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                </span>
               </span>
             )}
             {p.coaUrl && (
-              <a
-                href={p.coaUrl}
-                className="text-slate-500 underline underline-offset-2 hover:text-slate-700"
-                rel="nofollow"
-                target="_blank"
+              <span
+                className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 group-hover:border-slate-300 group-hover:bg-slate-100 transition-colors"
+                onClick={e => { e.preventDefault(); window.open(p.coaUrl!, "_blank", "noopener,noreferrer"); }}
               >
-                View COA →
-              </a>
-            )}
-            {p.lastVerifiedAt && (
-              <span>
-                <span className="text-stone-400">Verified:</span>{" "}
-                {new Date(p.lastVerifiedAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  year: "numeric",
-                })}
+                View COA
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2 10L10 2M10 2H5M10 2v5"/></svg>
               </span>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

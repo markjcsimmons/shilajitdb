@@ -40,46 +40,87 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={inter.variable}>
       <body>
-        <div className="min-h-dvh">
-          <header className="border-b border-slate-200 bg-white">
-            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-              <div className="min-w-0">
-                <Link
-                  href="/"
-                  className="truncate text-base font-semibold tracking-tight text-slate-900"
-                >
-                  Shilajit Transparency Database
-                </Link>
-                <p className="mt-0.5 hidden text-sm text-slate-500 sm:block">
-                  {productCount} products independently graded on quality, testing, and transparency.
-                </p>
-              </div>
-              <nav className="flex items-center gap-3 text-sm text-slate-700">
-                <Link href="/learn" className="hover:text-slate-900">
+        <div className="min-h-dvh flex flex-col">
+          {/* ── Header ── */}
+          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-sm shadow-sm">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+              <Link href="/" className="flex items-center gap-2.5 min-w-0">
+                {/* Amber dot accent */}
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-xs font-black text-white shadow-sm">
+                  S
+                </span>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold tracking-tight text-slate-900">
+                    Shilajit Transparency Database
+                  </div>
+                  <div className="hidden text-[11px] text-slate-400 sm:block">
+                    {productCount} products independently graded
+                  </div>
+                </div>
+              </Link>
+              <nav className="flex items-center gap-1 text-sm text-slate-600">
+                <Link href="/learn" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Learn
                 </Link>
-                <Link href="/updates" className="hover:text-slate-900">
+                <Link href="/updates" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Updates
                 </Link>
-                <Link href="/methodology" className="hover:text-slate-900">
+                <Link href="/methodology" className="rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   Methodology
                 </Link>
-                <Link href="/about" className="hover:text-slate-900">
+                <Link href="/about" className="hidden sm:block rounded-lg px-3 py-1.5 hover:bg-slate-100 hover:text-slate-900 transition-colors">
                   About
                 </Link>
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-          <footer className="border-t border-slate-200">
-            <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-600">
-              <p>
-                Built to show sources and objective signals. See{" "}
-                <Link href="/methodology" className="underline underline-offset-4">
-                  methodology
-                </Link>
-                .
-              </p>
+
+          {/* ── Main ── */}
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+
+          {/* ── Footer ── */}
+          <footer className="border-t border-slate-200 bg-white mt-12">
+            <div className="mx-auto max-w-6xl px-4 py-10">
+              <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+                <div className="col-span-2 sm:col-span-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500 text-[10px] font-black text-white">S</span>
+                    <span className="text-sm font-semibold text-slate-900">ShilajitDB</span>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
+                    A neutral, evidence-based database of shilajit products graded on testing, transparency, and safety.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Database</p>
+                  <ul className="space-y-2 text-sm text-slate-600">
+                    <li><Link href="/?coaStatus=PUBLIC" className="hover:text-slate-900 transition-colors">Public COA</Link></li>
+                    <li><Link href="/?thirdPartyTested=true" className="hover:text-slate-900 transition-colors">Named lab tested</Link></li>
+                    <li><Link href="/?qualityTier=ULTRA_PREMIUM" className="hover:text-slate-900 transition-colors">Ultra Premium</Link></li>
+                    <li><Link href="/updates" className="hover:text-slate-900 transition-colors">Recent updates</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Learn</p>
+                  <ul className="space-y-2 text-sm text-slate-600">
+                    <li><Link href="/learn/what-is-shilajit" className="hover:text-slate-900 transition-colors">What is shilajit?</Link></li>
+                    <li><Link href="/learn/how-to-read-shilajit-coa" className="hover:text-slate-900 transition-colors">How to read a COA</Link></li>
+                    <li><Link href="/learn/shilajit-heavy-metals" className="hover:text-slate-900 transition-colors">Heavy metals safety</Link></li>
+                    <li><Link href="/learn/shilajit-forms-compared" className="hover:text-slate-900 transition-colors">Forms compared</Link></li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">About</p>
+                  <ul className="space-y-2 text-sm text-slate-600">
+                    <li><Link href="/methodology" className="hover:text-slate-900 transition-colors">Methodology</Link></li>
+                    <li><Link href="/about" className="hover:text-slate-900 transition-colors">About</Link></li>
+                    <li><Link href="/learn" className="hover:text-slate-900 transition-colors">Research guides</Link></li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-8 border-t border-slate-100 pt-6 text-xs text-slate-400">
+                Independent and unaffiliated with any shilajit brand.
+              </div>
             </div>
           </footer>
         </div>
@@ -87,4 +128,3 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     </html>
   );
 }
-
