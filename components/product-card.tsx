@@ -50,10 +50,9 @@ function formLabel(form: ProductForm): string {
 
 export function ProductCard({ product: p }: { product: ProductCardData }) {
   return (
-    <Link
-      href={`/product/${p.slug}`}
+    <div
       className={cn(
-        "group block rounded-2xl border border-stone-200 border-l-4 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-stone-300",
+        "group rounded-2xl border border-stone-200 border-l-4 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-stone-300",
         gradeAccentClass(p.overallGrade)
       )}
     >
@@ -79,9 +78,12 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
             {/* Name + brand */}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-[15px] font-bold tracking-tight text-slate-900 group-hover:text-slate-700 transition-colors leading-snug">
+                <Link
+                  href={`/product/${p.slug}`}
+                  className="text-[15px] font-bold tracking-tight text-slate-900 hover:text-slate-700 hover:underline underline-offset-2 transition-colors leading-snug"
+                >
                   {p.name}
-                </span>
+                </Link>
                 {p.dataCompleteness === "LOW" && (
                   <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] text-slate-400">
                     Unverified
@@ -94,6 +96,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
                 <span>{formLabel(p.form)}</span>
               </div>
             </div>
+
 
             {/* Tier + COA badges */}
             <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
@@ -176,17 +179,19 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               </span>
             )}
             {p.coaUrl && (
-              <span
-                className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 group-hover:border-slate-300 group-hover:bg-slate-100 transition-colors"
-                onClick={e => { e.preventDefault(); window.open(p.coaUrl!, "_blank", "noopener,noreferrer"); }}
+              <a
+                href={p.coaUrl}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-100 transition-colors"
               >
                 View COA
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2 10L10 2M10 2H5M10 2v5"/></svg>
-              </span>
+              </a>
             )}
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
