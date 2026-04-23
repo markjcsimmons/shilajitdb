@@ -8,6 +8,11 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default [
   js.configs.recommended,
-  ...compat.extends("next/core-web-vitals", "next/typescript")
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "react/no-unescaped-entities": "off",
+    },
+  },
 ];
 
