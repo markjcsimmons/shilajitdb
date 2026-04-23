@@ -45,25 +45,31 @@ function filtersToParams(f: FilterState): Record<string, string | undefined> {
 
 type ChipProps = {
   active: boolean;
+  /** Tailwind classes applied when active (bg + text) */
   activeClass: string;
+  /** Tailwind classes applied when inactive — lets each chip carry its own colour */
+  inactiveClass?: string;
   onClick: () => void;
   children: React.ReactNode;
 };
 
-function Chip({ active, activeClass, onClick, children }: ChipProps) {
+function Chip({ active, activeClass, inactiveClass, onClick, children }: ChipProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-medium transition-all duration-150",
+        "inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-150",
         active
-          ? cn(activeClass, "border-transparent text-white shadow-sm")
-          : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:bg-stone-50 hover:shadow-sm"
+          ? cn(activeClass, "border-transparent text-white shadow-md scale-[1.03]")
+          : cn(
+              inactiveClass ?? "border-stone-200 bg-white text-stone-600",
+              "hover:scale-[1.03] hover:shadow-sm"
+            )
       )}
     >
       {active && (
-        <svg className="h-2.5 w-2.5 shrink-0" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M2 6l3 3 5-5" />
         </svg>
       )}
@@ -74,7 +80,7 @@ function Chip({ active, activeClass, onClick, children }: ChipProps) {
 
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-widest text-stone-400 w-14">
+    <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-stone-400 w-16">
       {children}
     </span>
   );
@@ -116,16 +122,36 @@ export function FilterBar({ filters, total, active = false }: Props) {
         {/* Quality row */}
         <div className="flex flex-wrap items-center gap-2">
           <GroupLabel>Quality</GroupLabel>
-          <Chip active={optimistic.qualityTier === "ULTRA_PREMIUM"} activeClass="bg-emerald-600" onClick={() => toggle("qualityTier", "ULTRA_PREMIUM")}>
+          <Chip
+            active={optimistic.qualityTier === "ULTRA_PREMIUM"}
+            activeClass="bg-emerald-600"
+            inactiveClass="border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-100"
+            onClick={() => toggle("qualityTier", "ULTRA_PREMIUM")}
+          >
             Ultra Premium
           </Chip>
-          <Chip active={optimistic.qualityTier === "PREMIUM"} activeClass="bg-sky-600" onClick={() => toggle("qualityTier", "PREMIUM")}>
+          <Chip
+            active={optimistic.qualityTier === "PREMIUM"}
+            activeClass="bg-sky-600"
+            inactiveClass="border-sky-200 bg-sky-50 text-sky-800 hover:border-sky-300 hover:bg-sky-100"
+            onClick={() => toggle("qualityTier", "PREMIUM")}
+          >
             Premium
           </Chip>
-          <Chip active={optimistic.qualityTier === "AVERAGE"} activeClass="bg-amber-500" onClick={() => toggle("qualityTier", "AVERAGE")}>
+          <Chip
+            active={optimistic.qualityTier === "AVERAGE"}
+            activeClass="bg-amber-500"
+            inactiveClass="border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300 hover:bg-amber-100"
+            onClick={() => toggle("qualityTier", "AVERAGE")}
+          >
             Average
           </Chip>
-          <Chip active={optimistic.qualityTier === "POOR"} activeClass="bg-rose-600" onClick={() => toggle("qualityTier", "POOR")}>
+          <Chip
+            active={optimistic.qualityTier === "POOR"}
+            activeClass="bg-rose-600"
+            inactiveClass="border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300 hover:bg-rose-100"
+            onClick={() => toggle("qualityTier", "POOR")}
+          >
             Poor
           </Chip>
         </div>
@@ -136,13 +162,28 @@ export function FilterBar({ filters, total, active = false }: Props) {
         {/* Testing row */}
         <div className="flex flex-wrap items-center gap-2">
           <GroupLabel>Testing</GroupLabel>
-          <Chip active={optimistic.coaStatus === "PUBLIC"} activeClass="bg-slate-700" onClick={() => toggle("coaStatus", "PUBLIC")}>
+          <Chip
+            active={optimistic.coaStatus === "PUBLIC"}
+            activeClass="bg-slate-700"
+            inactiveClass="border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+            onClick={() => toggle("coaStatus", "PUBLIC")}
+          >
             Public COA
           </Chip>
-          <Chip active={!!optimistic.thirdPartyTested} activeClass="bg-slate-700" onClick={() => update({ thirdPartyTested: optimistic.thirdPartyTested ? undefined : true })}>
+          <Chip
+            active={!!optimistic.thirdPartyTested}
+            activeClass="bg-slate-700"
+            inactiveClass="border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+            onClick={() => update({ thirdPartyTested: optimistic.thirdPartyTested ? undefined : true })}
+          >
             Named lab
           </Chip>
-          <Chip active={!!optimistic.heavyMetalsTested} activeClass="bg-slate-700" onClick={() => update({ heavyMetalsTested: optimistic.heavyMetalsTested ? undefined : true })}>
+          <Chip
+            active={!!optimistic.heavyMetalsTested}
+            activeClass="bg-slate-700"
+            inactiveClass="border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+            onClick={() => update({ heavyMetalsTested: optimistic.heavyMetalsTested ? undefined : true })}
+          >
             Heavy metals tested
           </Chip>
         </div>
@@ -153,13 +194,18 @@ export function FilterBar({ filters, total, active = false }: Props) {
         {/* Form + origin row */}
         <div className="flex flex-wrap items-center gap-2">
           <GroupLabel>Form</GroupLabel>
-          <Chip active={optimistic.form === "RESIN"} activeClass="bg-slate-700" onClick={() => toggle("form", "RESIN")}>Resin</Chip>
-          <Chip active={optimistic.form === "CAPSULE"} activeClass="bg-slate-700" onClick={() => toggle("form", "CAPSULE")}>Capsule</Chip>
-          <Chip active={optimistic.form === "TABLETS"} activeClass="bg-slate-700" onClick={() => toggle("form", "TABLETS")}>Tablet</Chip>
-          <Chip active={optimistic.form === "POWDER"} activeClass="bg-slate-700" onClick={() => toggle("form", "POWDER")}>Powder</Chip>
-          <Chip active={optimistic.form === "GUMMY"} activeClass="bg-slate-700" onClick={() => toggle("form", "GUMMY")}>Gummy</Chip>
-          <span className="text-stone-200 select-none">|</span>
-          <Chip active={optimistic.manufacturingCountryClaim === "United States"} activeClass="bg-slate-700" onClick={() => toggle("manufacturingCountryClaim", "United States")}>
+          <Chip active={optimistic.form === "RESIN"} activeClass="bg-slate-700" inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100" onClick={() => toggle("form", "RESIN")}>Resin</Chip>
+          <Chip active={optimistic.form === "CAPSULE"} activeClass="bg-slate-700" inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100" onClick={() => toggle("form", "CAPSULE")}>Capsule</Chip>
+          <Chip active={optimistic.form === "TABLETS"} activeClass="bg-slate-700" inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100" onClick={() => toggle("form", "TABLETS")}>Tablet</Chip>
+          <Chip active={optimistic.form === "POWDER"} activeClass="bg-slate-700" inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100" onClick={() => toggle("form", "POWDER")}>Powder</Chip>
+          <Chip active={optimistic.form === "GUMMY"} activeClass="bg-slate-700" inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100" onClick={() => toggle("form", "GUMMY")}>Gummy</Chip>
+          <span className="text-stone-200 select-none mx-1">|</span>
+          <Chip
+            active={optimistic.manufacturingCountryClaim === "United States"}
+            activeClass="bg-slate-700"
+            inactiveClass="border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100"
+            onClick={() => toggle("manufacturingCountryClaim", "United States")}
+          >
             US Made
           </Chip>
         </div>
