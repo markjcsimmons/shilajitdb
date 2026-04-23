@@ -169,7 +169,7 @@ export default async function HomePage({
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl max-w-xl leading-snug">
-            The shilajit quality database
+            Shilajit transparency database
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-lg leading-relaxed">
             Every product graded on COA quality, testing lab credibility, heavy metal safety,
