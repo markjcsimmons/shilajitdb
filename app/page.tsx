@@ -165,7 +165,7 @@ export default async function HomePage({
         <div className="relative">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-4">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            Independent · No brand affiliation
+            Unbiased. Comprehensive. Free.
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl max-w-xl leading-snug">
