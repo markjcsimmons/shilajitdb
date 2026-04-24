@@ -7,14 +7,141 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+// ── Tag metadata ──────────────────────────────────────────────────────────────
+
 const TAG_META: Record<string, { label: string; description: string }> = {
-  best_value:     { label: "Best Value",     description: "Highest transparency grade per dollar — strong testing credentials without a premium price tag." },
-  best_tested:    { label: "Best Tested",    description: "Products with a publicly available COA from a named independent laboratory." },
-  best_resin:     { label: "Best Resin",     description: "Top-rated resin-form shilajit — the least processed format, preserving the fulvic-humic mineral matrix." },
-  best_us_made:   { label: "Best US-Made",   description: "Products manufactured in the United States under FDA 21 CFR Part 111 facility oversight." },
-  best_beginners: { label: "Best for Beginners", description: "Well-documented, straightforward products that are a good starting point for first-time buyers." },
-  editors_pick:   { label: "Editor's Picks", description: "Hand-selected products that stand out across quality, transparency, and value." },
+  best_value:    { label: "Best Value",     description: "Highest quality-to-price ratio — strong testing credentials at a competitive price per serving." },
+  best_tested:   { label: "Best Tested",    description: "Products with a publicly available COA from a named independent laboratory and confirmed heavy metals testing." },
+  best_resin:    { label: "Best Resin",     description: "Top-rated resin-form shilajit — the least processed format, preserving the fulvic-humic mineral matrix." },
+  best_capsules: { label: "Best Capsules",  description: "Top capsule-form shilajit products, curated by grade, testing transparency, and value." },
+  verified_safe: { label: "Verified Safe",  description: "Products meeting the highest safety bar: public COA, confirmed heavy metals testing, and GMP-certified manufacturing." },
+  editors_pick:  { label: "Editor's Picks", description: "Hand-selected products that stand out across quality, transparency, and value." },
 };
+
+// ── Shared select ─────────────────────────────────────────────────────────────
+
+const PRODUCT_SELECT = {
+  id: true,
+  slug: true,
+  name: true,
+  form: true,
+  dataCompleteness: true,
+  manufacturingCountryClaim: true,
+  coaStatus: true,
+  coaUrl: true,
+  transparencyGrade: true,
+  qualityTier: true,
+  overallGrade: true,
+  thirdPartyTestingLab: true,
+  lastVerifiedAt: true,
+  heavyMetalsTested: true,
+  bestForTags: true,
+  pricePerServingCents: true,
+  pricePerGramCents: true,
+  brand: { select: { name: true, slug: true } },
+} as const;
+
+const BASE_WHERE = {
+  isCanonical: true,
+  dataCompleteness: { not: "LOW" as const },
+};
+
+// ── Value score algorithm ─────────────────────────────────────────────────────
+// Quality points / price per gram — higher = more quality per dollar
+
+type ProductResult = Awaited<ReturnType<typeof prisma.product.findMany<{ select: typeof PRODUCT_SELECT }>>>[number];
+
+async function fetchValueProducts(): Promise<ProductResult[]> {
+  const candidates = await prisma.product.findMany({
+    where: {
+      ...BASE_WHERE,
+      pricePerGramCents: { not: null, gt: 0 },
+      qualityTier: { not: "POOR" },
+    },
+    select: PRODUCT_SELECT,
+  });
+
+  function qualityPoints(p: ProductResult): number {
+    let pts = 0;
+    if (p.qualityTier === "ULTRA_PREMIUM") pts += 4;
+    else if (p.qualityTier === "PREMIUM") pts += 3;
+    else if (p.qualityTier === "AVERAGE") pts += 2;
+    if (p.coaStatus === "PUBLIC") pts += 2;
+    else if (p.coaStatus === "PUBLIC_EMBEDDED") pts += 1;
+    if (p.thirdPartyTestingLab) pts += 1;
+    if (p.heavyMetalsTested === "CONFIRMED") pts += 1;
+    return pts;
+  }
+
+  return candidates
+    .map((p) => ({ ...p, _score: qualityPoints(p) / p.pricePerGramCents! }))
+    .sort((a, b) => b._score - a._score)
+    .slice(0, 10)
+    .map(({ _score, ...p }) => p);
+}
+
+// ── Per-tag product fetchers ──────────────────────────────────────────────────
+
+async function fetchProducts(tag: string): Promise<ProductResult[]> {
+
+  switch (tag) {
+    case "best_tested":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          coaStatus: "PUBLIC",
+          thirdPartyTestingLab: { not: null },
+          heavyMetalsTested: "CONFIRMED",
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_resin":
+      return prisma.product.findMany({
+        where: { ...BASE_WHERE, form: "RESIN" },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_capsules":
+      return prisma.product.findMany({
+        where: { ...BASE_WHERE, form: "CAPSULE" },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "verified_safe":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          coaStatus: "PUBLIC",
+          heavyMetalsTested: "CONFIRMED",
+          gmpCertified: true,
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_value":
+      return fetchValueProducts();
+
+    case "editors_pick":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          bestForTags: { has: "editors_pick" },
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    default:
+      return [];
+  }
+}
+
+// ── Route ─────────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({
   params,
@@ -44,34 +171,7 @@ export default async function BestTagPage({
   const meta = TAG_META[dbTag];
   if (!meta) notFound();
 
-  const products = await prisma.product.findMany({
-    where: {
-      isCanonical: true,
-      dataCompleteness: { not: "LOW" },
-      bestForTags: { has: dbTag },
-    },
-    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      form: true,
-      dataCompleteness: true,
-      manufacturingCountryClaim: true,
-      coaStatus: true,
-      coaUrl: true,
-      transparencyGrade: true,
-      qualityTier: true,
-      overallGrade: true,
-      thirdPartyTestingLab: true,
-      lastVerifiedAt: true,
-      heavyMetalsTested: true,
-      bestForTags: true,
-      pricePerServingCents: true,
-      pricePerGramCents: true,
-      brand: { select: { name: true, slug: true } },
-    },
-  });
+  const products = await fetchProducts(dbTag);
 
   return (
     <div className="space-y-4">
@@ -90,7 +190,7 @@ export default async function BestTagPage({
 
       {products.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-500">
-          No products have been tagged as {meta.label} yet.
+          No products matched this category yet.
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3">
