@@ -14,7 +14,7 @@ const TAG_META: Record<string, { label: string; description: string }> = {
   best_tested:   { label: "Best Tested",    description: "Products with a publicly available COA from a named independent laboratory and confirmed heavy metals testing." },
   best_resin:    { label: "Best Resin",     description: "Top-rated resin-form shilajit — the least processed format, preserving the fulvic-humic mineral matrix." },
   best_capsules: { label: "Best Capsules",  description: "Top capsule-form shilajit products, curated by grade, testing transparency, and value." },
-  verified_safe: { label: "Verified Safe",  description: "Products meeting the highest safety bar: public COA, confirmed heavy metals testing, and GMP-certified manufacturing." },
+  best_gummies:  { label: "Best Gummies",   description: "Top gummy-form shilajit products, curated by grade, testing transparency, and value." },
   editors_pick:  { label: "Editor's Picks", description: "Hand-selected products that stand out across quality, transparency, and value." },
 };
 
@@ -112,13 +112,9 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
         select: PRODUCT_SELECT,
       });
 
-    case "verified_safe":
+    case "best_gummies":
       return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          coaStatus: "PUBLIC",
-          heavyMetalsTested: "CONFIRMED",
-        },
+        where: { ...BASE_WHERE, form: "GUMMY" },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
         take: 5,
         select: PRODUCT_SELECT,

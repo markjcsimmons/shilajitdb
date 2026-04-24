@@ -150,7 +150,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       heavyMetalsRaw === "NO" ? "NONE" as const : null;
 
     // Best-for tags (comma-separated, e.g. "best_value,best_tested")
-    const VALID_TAGS = ["best_value","best_tested","best_resin","best_capsules","verified_safe","editors_pick"] as const;
+    const VALID_TAGS = ["best_value","best_tested","best_resin","best_capsules","best_gummies","editors_pick"] as const;
     const bestForTags = (r.best_for ?? "")
       .split(",")
       .map((t: string) => t.trim().toLowerCase())

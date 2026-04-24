@@ -50,12 +50,12 @@ const BEST_FOR_CATEGORIES = [
     labelColor: "text-violet-800",
   },
   {
-    tag: "verified_safe",
-    label: "Verified Safe",
-    description: "Public COA + heavy metals confirmed + GMP certified facility",
-    icon: "✅",
-    color: "bg-teal-50 border-teal-200 hover:bg-teal-100",
-    labelColor: "text-teal-800",
+    tag: "best_gummies",
+    label: "Best Gummies",
+    description: "Top gummy-form shilajit products by grade and transparency",
+    icon: "🍬",
+    color: "bg-pink-50 border-pink-200 hover:bg-pink-100",
+    labelColor: "text-pink-800",
   },
   {
     tag: "editors_pick",

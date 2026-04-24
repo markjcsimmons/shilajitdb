@@ -53,7 +53,7 @@ const TAG_STYLES: Record<string, string> = {
   best_value:    "bg-emerald-50 border-emerald-200 text-emerald-800",
   best_resin:    "bg-amber-50 border-amber-200 text-amber-800",
   best_capsules: "bg-violet-50 border-violet-200 text-violet-800",
-  verified_safe: "bg-teal-50 border-teal-200 text-teal-800",
+  best_gummies:  "bg-pink-50 border-pink-200 text-pink-800",
   editors_pick:  "bg-rose-50 border-rose-200 text-rose-800",
 };
 
