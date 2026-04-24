@@ -43,7 +43,6 @@ const PRODUCT_SELECT = {
 
 const BASE_WHERE = {
   isCanonical: true,
-  dataCompleteness: { not: "LOW" as const },
 };
 
 // ── Value score algorithm ─────────────────────────────────────────────────────
@@ -54,7 +53,7 @@ type ProductResult = Awaited<ReturnType<typeof prisma.product.findMany<{ select:
 async function fetchValueProducts(): Promise<ProductResult[]> {
   const candidates = await prisma.product.findMany({
     where: {
-      ...BASE_WHERE,
+      isCanonical: true,
       pricePerGramCents: { not: null, gt: 0 },
       qualityTier: { not: "POOR" },
     },
@@ -91,7 +90,6 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           ...BASE_WHERE,
           coaStatus: "PUBLIC",
           thirdPartyTestingLab: { not: null },
-          heavyMetalsTested: "CONFIRMED",
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
         select: PRODUCT_SELECT,
@@ -117,7 +115,6 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           ...BASE_WHERE,
           coaStatus: "PUBLIC",
           heavyMetalsTested: "CONFIRMED",
-          gmpCertified: true,
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
         select: PRODUCT_SELECT,
