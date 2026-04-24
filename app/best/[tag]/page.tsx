@@ -75,7 +75,7 @@ async function fetchValueProducts(): Promise<ProductResult[]> {
   return candidates
     .map((p) => ({ ...p, _score: qualityPoints(p) / p.pricePerGramCents! }))
     .sort((a, b) => b._score - a._score)
-    .slice(0, 10)
+    .slice(0, 5)
     .map(({ _score, ...p }) => p);
 }
 
@@ -92,6 +92,7 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           thirdPartyTestingLab: { not: null },
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
@@ -99,6 +100,7 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
       return prisma.product.findMany({
         where: { ...BASE_WHERE, form: "RESIN" },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
@@ -106,6 +108,7 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
       return prisma.product.findMany({
         where: { ...BASE_WHERE, form: "CAPSULE" },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
@@ -117,6 +120,7 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           heavyMetalsTested: "CONFIRMED",
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
