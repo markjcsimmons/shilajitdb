@@ -2,11 +2,12 @@ import Link from "next/link";
 import { Pagination } from "@/components/pagination";
 import { FilterBar, type FilterState } from "@/components/filter-bar";
 import { SearchBox } from "@/components/search-box";
+import { SortSelect } from "@/components/sort-select";
 import { ProductCard } from "@/components/product-card";
 import { prisma } from "@/lib/db";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
 import {
-  buildDefaultOrderBy,
+  buildOrderBy,
   buildProductWhere,
   PAGE_SIZE,
   parseProductFilters,
@@ -80,14 +81,16 @@ export default async function HomePage({
     filters.thirdPartyTested ||
     filters.heavyMetalsTested ||
     filters.form ||
-    filters.manufacturingCountryClaim
+    filters.manufacturingCountryClaim ||
+    filters.minPriceGram != null ||
+    filters.maxPriceGram != null
   );
 
   const where = buildProductWhere(filters);
-  const orderBy = buildDefaultOrderBy();
+  const orderBy = buildOrderBy(filters.sort);
   const skip = (filters.page - 1) * PAGE_SIZE;
 
-  const [total, products, productCount, brandCount, publicCoaCount] = await Promise.all([
+  const [total, products, productCount, brandCount, publicCoaCount, lastVerified] = await Promise.all([
     hasActiveFilter ? prisma.product.count({ where }) : Promise.resolve(0),
     hasActiveFilter
       ? prisma.product.findMany({
@@ -122,6 +125,11 @@ export default async function HomePage({
     prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
     prisma.brand.count(),
     prisma.product.count({ where: { isCanonical: true, coaStatus: "PUBLIC" } }),
+    prisma.product.findFirst({
+      where: { isCanonical: true, lastVerifiedAt: { not: null } },
+      orderBy: { lastVerifiedAt: "desc" },
+      select: { lastVerifiedAt: true },
+    }),
   ]);
 
   const coaPercent = productCount > 0 ? Math.round((publicCoaCount / productCount) * 100) : 0;
@@ -147,7 +155,14 @@ export default async function HomePage({
     manufacturingCountryClaim: filters.manufacturingCountryClaim,
     q: filters.q,
     page: filters.page,
+    sort: filters.sort,
+    minPriceGram: filters.minPriceGram,
+    maxPriceGram: filters.maxPriceGram,
   };
+
+  const lastVerifiedLabel = lastVerified?.lastVerifiedAt
+    ? new Date(lastVerified.lastVerifiedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : null;
 
   return (
     <div className="space-y-5">
@@ -190,12 +205,22 @@ export default async function HomePage({
               </div>
             ))}
           </div>
+          {lastVerifiedLabel && (
+            <p className="mt-3 text-[11px] text-slate-500">
+              Last updated: {lastVerifiedLabel}
+            </p>
+          )}
         </div>
       </div>
 
       {/* ── Search + filters ── */}
       <SearchBox initialQ={filters.q} filters={filterState} />
       <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
+      {hasActiveFilter && (
+        <div className="flex justify-end">
+          <SortSelect current={filters.sort} filters={filterState} />
+        </div>
+      )}
 
       {/* ── Product list / discovery ── */}
       {!hasActiveFilter ? (

@@ -14,6 +14,9 @@ export type FilterState = {
   manufacturingCountryClaim?: string;
   q?: string;
   page?: number;
+  sort?: string;
+  minPriceGram?: number;
+  maxPriceGram?: number;
 };
 
 type Props = {
@@ -40,6 +43,9 @@ function filtersToParams(f: FilterState): Record<string, string | undefined> {
     form: f.form,
     manufacturingCountryClaim: f.manufacturingCountryClaim,
     q: f.q || undefined,
+    sort: f.sort && f.sort !== "recommended" ? f.sort : undefined,
+    minPriceGram: f.minPriceGram != null ? String(f.minPriceGram) : undefined,
+    maxPriceGram: f.maxPriceGram != null ? String(f.maxPriceGram) : undefined,
   };
 }
 
@@ -112,7 +118,9 @@ export function FilterBar({ filters, total, active = false }: Props) {
     optimistic.heavyMetalsTested ||
     optimistic.form ||
     optimistic.manufacturingCountryClaim ||
-    optimistic.q;
+    optimistic.q ||
+    optimistic.minPriceGram != null ||
+    optimistic.maxPriceGram != null;
 
   return (
     <div className="space-y-3">
@@ -208,6 +216,44 @@ export function FilterBar({ filters, total, active = false }: Props) {
           >
             US Made
           </Chip>
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-stone-100" />
+
+        {/* Price row */}
+        <div className="flex flex-wrap items-center gap-2">
+          <GroupLabel>Price</GroupLabel>
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs text-stone-400">$/g</span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              placeholder="Min"
+              value={optimistic.minPriceGram ?? ""}
+              onChange={(e) => {
+                const v = e.target.value === "" ? undefined : parseFloat(e.target.value);
+                update({ minPriceGram: v });
+              }}
+              className="w-20 rounded-lg border border-stone-200 bg-white px-2.5 py-1 text-xs text-slate-700 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-300"
+            />
+            <span className="text-xs text-stone-300">—</span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.01"
+              placeholder="Max"
+              value={optimistic.maxPriceGram ?? ""}
+              onChange={(e) => {
+                const v = e.target.value === "" ? undefined : parseFloat(e.target.value);
+                update({ maxPriceGram: v });
+              }}
+              className="w-20 rounded-lg border border-stone-200 bg-white px-2.5 py-1 text-xs text-slate-700 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-300"
+            />
+          </div>
         </div>
 
         {/* Count + reset */}

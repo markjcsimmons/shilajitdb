@@ -48,6 +48,20 @@ function formLabel(form: ProductForm): string {
   return form.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
 }
 
+// Category-specific colours for best-for tags
+const TAG_STYLES: Record<string, string> = {
+  best_tested:   "bg-sky-50 border-sky-200 text-sky-800",
+  best_value:    "bg-emerald-50 border-emerald-200 text-emerald-800",
+  best_resin:    "bg-amber-50 border-amber-200 text-amber-800",
+  best_capsules: "bg-violet-50 border-violet-200 text-violet-800",
+  verified_safe: "bg-teal-50 border-teal-200 text-teal-800",
+  editors_pick:  "bg-rose-50 border-rose-200 text-rose-800",
+};
+
+function tagLabel(tag: string): string {
+  return tag.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function ProductCard({ product: p }: { product: ProductCardData }) {
   return (
     <div
@@ -58,7 +72,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
     >
       <div className="flex items-stretch gap-0">
         {/* Grade badge column */}
-        <div className="flex w-16 shrink-0 flex-col items-center justify-center px-2 py-4">
+        <div className="flex w-16 shrink-0 flex-col items-center justify-center px-2 py-5">
           <div
             className={cn(
               "flex h-14 w-14 items-center justify-center rounded-xl text-xl font-black tracking-tight shadow-sm",
@@ -73,14 +87,15 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
         <div className="w-px bg-stone-100 my-3" />
 
         {/* Main content */}
-        <div className="min-w-0 flex-1 px-4 py-4">
+        <div className="min-w-0 flex-1 px-4 py-5">
+
+          {/* Row 1: Name + brand */}
           <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
-            {/* Name + brand */}
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <Link
                   href={`/product/${p.slug}`}
-                  className="text-[15px] font-bold tracking-tight text-slate-900 hover:text-slate-700 hover:underline underline-offset-2 transition-colors leading-snug"
+                  className="text-base font-bold tracking-tight text-slate-900 hover:text-slate-700 hover:underline underline-offset-2 transition-colors leading-snug"
                 >
                   {p.name}
                 </Link>
@@ -96,7 +111,6 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
                 <span>{formLabel(p.form)}</span>
               </div>
             </div>
-
 
             {/* Tier + COA badges */}
             <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
@@ -130,32 +144,35 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
             </div>
           </div>
 
-          {/* Best-for tags */}
+          {/* Row 2: Best-for tags */}
           {p.bestForTags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
               {p.bestForTags.map(tag => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-800"
+                  className={cn(
+                    "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+                    TAG_STYLES[tag] ?? "bg-amber-50 border-amber-200 text-amber-800"
+                  )}
                 >
-                  ★ {tag.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                  ★ {tagLabel(tag)}
                 </span>
               ))}
             </div>
           )}
 
-          {/* Meta row */}
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-stone-500">
-            {p.pricePerServingCents != null && (
-              <span className="flex items-center gap-1">
-                <span className="text-stone-400">Per serving</span>
-                <span className="font-semibold text-slate-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
-              </span>
-            )}
+          {/* Row 3: Price + origin + lab (secondary meta) */}
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-stone-500">
             {p.pricePerGramCents != null && (
               <span className="flex items-center gap-1">
-                <span className="text-stone-400">Per gram</span>
+                <span className="text-stone-400">$/gram</span>
                 <span className="font-semibold text-slate-700">${(p.pricePerGramCents / 100).toFixed(2)}</span>
+              </span>
+            )}
+            {p.pricePerServingCents != null && (
+              <span className="flex items-center gap-1">
+                <span className="text-stone-400">$/serving</span>
+                <span className="font-semibold text-slate-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
               </span>
             )}
             {p.manufacturingCountryClaim && (
@@ -178,12 +195,19 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
                 </span>
               </span>
             )}
+
+            {/* COA CTA — solid when public, ghost otherwise */}
             {p.coaUrl && (
               <a
                 href={p.coaUrl}
                 target="_blank"
                 rel="nofollow noopener noreferrer"
-                className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300 hover:bg-slate-100 transition-colors"
+                className={cn(
+                  "ml-auto inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                  p.coaStatus === "PUBLIC"
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                    : "border border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100"
+                )}
               >
                 View COA
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2 10L10 2M10 2H5M10 2v5"/></svg>

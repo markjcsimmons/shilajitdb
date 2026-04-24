@@ -26,6 +26,16 @@ const CoaStatusSchema = enumList(["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"]);
 const TransparencyGradeSchema = enumList(["A", "B", "C", "D", "F"]);
 const QualityTierSchema = enumList(["ULTRA_PREMIUM", "PREMIUM", "AVERAGE", "POOR"]);
 
+export type SortOption = "recommended" | "grade_asc" | "price_gram_asc" | "price_serving_asc" | "verified_desc";
+
+export const SORT_LABELS: Record<SortOption, string> = {
+  recommended:       "Recommended",
+  grade_asc:         "Best grade first",
+  price_gram_asc:    "Lowest $/gram",
+  price_serving_asc: "Lowest $/serving",
+  verified_desc:     "Recently verified",
+};
+
 export type SearchParams = Record<string, string | string[] | undefined>;
 
 function getFirst(v: string | string[] | undefined) {
@@ -44,8 +54,10 @@ export type ProductFilters = {
   ingredient?: string;
   thirdPartyTested?: boolean;
   heavyMetalsTested?: boolean;
+  minPriceGram?: number; // dollars (e.g. 0.10)
+  maxPriceGram?: number; // dollars (e.g. 1.50)
   page: number;
-  sort: "default";
+  sort: SortOption;
 };
 
 const SearchParamSchema = z.object({
@@ -57,7 +69,9 @@ const SearchParamSchema = z.object({
   qualityTier: QualityTierSchema.optional(),
   ingredient: z.string().trim().min(1).max(60).optional(),
   page: z.coerce.number().int().min(1).max(999).optional(),
-  sort: z.literal("default").optional(),
+  sort: z.enum(["recommended", "grade_asc", "price_gram_asc", "price_serving_asc", "verified_desc"]).optional(),
+  minPriceGram: z.coerce.number().min(0).max(100).optional(),
+  maxPriceGram: z.coerce.number().min(0).max(100).optional(),
 });
 
 export function parseProductFilters(searchParams: SearchParams): ProductFilters {
@@ -71,11 +85,13 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     ingredient: getFirst(searchParams.ingredient),
     page: getFirst(searchParams.page),
     sort: getFirst(searchParams.sort),
+    minPriceGram: getFirst(searchParams.minPriceGram),
+    maxPriceGram: getFirst(searchParams.maxPriceGram),
   };
 
   const parsed = SearchParamSchema.safeParse(raw);
   if (!parsed.success) {
-    return { page: 1, sort: "default" };
+    return { page: 1, sort: "recommended" };
   }
 
   return {
@@ -88,8 +104,10 @@ export function parseProductFilters(searchParams: SearchParams): ProductFilters 
     ingredient: parsed.data.ingredient,
     thirdPartyTested: getFirst(searchParams.thirdPartyTested) === "true" ? true : undefined,
     heavyMetalsTested: getFirst(searchParams.heavyMetalsTested) === "true" ? true : undefined,
+    minPriceGram: parsed.data.minPriceGram,
+    maxPriceGram: parsed.data.maxPriceGram,
     page: parsed.data.page ?? 1,
-    sort: "default",
+    sort: parsed.data.sort ?? "recommended",
   };
 }
 
@@ -100,15 +118,12 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
     { isCanonical: true },
   ];
 
-  // When no search query (homepage default): show ONLY verified products to avoid clutter.
-  // When q exists: include BOTH verified and placeholder products; ordering will put placeholders last.
   const hasSearchQuery = Boolean(filters.q?.trim());
   if (!hasSearchQuery) {
     and.push({ dataCompleteness: { not: "LOW" } });
   }
 
   if (filters.q) {
-    // Normalize the query (strip diacritics) for slug matching so e.g. "pürblack" matches slug "purblack"
     const qNorm = filters.q.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     and.push({
       OR: [
@@ -128,29 +143,47 @@ export function buildProductWhere(filters: ProductFilters): Prisma.ProductWhereI
   if (filters.manufacturingCountryClaim)
     and.push({ manufacturingCountryClaim: filters.manufacturingCountryClaim });
   if (filters.ingredient)
-    and.push({
-      ingredientsNormalized: { has: filters.ingredient },
-    });
+    and.push({ ingredientsNormalized: { has: filters.ingredient } });
   if (filters.thirdPartyTested)
     and.push({ thirdPartyTestingLab: { not: null } });
   if (filters.heavyMetalsTested)
     and.push({ heavyMetalsTested: { in: ["CONFIRMED", "CLAIMED"] } });
 
+  // Price range (stored as cents, input in dollars)
+  if (filters.minPriceGram != null) {
+    and.push({ pricePerGramCents: { gte: Math.round(filters.minPriceGram * 100) } });
+  }
+  if (filters.maxPriceGram != null) {
+    and.push({ pricePerGramCents: { lte: Math.round(filters.maxPriceGram * 100) } });
+  }
+
   return and.length ? { AND: and } : {};
 }
 
+export function buildOrderBy(sort: SortOption): Prisma.ProductOrderByWithRelationInput[] {
+  switch (sort) {
+    case "grade_asc":
+      return [{ overallGrade: "asc" }, { dataCompleteness: "desc" }, { name: "asc" }];
+    case "price_gram_asc":
+      return [{ pricePerGramCents: "asc" }, { overallGrade: "asc" }, { name: "asc" }];
+    case "price_serving_asc":
+      return [{ pricePerServingCents: "asc" }, { overallGrade: "asc" }, { name: "asc" }];
+    case "verified_desc":
+      return [{ lastVerifiedAt: "desc" }, { overallGrade: "asc" }, { name: "asc" }];
+    case "recommended":
+    default:
+      return [{ dataCompleteness: "desc" }, { overallGrade: "asc" }, { name: "asc" }];
+  }
+}
+
+/** @deprecated use buildOrderBy(sort) */
 export function buildDefaultOrderBy(): Prisma.ProductOrderByWithRelationInput[] {
-  // LOW completeness products last; then best overall grade first (A_PLUS = pos 1 in enum → "asc" = A+ first)
-  return [
-    { dataCompleteness: "desc" },
-    { overallGrade: "asc" },
-    { name: "asc" },
-  ];
+  return buildOrderBy("recommended");
 }
 
 export function buildQueryString(next: Partial<ProductFilters>) {
   const params = new URLSearchParams();
-  const entries: [keyof ProductFilters, string | number | undefined][] = [
+  const entries: [string, string | number | undefined][] = [
     ["q", next.q],
     ["form", next.form],
     ["manufacturingCountryClaim", next.manufacturingCountryClaim],
@@ -160,16 +193,17 @@ export function buildQueryString(next: Partial<ProductFilters>) {
     ["ingredient", next.ingredient],
     ["thirdPartyTested", next.thirdPartyTested === true ? "true" : undefined],
     ["heavyMetalsTested", next.heavyMetalsTested === true ? "true" : undefined],
-    ["sort", next.sort && next.sort !== "default" ? next.sort : undefined],
+    ["minPriceGram", next.minPriceGram],
+    ["maxPriceGram", next.maxPriceGram],
+    ["sort", next.sort && next.sort !== "recommended" ? next.sort : undefined],
     ["page", next.page && next.page > 1 ? next.page : undefined],
   ];
   for (const [k, v] of entries) {
     if (v === undefined) continue;
     const s = String(v).trim();
     if (!s) continue;
-    params.set(String(k), s);
+    params.set(k, s);
   }
   const qs = params.toString();
   return qs ? `?${qs}` : "";
 }
-
