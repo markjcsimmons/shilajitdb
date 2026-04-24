@@ -133,7 +133,6 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <Chip
             active={optimistic.qualityTier === "ULTRA_PREMIUM"}
             activeClass="bg-emerald-600"
-            inactiveClass="border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-100"
             onClick={() => toggle("qualityTier", "ULTRA_PREMIUM")}
           >
             Ultra Premium
@@ -141,7 +140,6 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <Chip
             active={optimistic.qualityTier === "PREMIUM"}
             activeClass="bg-sky-600"
-            inactiveClass="border-sky-200 bg-sky-50 text-sky-800 hover:border-sky-300 hover:bg-sky-100"
             onClick={() => toggle("qualityTier", "PREMIUM")}
           >
             Premium
@@ -149,7 +147,6 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <Chip
             active={optimistic.qualityTier === "AVERAGE"}
             activeClass="bg-amber-500"
-            inactiveClass="border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300 hover:bg-amber-100"
             onClick={() => toggle("qualityTier", "AVERAGE")}
           >
             Average
@@ -157,7 +154,6 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <Chip
             active={optimistic.qualityTier === "POOR"}
             activeClass="bg-rose-600"
-            inactiveClass="border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300 hover:bg-rose-100"
             onClick={() => toggle("qualityTier", "POOR")}
           >
             Poor
