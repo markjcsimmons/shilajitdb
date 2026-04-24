@@ -365,4 +365,42 @@ export async function removeBrandsWithNoProductsAction(formData: FormData) {
   redirect(`${redirectTo}?ran=brands_cleaned&removed=${count}`);
 }
 
+export async function adminAddEditorsPick(formData: FormData) {
+  await requireAdmin();
+  const productId = String(formData.get("productId") ?? "").trim();
+  if (!productId) redirect("/admin/editors-picks?error=missing");
+
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { bestForTags: true },
+  });
+  if (!product) redirect("/admin/editors-picks?error=notfound");
+
+  if (!product.bestForTags.includes("editors_pick")) {
+    await prisma.product.update({
+      where: { id: productId },
+      data: { bestForTags: { push: "editors_pick" } },
+    });
+  }
+  redirect("/admin/editors-picks?saved=1");
+}
+
+export async function adminRemoveEditorsPick(formData: FormData) {
+  await requireAdmin();
+  const productId = String(formData.get("productId") ?? "").trim();
+  if (!productId) redirect("/admin/editors-picks?error=missing");
+
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { bestForTags: true },
+  });
+  if (!product) redirect("/admin/editors-picks?error=notfound");
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: { bestForTags: product.bestForTags.filter((t) => t !== "editors_pick") },
+  });
+  redirect("/admin/editors-picks?removed=1");
+}
+
 

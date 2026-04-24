@@ -35,6 +35,10 @@ export default async function AdminProtectedLayout({
           <Link href="/admin/data" className="text-slate-700 hover:text-slate-900">
             Data
           </Link>
+          <span className="text-slate-300">/</span>
+          <Link href="/admin/editors-picks" className="text-slate-700 hover:text-slate-900">
+            Editor&apos;s Picks
+          </Link>
         </nav>
         <form action="/admin/logout" method="POST">
           <Button type="submit" variant="secondary">
