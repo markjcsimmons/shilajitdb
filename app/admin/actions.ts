@@ -125,6 +125,10 @@ export async function adminUpsertProduct(formData: FormData) {
     officialCanonicalUrl: formData.get("officialCanonicalUrl"),
     lastVerifiedAt: formData.get("lastVerifiedAt"),
     metaDescription: formData.get("metaDescription"),
+    heavyMetalsTested: formData.get("heavyMetalsTested"),
+    gmpCertified: formData.get("gmpCertified"),
+    pricePerGramCents: formData.get("pricePerGramCents"),
+    pricePerServingCents: formData.get("pricePerServingCents"),
   });
   if (!parsed.success) {
     const metaIssue = parsed.error.issues.find((i) => i.path.includes("metaDescription"));
@@ -221,6 +225,10 @@ export async function adminUpsertProduct(formData: FormData) {
     coaUrl: parsed.data.coaUrl?.trim() || null,
     thirdPartyTestingLab: parsed.data.thirdPartyTestingLab?.trim() || null,
     hasPatentClaim: parsed.data.hasPatentClaim,
+    gmpCertified: parsed.data.gmpCertified === "yes",
+    heavyMetalsTested: (parsed.data.heavyMetalsTested || null) as "CONFIRMED" | "CLAIMED" | "NONE" | null,
+    pricePerServingCents: parsed.data.pricePerServingCents ?? null,
+    pricePerGramCents: parsed.data.pricePerGramCents ?? null,
     officialCanonicalUrl,
     officialDomain,
     lastVerifiedAt: toDateOrNull(parsed.data.lastVerifiedAt ?? ""),

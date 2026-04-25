@@ -282,10 +282,57 @@ export default async function AdminProductEditPage({
             <textarea
               name="thirdPartyTestingLab"
               defaultValue={product.thirdPartyTestingLab ?? ""}
-              placeholder="e.g. Lab name, testing done (heavy metals, potency), or “tested by X”"
+              placeholder="e.g. Lab name, testing done (heavy metals, potency), or 'tested by X'"
               className="mt-1 min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
             />
             <p className="mt-1 text-xs text-slate-500">Lab name or details when COA/testing is mentioned but no document link.</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="text-xs font-medium text-slate-700">Heavy metals tested</label>
+              <Select name="heavyMetalsTested" defaultValue={product.heavyMetalsTested ?? ""}>
+                <option value="">Unknown / not specified</option>
+                <option value="CONFIRMED">Confirmed — COA proves it</option>
+                <option value="CLAIMED">Claimed — brand says so, no COA proof</option>
+                <option value="NONE">None — not tested</option>
+              </Select>
+              <p className="mt-1 text-xs text-slate-500">CONFIRMED scores highest; CLAIMED scores lower; NONE / blank = no credit.</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-700">GMP certified</label>
+              <Select name="gmpCertified" defaultValue={product.gmpCertified ? "yes" : "no"}>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="text-xs font-medium text-slate-700">Price per serving ($ USD)</label>
+              <Input
+                name="pricePerServingCents"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="e.g. 0.92"
+                defaultValue={product.pricePerServingCents != null ? (product.pricePerServingCents / 100).toFixed(2) : ""}
+              />
+              <p className="mt-1 text-xs text-slate-500">From the CSV price_per_serving column. Enter in dollars.</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-700">Price per gram ($ USD) — resin / powder only</label>
+              <Input
+                name="pricePerGramCents"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="e.g. 3.67"
+                defaultValue={product.pricePerGramCents != null ? (product.pricePerGramCents / 100).toFixed(2) : ""}
+              />
+              <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size (grams). Used for Best Value ranking.</p>
+            </div>
           </div>
 
           <div>

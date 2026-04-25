@@ -22,6 +22,19 @@ function optionalInt() {
     });
 }
 
+/** Accepts a dollar string like "0.92" or "36.67" and returns cents as an integer. */
+function optionalDollarsAsCents() {
+  return z
+    .union([z.string(), z.null(), z.undefined()])
+    .optional()
+    .transform((v) => {
+      const s = (v ?? "").toString().trim();
+      if (s === "") return null;
+      const n = parseFloat(s);
+      return !Number.isFinite(n) || n <= 0 ? null : Math.round(n * 100);
+    });
+}
+
 export const ProductInputSchema = z.object({
   brandId: z.string().trim().min(1),
   name: z.string().trim().min(2).max(140),
@@ -37,10 +50,12 @@ export const ProductInputSchema = z.object({
     .optional()
     .or(z.literal("")),
   heavyMetalsTested: z
-    .enum(["NONE", "CLAIMED", "PASS", "FAIL", ""])
+    .enum(["CONFIRMED", "CLAIMED", "NONE", ""])
     .optional()
     .or(z.literal("")),
   gmpCertified: z.string().optional(),
+  pricePerServingCents: optionalDollarsAsCents(),
+  pricePerGramCents: optionalDollarsAsCents(),
   marketingClaim: optionalString(300),
   amazonAsin: optionalString(20),
   servingsCount: optionalInt(),

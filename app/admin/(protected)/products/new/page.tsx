@@ -164,10 +164,55 @@ export default async function AdminProductNewPage({
           <label className="text-xs font-medium text-slate-700">Third-party testing lab (optional)</label>
           <textarea
             name="thirdPartyTestingLab"
-            placeholder="e.g. Lab name, testing done (heavy metals, potency), or “tested by X”"
+            placeholder="e.g. Lab name, testing done (heavy metals, potency), or 'tested by X'"
             className="mt-1 min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
           />
           <p className="mt-1 text-xs text-slate-500">Lab name or details when COA/testing is mentioned but no document link.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-medium text-slate-700">Heavy metals tested</label>
+            <Select name="heavyMetalsTested" defaultValue="">
+              <option value="">Unknown / not specified</option>
+              <option value="CONFIRMED">Confirmed — COA proves it</option>
+              <option value="CLAIMED">Claimed — brand says so, no COA proof</option>
+              <option value="NONE">None — not tested</option>
+            </Select>
+            <p className="mt-1 text-xs text-slate-500">CONFIRMED scores highest; CLAIMED scores lower.</p>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-slate-700">GMP certified</label>
+            <Select name="gmpCertified" defaultValue="no">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-medium text-slate-700">Price per serving ($ USD)</label>
+            <Input
+              name="pricePerServingCents"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 0.92"
+            />
+            <p className="mt-1 text-xs text-slate-500">From price_per_serving column. Enter in dollars.</p>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-slate-700">Price per gram ($ USD) — resin / powder only</label>
+            <Input
+              name="pricePerGramCents"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="e.g. 3.67"
+            />
+            <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size. Used for Best Value ranking.</p>
+          </div>
         </div>
 
         <div>
