@@ -5,7 +5,7 @@ import Script from "next/script";
 import { prisma } from "@/lib/db";
 import "./globals.css";
 
-const GA_ID = "G-WMM7QDGCE7";
+const GA_ID = "G-GCY995S1EP";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
