@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <article className="prose prose-slate max-w-none">
+    <article className="prose prose-invert max-w-none">
       <h1>Why this database exists</h1>
 
       <p>

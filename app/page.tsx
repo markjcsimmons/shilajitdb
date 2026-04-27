@@ -22,48 +22,36 @@ const BEST_FOR_CATEGORIES = [
     label: "Best Tested",
     description: "Public COA from a named independent lab, heavy metals confirmed",
     icon: "🔬",
-    color: "bg-sky-50 border-sky-200 hover:bg-sky-100",
-    labelColor: "text-sky-800",
   },
   {
     tag: "best_value",
     label: "Best Value",
     description: "Strong testing credentials at a competitive price",
     icon: "💰",
-    color: "bg-emerald-50 border-emerald-200 hover:bg-emerald-100",
-    labelColor: "text-emerald-800",
   },
   {
     tag: "best_resin",
     label: "Best Resin",
     description: "Top-rated resin — the least processed, most traditional form",
     icon: "🪨",
-    color: "bg-amber-50 border-amber-200 hover:bg-amber-100",
-    labelColor: "text-amber-900",
   },
   {
     tag: "best_capsules",
     label: "Best Capsules",
     description: "Top capsule products by grade, testing, and transparency",
     icon: "💊",
-    color: "bg-violet-50 border-violet-200 hover:bg-violet-100",
-    labelColor: "text-violet-800",
   },
   {
     tag: "best_gummies",
     label: "Best Gummies",
     description: "Top gummy-form shilajit products by grade and transparency",
     icon: "🍬",
-    color: "bg-pink-50 border-pink-200 hover:bg-pink-100",
-    labelColor: "text-pink-800",
   },
   {
     tag: "editors_pick",
     label: "Editor's Picks",
     description: "Hand-selected across quality, transparency, and value",
     icon: "⭐",
-    color: "bg-rose-50 border-rose-200 hover:bg-rose-100",
-    labelColor: "text-rose-800",
   },
 ];
 
@@ -99,26 +87,13 @@ export default async function HomePage({
           skip,
           take: PAGE_SIZE,
           select: {
-            id: true,
-            slug: true,
-            name: true,
-            form: true,
-            dataCompleteness: true,
-            manufacturingCountryClaim: true,
-            coaStatus: true,
-            coaUrl: true,
-            transparencyGrade: true,
-            qualityTier: true,
-            overallGrade: true,
-            thirdPartyTestingLab: true,
-            lastVerifiedAt: true,
-            heavyMetalsTested: true,
-            bestForTags: true,
-            pricePerServingCents: true,
-            pricePerGramCents: true,
-            brand: {
-              select: { name: true, slug: true },
-            },
+            id: true, slug: true, name: true, form: true,
+            dataCompleteness: true, manufacturingCountryClaim: true,
+            coaStatus: true, coaUrl: true, transparencyGrade: true,
+            qualityTier: true, overallGrade: true, thirdPartyTestingLab: true,
+            lastVerifiedAt: true, heavyMetalsTested: true, bestForTags: true,
+            pricePerServingCents: true, pricePerGramCents: true,
+            brand: { select: { name: true, slug: true } },
           },
         })
       : Promise.resolve([]),
@@ -133,6 +108,9 @@ export default async function HomePage({
   ]);
 
   const coaPercent = productCount > 0 ? Math.round((publicCoaCount / productCount) * 100) : 0;
+  const lastVerifiedLabel = lastVerified?.lastVerifiedAt
+    ? new Date(lastVerified.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    : null;
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
@@ -160,137 +138,134 @@ export default async function HomePage({
     maxPriceGram: filters.maxPriceGram,
   };
 
-  const lastVerifiedLabel = lastVerified?.lastVerifiedAt
-    ? new Date(lastVerified.lastVerifiedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
-    : null;
-
   return (
-    <div className="space-y-5">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-slate-900 px-6 py-8 md:px-10 md:py-10">
-        {/* Subtle amber glow top-right */}
-        <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute -left-8 bottom-0 h-40 w-40 rounded-full bg-amber-500/5 blur-2xl" />
-
-        <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            Unbiased. Comprehensive. Free.
+      <div className="-mx-4 border-b border-[#252A40] px-4 py-16 md:py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#3D7AFF] mb-4">
+              Independent · Unaffiliated · Free
+            </p>
+            <h1 className="font-serif text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#EEF0F8] mb-4">
+              Shilajit<br />
+              <span className="italic font-normal text-[#8892B8]">Transparency</span> Database
+            </h1>
+            <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-8">
+              Every product graded on COA quality, testing lab credibility, heavy metal safety,
+              and manufacturing transparency — so you can buy with confidence. We do not earn
+              revenue from this site; our goal is to educate and inform.
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              <Link
+                href="/?q="
+                className="inline-flex items-center bg-[#3D7AFF] text-[#080B14] font-bold text-sm px-6 py-3 rounded-md hover:bg-[#6E9FFF] transition-colors"
+              >
+                Browse the Database →
+              </Link>
+              <Link
+                href="/methodology"
+                className="inline-flex items-center border border-[#313760] text-[#EEF0F8] font-semibold text-sm px-6 py-3 rounded-md hover:bg-[#171C2E] transition-colors"
+              >
+                How We Grade
+              </Link>
+            </div>
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl max-w-xl leading-tight">
-            Shilajit transparency database
-          </h1>
-          <p className="mt-2 text-sm text-slate-400 max-w-lg leading-relaxed">
-            Every product graded on COA quality, testing lab credibility, heavy metal safety,
-            and manufacturing transparency — so you can buy with confidence. We do not earn
-            revenue from this site; our goal is to educate and inform.
-          </p>
-
-          {/* Stat chips */}
-          <div className="mt-6 flex flex-wrap gap-3">
+          {/* Stats bar */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 overflow-hidden rounded-lg border border-[#252A40]">
             {[
-              { value: productCount, label: "products graded" },
-              { value: brandCount, label: "brands tracked" },
+              { value: String(productCount), label: "products graded" },
+              { value: String(brandCount), label: "brands tracked" },
               { value: `${coaPercent}%`, label: "with public COA" },
-            ].map((s) => (
-              <div key={s.label} className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 backdrop-blur-sm">
-                <div className="text-lg font-bold text-white">{s.value}</div>
-                <div className="text-xs text-slate-400">{s.label}</div>
+              { value: lastVerifiedLabel ?? "—", label: "last updated" },
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                className={`px-5 py-5 border-r border-[#252A40] last:border-r-0 ${i % 2 === 0 ? "bg-[#0F1320]" : "bg-[#0F1320]"}`}
+              >
+                <div className="font-mono text-2xl font-semibold text-[#EEF0F8] leading-none">{s.value}</div>
+                <div className="text-xs text-[#4A5070] mt-1.5">{s.label}</div>
               </div>
             ))}
           </div>
-          {lastVerifiedLabel && (
-            <p className="mt-3 text-xs text-slate-500">
-              Last updated: {lastVerifiedLabel}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* ── Search + filters ── */}
-      <SearchBox initialQ={filters.q} filters={filterState} />
-      <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
-      {hasActiveFilter && (
-        <div className="flex justify-end">
-          <SortSelect current={filters.sort} filters={filterState} />
-        </div>
-      )}
+      {/* ── Search + filters (always visible) ── */}
+      <div className="mt-8 space-y-4">
+        <SearchBox initialQ={filters.q} filters={filterState} />
+        <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
+        {hasActiveFilter && (
+          <div className="flex justify-end">
+            <SortSelect current={filters.sort} filters={filterState} />
+          </div>
+        )}
+      </div>
 
       {/* ── Product list / discovery ── */}
       {!hasActiveFilter ? (
-        <div className="space-y-6 pt-2">
-          {/* Best-of category cards */}
-          <div>
-            <h2 className="text-sm font-semibold text-slate-700 mb-3">Top picks</h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {BEST_FOR_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.tag}
-                  href={`/best/${cat.tag.replace(/_/g, "-")}`}
-                  className={`group rounded-2xl border p-4 transition-all duration-150 hover:shadow-sm ${cat.color}`}
-                >
-                  <div className="text-2xl mb-2">{cat.icon}</div>
-                  <div className={`text-sm font-semibold ${cat.labelColor}`}>{cat.label}</div>
-                  <div className="mt-0.5 text-xs text-stone-500 leading-snug">{cat.description}</div>
-                </Link>
-              ))}
+        <div className="space-y-12 pt-8">
+
+          {/* Top picks */}
+          <div className="-mx-4 border-t border-b border-[#252A40] py-10 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="mb-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-1.5">Top Picks</p>
+                <h2 className="font-serif text-2xl font-semibold text-[#EEF0F8]">Editor-curated categories</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {BEST_FOR_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.tag}
+                    href={`/best/${cat.tag.replace(/_/g, "-")}`}
+                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-4 transition-colors hover:bg-[#171C2E] hover:border-[#313760]"
+                  >
+                    <div className="text-2xl mb-2">{cat.icon}</div>
+                    <div className="text-sm font-semibold text-[#EEF0F8] mb-1">{cat.label}</div>
+                    <div className="text-xs text-[#4A5070] leading-snug">{cat.description}</div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* How we grade mini-explainer */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-6">
-            <h2 className="text-sm font-semibold text-slate-800 mb-4">How we grade products</h2>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {/* How we grade */}
+          <div>
+            <div className="mb-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-1.5">Methodology</p>
+              <h2 className="font-serif text-2xl font-semibold text-[#EEF0F8]">How we grade products</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {[
                 {
-                  icon: (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  ),
-                  title: "COA verification",
+                  title: "COA Verification",
                   desc: "We check whether a Certificate of Analysis exists, who issued it, and whether it covers the right panels.",
                 },
                 {
-                  icon: (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                  ),
-                  title: "Testing credibility",
+                  title: "Testing Credibility",
                   desc: "We identify whether the testing laboratory is named, independent, and ISO-accredited.",
                 },
                 {
-                  icon: (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                    </svg>
-                  ),
-                  title: "Safety signals",
+                  title: "Safety Signals",
                   desc: "Heavy metals testing, GMP certification, and manufacturing transparency all factor into the grade.",
                 },
               ].map((item) => (
-                <div key={item.title} className="flex gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-slate-800">{item.title}</div>
-                    <div className="mt-0.5 text-xs text-stone-500 leading-relaxed">{item.desc}</div>
-                  </div>
+                <div key={item.title} className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
+                  <div className="text-sm font-semibold text-[#EEF0F8] mb-2">{item.title}</div>
+                  <div className="text-xs text-[#4A5070] leading-relaxed">{item.desc}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-stone-100">
+            <div className="mt-4">
               <Link
                 href="/methodology"
-                className="text-xs font-medium text-slate-600 hover:text-slate-900 underline underline-offset-2 transition-colors"
+                className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors"
               >
                 Read the full methodology →
               </Link>
@@ -299,14 +274,14 @@ export default async function HomePage({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
             {products.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
-                <p className="text-sm font-medium text-slate-600">No products matched your filters.</p>
-                <Link href="/" className="mt-2 inline-block text-xs text-slate-500 underline underline-offset-2 hover:text-slate-800">
+              <div className="col-span-2 rounded-lg border border-dashed border-[#252A40] bg-[#0F1320] p-10 text-center">
+                <p className="text-sm font-medium text-[#8892B8]">No products matched your filters.</p>
+                <Link href="/" className="mt-2 inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">
                   Clear all filters
                 </Link>
               </div>

@@ -11,7 +11,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+        sans:  ["var(--font-dm-sans)", ...defaultTheme.fontFamily.sans],
+        serif: ["var(--font-playfair)", ...defaultTheme.fontFamily.serif],
+        mono:  ["var(--font-mono)", ...defaultTheme.fontFamily.mono],
       },
     },
   },

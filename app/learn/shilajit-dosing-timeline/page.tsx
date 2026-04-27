@@ -18,26 +18,26 @@ export const metadata: Metadata = {
 export default function DosingTimelinePage() {
   return (
     <article className="space-y-6 max-w-3xl">
-      <nav className="flex items-center gap-2 text-xs text-stone-400">
-        <Link href="/" className="hover:text-stone-600">Home</Link>
+      <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
+        <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
-        <Link href="/learn" className="hover:text-stone-600">Learn</Link>
+        <Link href="/learn" className="hover:text-[#8892B8]">Learn</Link>
         <span>/</span>
         <span>Dosing & Timeline</span>
       </nav>
 
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 md:p-8 space-y-8">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 md:p-8 space-y-8">
         <header>
-          <div className="inline-block rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700 mb-4">
+          <div className="inline-block rounded-full bg-[#1F2540] border border-[#252A40] px-3 py-1 text-xs font-medium text-[#8892B8] mb-4">
             Practical
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 leading-snug">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
             How Long Does Shilajit Take to Work? Dosing, Timeline &amp; Expectations
           </h1>
-          <p className="mt-3 text-sm text-stone-500">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
         </header>
 
-        <section className="space-y-4 text-sm text-slate-700 leading-relaxed">
+        <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
           <p className="text-base">
             The most common questions from new shilajit users are about timing: how much should I
             take, how do I take it, and when will I notice a difference? The clinical trial literature
@@ -45,55 +45,55 @@ export default function DosingTimelinePage() {
             and the quality of the product you are using matters as much as the dose.
           </p>
 
-          <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-            <p className="text-xs font-semibold text-amber-700 mb-1">Disclaimer</p>
-            <p className="text-xs text-amber-700">
+          <div className="rounded-lg bg-[#201800] border border-[#EAB308]/30 p-4">
+            <p className="text-xs font-semibold text-[#EAB308] mb-1">Disclaimer</p>
+            <p className="text-xs text-[#EAB308]">
               This page summarises information from published research for educational purposes only.
               It is not medical advice. Consult a qualified healthcare professional before starting
               any new supplement, particularly if you have an existing health condition or take medication.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What Dose Was Used in Research</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What Dose Was Used in Research</h2>
           <p>
             Across the published clinical trials, doses have ranged from 200 mg to 500 mg per day,
             typically split into one or two doses. The most referenced protocols are:
           </p>
 
-          <div className="rounded-xl border border-stone-200 overflow-hidden">
+          <div className="rounded-xl border border-[#252A40] overflow-hidden">
             <table className="w-full text-xs">
-              <thead className="bg-stone-50 border-b border-stone-200">
+              <thead className="bg-[#171C2E] border-b border-[#252A40]">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Study</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Dose</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Duration</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Outcome measured</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Study</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Dose</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Duration</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Outcome measured</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-[#252A40]">
                 <tr>
-                  <td className="px-4 py-3 text-stone-600">Pandit et al. 2016</td>
-                  <td className="px-4 py-3 font-medium text-slate-800">250 mg × 2/day</td>
-                  <td className="px-4 py-3 text-stone-600">90 days</td>
-                  <td className="px-4 py-3 text-stone-600">Testosterone, DHEAS</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Pandit et al. 2016</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">250 mg × 2/day</td>
+                  <td className="px-4 py-3 text-[#8892B8]">90 days</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Testosterone, DHEAS</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-stone-600">Surapaneni et al. 2012</td>
-                  <td className="px-4 py-3 font-medium text-slate-800">200 mg × 2/day</td>
-                  <td className="px-4 py-3 text-stone-600">12 weeks</td>
-                  <td className="px-4 py-3 text-stone-600">Fatigue, mitochondrial markers</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Surapaneni et al. 2012</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">200 mg × 2/day</td>
+                  <td className="px-4 py-3 text-[#8892B8]">12 weeks</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Fatigue, mitochondrial markers</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-stone-600">Keller et al. 2019</td>
-                  <td className="px-4 py-3 font-medium text-slate-800">500 mg/day</td>
-                  <td className="px-4 py-3 text-stone-600">8 weeks</td>
-                  <td className="px-4 py-3 text-stone-600">Muscle strength, recovery</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Keller et al. 2019</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">500 mg/day</td>
+                  <td className="px-4 py-3 text-[#8892B8]">8 weeks</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Muscle strength, recovery</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 text-stone-600">Biswas et al. 2010</td>
-                  <td className="px-4 py-3 font-medium text-slate-800">100 mg × 2/day</td>
-                  <td className="px-4 py-3 text-stone-600">90 days</td>
-                  <td className="px-4 py-3 text-stone-600">Sperm count and motility</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Biswas et al. 2010</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">100 mg × 2/day</td>
+                  <td className="px-4 py-3 text-[#8892B8]">90 days</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Sperm count and motility</td>
                 </tr>
               </tbody>
             </table>
@@ -107,7 +107,7 @@ export default function DosingTimelinePage() {
             without medical guidance.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">How to Take Resin</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">How to Take Resin</h2>
           <p>
             Resin is the most potent and least processed form of shilajit. Taking it correctly
             makes a difference:
@@ -135,37 +135,37 @@ export default function DosingTimelinePage() {
             </li>
           </ol>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">How to Take Capsules</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">How to Take Capsules</h2>
           <p>
             Capsules are simpler: take as directed on the label, with water, ideally in the morning.
             Check that the label states the amount of shilajit per capsule in milligrams. If it only
             states a proprietary blend weight, the effective shilajit dose is unknown.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What to Expect and When</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What to Expect and When</h2>
 
           <div className="space-y-4 mt-2">
-            <div className="rounded-xl border border-stone-200 p-4">
-              <p className="text-xs font-semibold text-slate-700 mb-1">Week 1–2: Adjustment phase</p>
-              <p className="text-xs text-stone-600">
+            <div className="rounded-xl border border-[#252A40] p-4">
+              <p className="text-xs font-semibold text-[#8892B8] mb-1">Week 1–2: Adjustment phase</p>
+              <p className="text-xs text-[#8892B8]">
                 Most users report no dramatic change in the first two weeks. Some notice mild
                 effects on energy or sleep quality. A small number experience mild digestive
                 adjustment — loose stools or nausea — which typically resolves. If GI symptoms
                 persist, reduce the dose and re-titrate upward.
               </p>
             </div>
-            <div className="rounded-xl border border-stone-200 p-4">
-              <p className="text-xs font-semibold text-slate-700 mb-1">Week 3–6: Initial effects</p>
-              <p className="text-xs text-stone-600">
+            <div className="rounded-xl border border-[#252A40] p-4">
+              <p className="text-xs font-semibold text-[#8892B8] mb-1">Week 3–6: Initial effects</p>
+              <p className="text-xs text-[#8892B8]">
                 This is when most users first report subjective improvements in energy, mental
                 clarity, or recovery from exercise. The mitochondrial support effects that are
                 best documented in research typically begin to manifest in this window. Hormonal
                 effects (testosterone) require longer.
               </p>
             </div>
-            <div className="rounded-xl border border-stone-200 p-4">
-              <p className="text-xs font-semibold text-slate-700 mb-1">Week 8–12: Documented outcome window</p>
-              <p className="text-xs text-stone-600">
+            <div className="rounded-xl border border-[#252A40] p-4">
+              <p className="text-xs font-semibold text-[#8892B8] mb-1">Week 8–12: Documented outcome window</p>
+              <p className="text-xs text-[#8892B8]">
                 The majority of clinical studies that measured significant effects used 8–12 week
                 (60–90 day) protocols. Testosterone changes (Pandit et al.), sperm quality
                 improvement (Biswas et al.), and fatigue reduction (Surapaneni et al.) were all
@@ -173,9 +173,9 @@ export default function DosingTimelinePage() {
                 is producing a meaningful effect for you.
               </p>
             </div>
-            <div className="rounded-xl border border-stone-200 p-4">
-              <p className="text-xs font-semibold text-slate-700 mb-1">Beyond 3 months</p>
-              <p className="text-xs text-stone-600">
+            <div className="rounded-xl border border-[#252A40] p-4">
+              <p className="text-xs font-semibold text-[#8892B8] mb-1">Beyond 3 months</p>
+              <p className="text-xs text-[#8892B8]">
                 Long-term use data beyond 90 days is limited in formal trials. Traditional Ayurvedic
                 usage involves continuous use with periodic breaks (cycling). A common practical
                 approach is 8–12 weeks on, followed by a 2–4 week break. There is no clinical
@@ -185,7 +185,7 @@ export default function DosingTimelinePage() {
             </div>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Why Product Quality Changes the Timeline</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Why Product Quality Changes the Timeline</h2>
           <p>
             If you use a product with low fulvic acid content, poor purification, or significant
             fillers, you may not experience the effects described in research — because the product
@@ -198,7 +198,7 @@ export default function DosingTimelinePage() {
             regardless of what the label says.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Interactions and Contraindications</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Interactions and Contraindications</h2>
           <ul className="list-disc pl-5 space-y-2 mt-2">
             <li>
               <strong>Iron supplements:</strong> Shilajit increases iron absorption. If you are
@@ -223,9 +223,9 @@ export default function DosingTimelinePage() {
           </ul>
         </section>
 
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-5">
-          <p className="text-sm font-medium text-slate-900">Start with a verified product</p>
-          <p className="mt-1 text-xs text-stone-600">
+        <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
+          <p className="text-sm font-medium text-[#EEF0F8]">Start with a verified product</p>
+          <p className="mt-1 text-xs text-[#8892B8]">
             The protocol only works with authentic, quality-verified shilajit. Use our database to
             find products with public COAs from named testing laboratories.
           </p>
@@ -237,9 +237,9 @@ export default function DosingTimelinePage() {
           </Link>
         </div>
 
-        <footer className="border-t border-stone-100 pt-6">
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-stone-500">
+        <footer className="border-t border-[#252A40] pt-6">
+          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#4A5070]">
             <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
             <li>2. Surapaneni DK, et al. "Shilajit attenuates behavioral symptoms of chronic fatigue syndrome." <em>J Ethnopharmacol</em>. 2012;143(1):91–99. <a href="https://pubmed.ncbi.nlm.nih.gov/22771318/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 22771318</a></li>
             <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
@@ -250,13 +250,13 @@ export default function DosingTimelinePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Link href="/learn/shilajit-benefits" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">Shilajit Benefits: Full Evidence Review →</p>
+        <Link href="/learn/shilajit-benefits" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Shilajit Benefits: Full Evidence Review →</p>
         </Link>
-        <Link href="/learn/shilajit-forms-compared" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">Resin vs. Capsules vs. Powder: Which Form? →</p>
+        <Link href="/learn/shilajit-forms-compared" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Resin vs. Capsules vs. Powder: Which Form? →</p>
         </Link>
       </div>
     </article>

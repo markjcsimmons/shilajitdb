@@ -165,15 +165,15 @@ function StatChip({
   valueClass?: string;
 }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-stone-50 p-3">
-      <div className="text-xs text-stone-500">{label}</div>
-      <div className={cn("mt-0.5 truncate text-sm font-medium text-slate-900", valueClass)}>
+    <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-3">
+      <div className="text-xs text-[#4A5070]">{label}</div>
+      <div className={cn("mt-0.5 truncate text-sm font-medium text-[#EEF0F8]", valueClass)}>
         {href ? (
           <a
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-slate-700"
+            className="underline underline-offset-2 hover:text-[#6E9FFF] transition-colors"
           >
             {value}
           </a>
@@ -216,14 +216,14 @@ function Accordion({
 }) {
   return (
     <details
-      className="group rounded-2xl border border-stone-200 bg-white shadow-sm"
+      className="group rounded-lg border border-[#252A40] bg-[#0F1320]"
       open={defaultOpen}
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 hover:bg-stone-50 rounded-2xl group-open:rounded-b-none">
-        <span className="font-medium text-slate-900">{title}</span>
-        <ChevronDown className="h-4 w-4 shrink-0 text-stone-400 transition-transform duration-200 group-open:rotate-180" />
+      <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 hover:bg-[#171C2E] rounded-lg group-open:rounded-b-none transition-colors">
+        <span className="font-medium text-[#EEF0F8]">{title}</span>
+        <ChevronDown className="h-4 w-4 shrink-0 text-[#4A5070] transition-transform duration-200 group-open:rotate-180" />
       </summary>
-      <div className="border-t border-stone-100 px-5 py-5">{children}</div>
+      <div className="border-t border-[#252A40] px-5 py-5">{children}</div>
     </details>
   );
 }
@@ -373,7 +373,7 @@ export default async function ProductPage({
       {/* Not-canonical warning */}
       {!product.isCanonical && (
         <div
-          className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          className="rounded-lg border border-[#EAB308]/30 bg-[#201800] px-4 py-3 text-sm text-[#EAB308]"
           role="status"
         >
           <strong>Discovered / Needs Review.</strong> This product was discovered from a sitemap or
@@ -382,21 +382,16 @@ export default async function ProductPage({
       )}
 
       {/* ── HERO CARD ─────────────────────────────────────────────────────────── */}
-      <div
-        className={cn(
-          "rounded-2xl border border-stone-200 border-l-4 bg-white p-5 shadow-sm sm:p-6",
-          gradeAccentClass(product.overallGrade)
-        )}
-      >
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5 sm:p-6">
         {/* Breadcrumb */}
-        <nav className="mb-4 text-xs text-stone-400" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-stone-600">Home</Link>
+        <nav className="mb-4 text-xs text-[#4A5070]" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
           <span className="mx-1.5">/</span>
-          <Link href={`/brand/${product.brand.slug}`} className="hover:text-stone-600">
+          <Link href={`/brand/${product.brand.slug}`} className="hover:text-[#8892B8] transition-colors">
             {product.brand.name}
           </Link>
           <span className="mx-1.5">/</span>
-          <span className="text-stone-600">{product.name}</span>
+          <span className="text-[#8892B8]">{product.name}</span>
         </nav>
 
         {/* Two-column layout on desktop: left = existing content, right = grade summary */}
@@ -417,13 +412,13 @@ export default async function ProductPage({
             </div>
             <Link
               href="/methodology"
-              className="text-[11px] leading-tight text-stone-400 hover:text-stone-600 tabular-nums"
+              className="text-xs leading-tight text-[#4A5070] hover:text-[#8892B8] tabular-nums transition-colors"
               title="See grading methodology"
             >
               {score} / {MAX_SCORE} pts
             </Link>
             {categoryRank && (
-              <span className="text-[11px] leading-tight text-stone-400 text-center">
+              <span className="text-xs leading-tight text-[#4A5070] text-center">
                 #{categoryRank.rank} of {categoryRank.total}
               </span>
             )}
@@ -431,12 +426,12 @@ export default async function ProductPage({
 
           {/* Name + meta */}
           <div className="min-w-0 flex-1">
-            <p className="text-sm text-stone-500">
-              <Link href={`/brand/${product.brand.slug}`} className="hover:underline font-medium text-stone-700">
+            <p className="text-sm text-[#4A5070]">
+              <Link href={`/brand/${product.brand.slug}`} className="hover:text-[#8892B8] font-medium transition-colors">
                 {product.brand.name}
               </Link>
             </p>
-            <h1 className="mt-0.5 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            <h1 className="mt-0.5 font-serif text-xl font-semibold text-[#EEF0F8] sm:text-2xl">
               {product.name}
             </h1>
 
@@ -451,12 +446,12 @@ export default async function ProductPage({
                 {labelQualityTier(quality.tier)}
               </span>
               {product.dataCompleteness === "LOW" && (
-                <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500">
+                <span className="inline-flex items-center rounded-full border border-[#252A40] bg-[#1F2540] px-2.5 py-0.5 text-xs text-[#4A5070]">
                   Limited data
                 </span>
               )}
               {product.lastVerifiedAt && (
-                <span className="text-xs text-stone-400">
+                <span className="text-xs text-[#4A5070]">
                   Verified{" "}
                   {new Date(product.lastVerifiedAt).toLocaleDateString("en-US", {
                     month: "short",
@@ -473,7 +468,7 @@ export default async function ProductPage({
                   href={product.coaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-[#22C55E]/30 bg-[#052010] px-3 py-1.5 text-xs font-medium text-[#22C55E] hover:bg-[#073018] transition-colors"
                 >
                   View COA →
                 </a>
@@ -483,7 +478,7 @@ export default async function ProductPage({
                   href={buyLink}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-stone-50 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8] transition-colors"
                 >
                   Shop →
                 </a>
@@ -493,14 +488,14 @@ export default async function ProductPage({
                   href={product.sourceDsldUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-stone-50 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8] transition-colors"
                 >
                   FDA DSLD →
                 </a>
               )}
               <a
                 href={`mailto:${encodeURIComponent(reportEmail)}?subject=${reportSubject}&body=${reportBody}`}
-                className="inline-flex items-center gap-1 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-stone-50 hover:text-slate-700 transition-colors"
+                className="inline-flex items-center gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#4A5070] hover:border-[#313760] hover:text-[#8892B8] transition-colors"
               >
                 Report update
               </a>
@@ -534,33 +529,33 @@ export default async function ProductPage({
         </div>
 
         {/* Secondary meta strip */}
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-stone-500 px-0.5">
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#4A5070] px-0.5">
           {product.heavyMetalsTested === "CONFIRMED" && (
-            <span className="font-medium text-emerald-700">Heavy metals tested ✓</span>
+            <span className="font-medium text-[#22C55E]">Heavy metals tested ✓</span>
           )}
           {product.heavyMetalsTested === "CLAIMED" && (
-            <span className="text-amber-600">Heavy metals tested (brand claim)</span>
+            <span className="text-[#EAB308]">Heavy metals tested (brand claim)</span>
           )}
           <span>
             GMP certified:{" "}
-            <span className={cn("font-medium", product.gmpCertified ? "text-emerald-700" : "text-stone-700")}>
+            <span className={cn("font-medium", product.gmpCertified ? "text-[#22C55E]" : "text-[#8892B8]")}>
               {product.gmpCertified ? "Yes" : "No"}
             </span>
           </span>
           {product.sourceRegion && (
             <span>
-              Source region: <span className="font-medium text-stone-700">{product.sourceRegion}</span>
+              Source region: <span className="font-medium text-[#8892B8]">{product.sourceRegion}</span>
             </span>
           )}
           {product.hasPatentClaim && (
             <span>
-              Patented process: <span className="font-medium text-stone-700">Yes</span>
+              Patented process: <span className="font-medium text-[#8892B8]">Yes</span>
             </span>
           )}
           {typeof product.pricePerServingCents === "number" && (
             <span>
               Price per serving:{" "}
-              <span className="font-medium text-stone-700">
+              <span className="font-mono font-medium text-[#EEF0F8]">
                 ${(product.pricePerServingCents / 100).toFixed(2)}
               </span>
             </span>
@@ -568,7 +563,7 @@ export default async function ProductPage({
           {typeof product.pricePerGramCents === "number" && (
             <span>
               Price per gram:{" "}
-              <span className="font-medium text-stone-700">
+              <span className="font-mono font-medium text-[#EEF0F8]">
                 ${(product.pricePerGramCents / 100).toFixed(2)}
               </span>
             </span>
@@ -583,12 +578,12 @@ export default async function ProductPage({
 
         {/* Right column — grade summary */}
         <div className="mt-5 md:mt-0 md:flex md:items-start">
-          <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-stone-400 mb-2">Why this grade?</p>
-            <p className="text-sm text-stone-600 leading-relaxed">{gradeSummary}</p>
+          <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-2">Why this grade?</p>
+            <p className="text-sm text-[#8892B8] leading-relaxed">{gradeSummary}</p>
             <Link
               href="/methodology"
-              className="mt-3 inline-block text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600"
+              className="mt-3 inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] underline underline-offset-2 transition-colors"
             >
               See full methodology →
             </Link>
@@ -604,35 +599,35 @@ export default async function ProductPage({
       <Accordion title="Grading breakdown">
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-stone-400">
+            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-[#4A5070]">
               Transparency Grade: {transparency.grade}
             </div>
-            <ul className="space-y-1.5 text-sm text-slate-700">
+            <ul className="space-y-1.5 text-sm text-[#8892B8]">
               {transparency.reasons.map((r) => (
                 <li key={r} className="flex items-start gap-2">
-                  <span className="mt-0.5 text-stone-300">·</span>
+                  <span className="mt-0.5 text-[#313760]">·</span>
                   {r}
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-stone-400">
+            <div className="mb-2 text-xs font-medium uppercase tracking-wide text-[#4A5070]">
               Quality Tier: {labelQualityTier(quality.tier)}
             </div>
-            <ul className="space-y-1.5 text-sm text-slate-700">
+            <ul className="space-y-1.5 text-sm text-[#8892B8]">
               {quality.reasons.map((r) => (
                 <li key={r} className="flex items-start gap-2">
-                  <span className="mt-0.5 text-stone-300">·</span>
+                  <span className="mt-0.5 text-[#313760]">·</span>
                   {r}
                 </li>
               ))}
             </ul>
           </div>
         </div>
-        <p className="mt-4 text-xs text-stone-400">
+        <p className="mt-4 text-xs text-[#4A5070]">
           Overall grade score: {score} / {MAX_SCORE} points.{" "}
-          <Link href="/methodology" className="underline underline-offset-2 hover:text-stone-600">
+          <Link href="/methodology" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
             See full grading methodology →
           </Link>
         </p>
@@ -640,7 +635,7 @@ export default async function ProductPage({
 
       {/* Ingredients */}
       <Accordion title="Ingredients">
-        <div className="text-sm leading-6 text-slate-700 whitespace-pre-wrap">
+        <div className="text-sm leading-6 text-[#8892B8] whitespace-pre-wrap">
           {product.ingredientText || "No ingredient text on file."}
         </div>
         {product.ingredientsNormalized.length > 0 && (
@@ -658,44 +653,44 @@ export default async function ProductPage({
       <Accordion title="Manufacturing details">
         <dl className="space-y-3 text-sm">
           <div className="flex items-start justify-between gap-6">
-            <dt className="text-slate-500">Country (claim)</dt>
-            <dd className="text-right text-slate-900">
+            <dt className="text-[#4A5070]">Country (claim)</dt>
+            <dd className="text-right text-[#EEF0F8]">
               {product.manufacturingCountryClaim ?? "—"}
             </dd>
           </div>
           {product.sourceRegion && (
             <div className="flex items-start justify-between gap-6">
-              <dt className="text-slate-500">Source region</dt>
-              <dd className="text-right text-slate-900">{product.sourceRegion}</dd>
+              <dt className="text-[#4A5070]">Source region</dt>
+              <dd className="text-right text-[#EEF0F8]">{product.sourceRegion}</dd>
             </div>
           )}
           <div className="flex items-start justify-between gap-6">
-            <dt className="text-slate-500">GMP certified</dt>
-            <dd className="text-right text-slate-900">
+            <dt className="text-[#4A5070]">GMP certified</dt>
+            <dd className="text-right text-[#EEF0F8]">
               {product.gmpCertified ? "Yes" : "No"}
             </dd>
           </div>
           {product.hasPatentClaim && (
             <div className="flex items-start justify-between gap-6">
-              <dt className="text-slate-500">Patented process</dt>
-              <dd className="text-right text-slate-900">Yes</dd>
+              <dt className="text-[#4A5070]">Patented process</dt>
+              <dd className="text-right text-[#EEF0F8]">Yes</dd>
             </div>
           )}
           {product.manufacturingClaimText && (
             <div className="flex items-start justify-between gap-6">
-              <dt className="shrink-0 text-slate-500">Claim text</dt>
-              <dd className="text-right text-slate-900 whitespace-pre-wrap">
+              <dt className="shrink-0 text-[#4A5070]">Claim text</dt>
+              <dd className="text-right text-[#EEF0F8] whitespace-pre-wrap">
                 {product.manufacturingClaimText}
               </dd>
             </div>
           )}
           {product.manufacturingEvidenceUrl && (
             <div className="flex items-start justify-between gap-6">
-              <dt className="text-slate-500">Evidence URL</dt>
+              <dt className="text-[#4A5070]">Evidence URL</dt>
               <dd className="text-right">
                 <a
                   href={product.manufacturingEvidenceUrl}
-                  className="text-slate-700 underline underline-offset-4 hover:text-slate-900"
+                  className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -706,11 +701,11 @@ export default async function ProductPage({
           )}
           {product.officialCanonicalUrl && (
             <div className="flex items-start justify-between gap-6">
-              <dt className="text-slate-500">Official product page</dt>
+              <dt className="text-[#4A5070]">Official product page</dt>
               <dd className="text-right">
                 <a
                   href={product.officialCanonicalUrl}
-                  className="text-slate-700 underline underline-offset-4 hover:text-slate-900"
+                  className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors"
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                 >
@@ -725,16 +720,16 @@ export default async function ProductPage({
       {/* Evidence & Sources */}
       <Accordion title={`Evidence & sources${product.evidence.length ? ` (${product.evidence.length})` : ""}`}>
         {product.evidence.length ? (
-          <div className="divide-y divide-stone-100">
+          <div className="divide-y divide-[#252A40]">
             {product.evidence.map((e) => (
               <div key={e.id} className="py-4 first:pt-0 last:pb-0">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                  <div className="text-sm font-medium text-slate-900">
+                  <div className="text-sm font-medium text-[#EEF0F8]">
                     {labelEvidenceType(e.type)}
                   </div>
                   <a
                     href={e.url}
-                    className="text-sm text-stone-500 underline underline-offset-4 hover:text-stone-700"
+                    className="text-sm text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -742,7 +737,7 @@ export default async function ProductPage({
                   </a>
                 </div>
                 {e.quote && (
-                  <p className="mt-2 text-sm leading-6 text-slate-600 whitespace-pre-wrap">
+                  <p className="mt-2 text-sm leading-6 text-[#8892B8] whitespace-pre-wrap">
                     {e.quote}
                   </p>
                 )}
@@ -750,9 +745,9 @@ export default async function ProductPage({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No evidence items have been added yet.</p>
+          <p className="text-sm text-[#4A5070]">No evidence items have been added yet.</p>
         )}
-        <p className="mt-4 border-t border-stone-100 pt-4 text-xs text-stone-400">
+        <p className="mt-4 border-t border-[#252A40] pt-4 text-xs text-[#4A5070]">
           Last verified:{" "}
           {product.lastVerifiedAt
             ? new Date(product.lastVerifiedAt).toLocaleDateString("en-US", {
@@ -788,20 +783,20 @@ export default async function ProductPage({
               .filter((g) => g.listings.length)
               .map((g) => (
                 <div key={g.source}>
-                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-stone-400">
+                  <div className="mb-2 text-xs font-medium uppercase tracking-wide text-[#4A5070]">
                     {labelListingSource(g.source)}
                   </div>
                   <div className="space-y-2">
                     {g.listings.map((l) => (
                       <div
                         key={l.id}
-                        className="flex flex-col gap-1 rounded-xl border border-stone-200 bg-stone-50 p-3 sm:flex-row sm:items-center sm:justify-between"
+                        className="flex flex-col gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <div className="truncate text-sm text-slate-700">
+                          <div className="truncate text-sm text-[#8892B8]">
                             <a
                               href={l.url}
-                              className="hover:underline"
+                              className="hover:text-[#EEF0F8] transition-colors"
                               target="_blank"
                               rel="nofollow noopener noreferrer"
                             >
@@ -809,7 +804,7 @@ export default async function ProductPage({
                             </a>
                           </div>
                           {l.lastSeenAt && (
-                            <div className="mt-0.5 text-xs text-stone-400">
+                            <div className="mt-0.5 text-xs text-[#4A5070]">
                               Last seen: {new Date(l.lastSeenAt).toLocaleDateString()}
                             </div>
                           )}
@@ -818,7 +813,7 @@ export default async function ProductPage({
                           href={l.url}
                           target="_blank"
                           rel="nofollow noopener noreferrer"
-                          className="shrink-0 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-stone-100 transition-colors"
+                          className="shrink-0 rounded-lg border border-[#252A40] bg-[#0F1320] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8] transition-colors"
                         >
                           Visit →
                         </a>
@@ -829,13 +824,13 @@ export default async function ProductPage({
               ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No listings have been captured yet.</p>
+          <p className="text-sm text-[#4A5070]">No listings have been captured yet.</p>
         )}
       </Accordion>
 
       {/* Compare */}
       <Accordion title="Compare with another product">
-        <p className="mb-4 text-sm text-slate-600">
+        <p className="mb-4 text-sm text-[#8892B8]">
           Compare this product side-by-side with another from the database.
         </p>
         <ComparePicker

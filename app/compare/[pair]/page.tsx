@@ -142,16 +142,16 @@ export default async function ComparePage({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Compare</h1>
-            <p className="mt-2 text-sm text-slate-700">
-              <Link href={`/product/${a.slug}`} className="underline underline-offset-4">
+            <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8]">Compare</h1>
+            <p className="mt-2 text-sm text-[#8892B8]">
+              <Link href={`/product/${a.slug}`} className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors">
                 {a.brand.name} — {a.name}
               </Link>{" "}
               vs{" "}
-              <Link href={`/product/${b.slug}`} className="underline underline-offset-4">
+              <Link href={`/product/${b.slug}`} className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors">
                 {b.brand.name} — {b.name}
               </Link>
             </p>
@@ -165,34 +165,34 @@ export default async function ComparePage({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-[#252A40] bg-[#0F1320]">
         <div className="grid grid-cols-1 gap-0 lg:grid-cols-3">
-          <div className="border-b border-slate-200 bg-slate-50 p-4 text-sm font-medium text-slate-700 lg:border-b-0 lg:border-r">
+          <div className="border-b border-[#252A40] bg-[#171C2E] p-4 text-sm font-medium text-[#4A5070] lg:border-b-0 lg:border-r">
             Field
           </div>
-          <div className="border-b border-slate-200 p-4 text-sm font-medium text-slate-900 lg:border-b-0 lg:border-r">
+          <div className="border-b border-[#252A40] p-4 text-sm font-medium text-[#EEF0F8] lg:border-b-0 lg:border-r">
             {a.brand.name} — {a.name}
           </div>
-          <div className="p-4 text-sm font-medium text-slate-900">{b.brand.name} — {b.name}</div>
+          <div className="p-4 text-sm font-medium text-[#EEF0F8]">{b.brand.name} — {b.name}</div>
         </div>
-        <div className="divide-y divide-slate-200">
+        <div className="divide-y divide-[#252A40]">
           {rows.map((r) => (
             <div key={r.label} className="grid grid-cols-1 lg:grid-cols-3">
-              <div className="bg-slate-50 p-4 text-sm text-slate-700 lg:border-r lg:border-slate-200">
+              <div className="bg-[#171C2E] p-4 text-sm text-[#4A5070] lg:border-r lg:border-[#252A40]">
                 {r.label}
               </div>
-              <div className="p-4 text-sm text-slate-900 lg:border-r lg:border-slate-200">
+              <div className="p-4 text-sm text-[#8892B8] lg:border-r lg:border-[#252A40]">
                 {"isLink" in r && r.isLink && r.a !== "—" ? (
-                  <a href={r.a} target="_blank" rel="nofollow" className="underline underline-offset-4">
+                  <a href={r.a} target="_blank" rel="nofollow" className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors">
                     View
                   </a>
                 ) : (
                   r.a
                 )}
               </div>
-              <div className="p-4 text-sm text-slate-900">
+              <div className="p-4 text-sm text-[#8892B8]">
                 {"isLink" in r && r.isLink && r.b !== "—" ? (
-                  <a href={r.b} target="_blank" rel="nofollow" className="underline underline-offset-4">
+                  <a href={r.b} target="_blank" rel="nofollow" className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors">
                     View
                   </a>
                 ) : (
@@ -205,42 +205,42 @@ export default async function ComparePage({
       </div>
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
+          <h2 className="text-lg font-semibold text-[#EEF0F8]">
             Why {a.brand.name} — {a.name}
           </h2>
           <div className="mt-4">
-            <div className="text-sm font-medium text-slate-900">Transparency</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <div className="text-sm font-medium text-[#EEF0F8]">Transparency</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#8892B8]">
               {aT.reasons.map((x) => (
                 <li key={x}>{x}</li>
               ))}
             </ul>
           </div>
           <div className="mt-4">
-            <div className="text-sm font-medium text-slate-900">Quality</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <div className="text-sm font-medium text-[#EEF0F8]">Quality</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#8892B8]">
               {aQ.reasons.map((x) => (
                 <li key={x}>{x}</li>
               ))}
             </ul>
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
+          <h2 className="text-lg font-semibold text-[#EEF0F8]">
             Why {b.brand.name} — {b.name}
           </h2>
           <div className="mt-4">
-            <div className="text-sm font-medium text-slate-900">Transparency</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <div className="text-sm font-medium text-[#EEF0F8]">Transparency</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#8892B8]">
               {bT.reasons.map((x) => (
                 <li key={x}>{x}</li>
               ))}
             </ul>
           </div>
           <div className="mt-4">
-            <div className="text-sm font-medium text-slate-900">Quality</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <div className="text-sm font-medium text-[#EEF0F8]">Quality</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#8892B8]">
               {bQ.reasons.map((x) => (
                 <li key={x}>{x}</li>
               ))}

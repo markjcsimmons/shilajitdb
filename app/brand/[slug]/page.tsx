@@ -146,17 +146,17 @@ export default async function BrandPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8]">
               {brand.name}
             </h1>
             {brand.website ? (
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-sm text-[#4A5070]">
                 <a
                   href={brand.website}
-                  className="underline underline-offset-4"
+                  className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors"
                   target="_blank"
                   rel="nofollow"
                 >
@@ -165,7 +165,7 @@ export default async function BrandPage({
               </p>
             ) : null}
             {brand.description ? (
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-700">
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-[#8892B8]">
                 {brand.description}
               </p>
             ) : null}
@@ -182,24 +182,24 @@ export default async function BrandPage({
       {/* Aggregate stat chips */}
       {verifiedProducts.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
-            <div className="text-2xl font-bold text-slate-900">{avgGradeLetter ?? "—"}</div>
-            <div className="mt-1 text-xs text-slate-500">Avg overall grade</div>
+          <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 text-center">
+            <div className="font-mono text-2xl font-bold text-[#EEF0F8]">{avgGradeLetter ?? "—"}</div>
+            <div className="mt-1 text-xs text-[#4A5070]">Avg overall grade</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
-            <div className="text-2xl font-bold text-slate-900">{publicCoaPct}%</div>
-            <div className="mt-1 text-xs text-slate-500">Products with public COA</div>
+          <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 text-center">
+            <div className="font-mono text-2xl font-bold text-[#EEF0F8]">{publicCoaPct}%</div>
+            <div className="mt-1 text-xs text-[#4A5070]">Products with public COA</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-center">
-            <div className="text-2xl font-bold text-slate-900">{namedLabCount}</div>
-            <div className="mt-1 text-xs text-slate-500">Products with named lab</div>
+          <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 text-center">
+            <div className="font-mono text-2xl font-bold text-[#EEF0F8]">{namedLabCount}</div>
+            <div className="mt-1 text-xs text-[#4A5070]">Products with named lab</div>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div className="text-sm font-medium text-slate-900">Transparency distribution</div>
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
+          <div className="text-sm font-medium text-[#EEF0F8]">Transparency distribution</div>
           <div className="mt-3 flex flex-wrap gap-2">
             {(["A", "B", "C", "D", "F"] as const).map((g) => (
               <Badge key={g} variant="outline">
@@ -208,8 +208,8 @@ export default async function BrandPage({
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div className="text-sm font-medium text-slate-900">COA availability</div>
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
+          <div className="text-sm font-medium text-[#EEF0F8]">COA availability</div>
           <div className="mt-3 flex flex-wrap gap-2">
             {(["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"] as const).map((s) => (
               <Badge key={s} variant="outline">
@@ -218,8 +218,8 @@ export default async function BrandPage({
             ))}
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div className="text-sm font-medium text-slate-900">Manufacturing country (claim)</div>
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
+          <div className="text-sm font-medium text-[#EEF0F8]">Manufacturing country (claim)</div>
           <div className="mt-3 flex flex-wrap gap-2">
             {countries.length ? (
               countries.map((c) => (
@@ -228,24 +228,24 @@ export default async function BrandPage({
                 </Badge>
               ))
             ) : (
-              <div className="text-sm text-slate-600">No country claims recorded.</div>
+              <div className="text-sm text-[#4A5070]">No country claims recorded.</div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+            <h2 className="text-lg font-semibold text-[#EEF0F8]">
               Products
             </h2>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-[#4A5070]">
               Sort defaults to highest Transparency Grade, then highest Quality Tier.
             </p>
           </div>
           <form method="GET" className="w-full sm:w-56">
-            <label className="text-xs font-medium text-slate-700">Sort</label>
+            <label className="text-xs font-medium text-[#4A5070]">Sort</label>
             <Select name="sort" defaultValue={sort === "name" ? "name" : "default"}>
               <option value="default">Transparency (best first)</option>
               <option value="name">Name (A–Z)</option>
@@ -255,16 +255,16 @@ export default async function BrandPage({
 
         <div className="mt-4 grid grid-cols-1 gap-3">
           {products.map((p) => (
-            <div key={p.id} className="rounded-2xl border border-slate-200 p-5">
+            <div key={p.id} className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <Link
                     href={`/product/${p.slug}`}
-                    className="text-base font-semibold tracking-tight text-slate-900 hover:underline"
+                    className="text-base font-semibold text-[#EEF0F8] hover:text-[#6E9FFF] transition-colors"
                   >
                     {p.name}
                   </Link>
-                  <div className="mt-1 text-sm text-slate-600">{labelForm(p.form)}</div>
+                  <div className="mt-1 text-sm text-[#4A5070]">{labelForm(p.form)}</div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <TransparencyBadge grade={p.transparencyGrade} />
@@ -275,8 +275,8 @@ export default async function BrandPage({
                   ) : null}
                 </div>
               </div>
-              <div className="mt-3 text-sm text-slate-700">
-                <span className="text-slate-500">Manufacturing claim: </span>
+              <div className="mt-3 text-sm text-[#4A5070]">
+                <span className="text-[#313760]">Manufacturing claim: </span>
                 {p.manufacturingCountryClaim ?? "—"}
               </div>
             </div>

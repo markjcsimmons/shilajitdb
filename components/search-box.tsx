@@ -58,7 +58,7 @@ export function SearchBox({ initialQ, filters }: Props) {
   return (
     <div className="relative mt-4">
       <svg
-        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#4A5070]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -72,9 +72,9 @@ export function SearchBox({ initialQ, filters }: Props) {
         placeholder="Search brand or product name…"
         onChange={handleChange}
         onKeyDown={handleKey}
-        className="w-full rounded-xl border border-stone-200 bg-white py-3.5 pl-12 pr-20 text-base text-slate-900 shadow-sm placeholder:text-stone-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:shadow-md"
+        className="w-full rounded-lg border border-[#252A40] bg-[#0F1320] py-3.5 pl-12 pr-20 text-base text-[#EEF0F8] placeholder:text-[#4A5070] focus:border-[#3D7AFF] focus:outline-none focus:ring-1 focus:ring-[#3D7AFF]/30"
       />
-      <span className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-400 sm:block">
+      <span className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded border border-[#252A40] bg-[#1F2540] px-1.5 py-0.5 text-xs text-[#4A5070] sm:block">
         ↵ Enter
       </span>
     </div>

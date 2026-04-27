@@ -18,28 +18,28 @@ export const metadata: Metadata = {
 export default function SourcingRegionsPage() {
   return (
     <article className="space-y-6 max-w-3xl">
-      <nav className="flex items-center gap-2 text-xs text-stone-400">
-        <Link href="/" className="hover:text-stone-600">Home</Link>
+      <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
+        <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
-        <Link href="/learn" className="hover:text-stone-600">Learn</Link>
+        <Link href="/learn" className="hover:text-[#8892B8]">Learn</Link>
         <span>/</span>
         <span>Sourcing Regions</span>
       </nav>
 
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 md:p-8 space-y-8">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 md:p-8 space-y-8">
         <header>
-          <div className="inline-block rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700 mb-4">
+          <div className="inline-block rounded-full bg-[#041828] border border-[#38BDF8]/30 px-3 py-1 text-xs font-medium text-[#38BDF8] mb-4">
             Sourcing
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 leading-snug">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
             Where Shilajit Comes From: Mountain Regions Compared
           </h1>
-          <p className="mt-3 text-sm text-stone-500">
+          <p className="mt-3 text-sm text-[#4A5070]">
             Last reviewed April 2026 · 7 min read
           </p>
         </header>
 
-        <section className="space-y-4 text-sm text-slate-700 leading-relaxed">
+        <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
           <p className="text-base">
             Walk down the supplements aisle and almost every shilajit product claims Himalayan origin.
             The marketing is understandable — the Himalayas carry mystique and altitude. But the claim
@@ -48,7 +48,7 @@ export default function SourcingRegionsPage() {
             purification, and verification — not a brand name attached to a mountain range.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What Actually Determines Quality</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What Actually Determines Quality</h2>
           <p>
             Shilajit quality is shaped by four variables:
           </p>
@@ -77,31 +77,31 @@ export default function SourcingRegionsPage() {
             </li>
           </ul>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">The Major Sourcing Regions</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">The Major Sourcing Regions</h2>
 
-          <div className="rounded-xl border border-stone-200 overflow-hidden">
+          <div className="rounded-xl border border-[#252A40] overflow-hidden">
             <table className="w-full text-xs">
-              <thead className="bg-stone-50 border-b border-stone-200">
+              <thead className="bg-[#171C2E] border-b border-[#252A40]">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Region</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Altitude</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Notes</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Region</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Altitude</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-[#252A40]">
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Himalayas (India, Nepal, Bhutan, Tibet)</td>
-                  <td className="px-4 py-3 text-stone-600">3,000–5,000 m+</td>
-                  <td className="px-4 py-3 text-stone-600">
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Himalayas (India, Nepal, Bhutan, Tibet)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">3,000–5,000 m+</td>
+                  <td className="px-4 py-3 text-[#8892B8]">
                     Most commercially available source. High fulvic acid potential; large variation
                     in quality due to widespread unregulated harvesting. "Himalayan" is often a
                     marketing label rather than a verified origin claim.
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Altai Mountains (Russia, Kazakhstan, Mongolia)</td>
-                  <td className="px-4 py-3 text-stone-600">2,000–4,000 m</td>
-                  <td className="px-4 py-3 text-stone-600">
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Altai Mountains (Russia, Kazakhstan, Mongolia)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">2,000–4,000 m</td>
+                  <td className="px-4 py-3 text-[#8892B8]">
                     Known in Russian literature as <em>mumiyo</em> or <em>mumie</em>. Extensively
                     studied in Soviet-era research for recovery and performance. Different mineral
                     profile from Himalayan; documented use by Soviet Olympic programmes in the 1970s–80s.
@@ -109,27 +109,27 @@ export default function SourcingRegionsPage() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Caucasus Mountains (Georgia, Azerbaijan, Armenia)</td>
-                  <td className="px-4 py-3 text-stone-600">1,500–3,500 m</td>
-                  <td className="px-4 py-3 text-stone-600">
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Caucasus Mountains (Georgia, Azerbaijan, Armenia)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">1,500–3,500 m</td>
+                  <td className="px-4 py-3 text-[#8892B8]">
                     Used in traditional Georgian and Armenian medicine. Lower average altitude but
                     different geological substrate produces a distinct mineral signature. Less
                     well-known in Western markets but referenced in Caucasian ethnobotanical literature.
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Hindu Kush / Karakoram (Pakistan, Afghanistan)</td>
-                  <td className="px-4 py-3 text-stone-600">3,500–5,000 m</td>
-                  <td className="px-4 py-3 text-stone-600">
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Hindu Kush / Karakoram (Pakistan, Afghanistan)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">3,500–5,000 m</td>
+                  <td className="px-4 py-3 text-[#8892B8]">
                     Geologically continuous with the Himalayas. Deposits here are sometimes sold
                     under the "Himalayan" label by Pakistani exporters, making origin claims
                     particularly difficult to verify from the consumer end.
                   </td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Andes (Peru, Bolivia, Chile)</td>
-                  <td className="px-4 py-3 text-stone-600">3,000–5,000 m</td>
-                  <td className="px-4 py-3 text-stone-600">
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Andes (Peru, Bolivia, Chile)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">3,000–5,000 m</td>
+                  <td className="px-4 py-3 text-[#8892B8]">
                     Known locally as <em>salajeet</em> or <em>momia</em>. Emerging in Western markets.
                     High-altitude sourcing with comparable geological conditions but a very different
                     mineral substrate from the Asian ranges — different trace element ratios.
@@ -140,7 +140,7 @@ export default function SourcingRegionsPage() {
             </table>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">The Case for Multi-Region Sourcing</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">The Case for Multi-Region Sourcing</h2>
           <p>
             Several researchers have argued that blending material from multiple mountain ranges may
             produce a broader mineral profile than single-origin sourcing — the rationale being that
@@ -157,7 +157,7 @@ export default function SourcingRegionsPage() {
             origin with no testing documentation.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">The "Himalayan Best" Problem</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">The "Himalayan Best" Problem</h2>
           <p>
             The dominance of Himalayan branding has created a market dynamic where the word
             "Himalayan" functions as a quality signal even when no quality verification supports it.
@@ -171,7 +171,7 @@ export default function SourcingRegionsPage() {
             the raw exudate from the source location.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Soviet Research: The Altai Legacy</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Soviet Research: The Altai Legacy</h2>
           <p>
             Much of the early systematic research on shilajit was conducted in the Soviet Union
             under the name <em>mumiyo</em>, focusing on Altai-sourced material. This research —
@@ -184,7 +184,7 @@ export default function SourcingRegionsPage() {
               href="https://pubmed.ncbi.nlm.nih.gov/17295385/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 text-slate-900"
+              className="underline underline-offset-2 text-[#EEF0F8]"
             >
               Agarwal et al. (Phytother Res 2007)
             </a>{" "}
@@ -193,9 +193,9 @@ export default function SourcingRegionsPage() {
         </section>
 
         {/* CTA */}
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-5">
-          <p className="text-sm font-medium text-slate-900">Filter by manufacturing country claim</p>
-          <p className="mt-1 text-xs text-stone-600">
+        <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
+          <p className="text-sm font-medium text-[#EEF0F8]">Filter by manufacturing country claim</p>
+          <p className="mt-1 text-xs text-[#8892B8]">
             The database records each brand's stated manufacturing country. You can filter and compare
             what testing documentation exists regardless of origin claim.
           </p>
@@ -207,9 +207,9 @@ export default function SourcingRegionsPage() {
           </Link>
         </div>
 
-        <footer className="border-t border-stone-100 pt-6">
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-stone-500">
+        <footer className="border-t border-[#252A40] pt-6">
+          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#4A5070]">
             <li>
               1. Agarwal SP, et al. "Shilajit: A review."{" "}
               <em>Phytother Res</em>. 2007;21(5):401–405.{" "}
@@ -235,13 +235,13 @@ export default function SourcingRegionsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Link href="/learn/how-to-read-shilajit-coa" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Up next</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">How to Read a Shilajit COA →</p>
+        <Link href="/learn/how-to-read-shilajit-coa" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Up next</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How to Read a Shilajit COA →</p>
         </Link>
-        <Link href="/learn/fake-shilajit-how-to-spot" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">How to Spot Fake or Adulterated Shilajit →</p>
+        <Link href="/learn/fake-shilajit-how-to-spot" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How to Spot Fake or Adulterated Shilajit →</p>
         </Link>
       </div>
     </article>

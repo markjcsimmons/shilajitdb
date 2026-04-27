@@ -20,9 +20,9 @@ export function Pagination({
 
   return (
     <div className="mt-6 flex items-center justify-between gap-3">
-      <div className="text-sm text-slate-600">
-        Page <span className="font-medium text-slate-900">{page}</span> of{" "}
-        <span className="font-medium text-slate-900">{totalPages}</span>
+      <div className="text-sm text-[#4A5070]">
+        Page <span className="font-medium text-[#EEF0F8]">{page}</span> of{" "}
+        <span className="font-medium text-[#EEF0F8]">{totalPages}</span>
       </div>
       <div className="flex items-center gap-2">
         <Button href={prevHref} variant="secondary" aria-disabled={page <= 1}>

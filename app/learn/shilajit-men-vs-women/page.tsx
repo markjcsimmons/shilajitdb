@@ -18,26 +18,26 @@ export const metadata: Metadata = {
 export default function MenVsWomenPage() {
   return (
     <article className="space-y-6 max-w-3xl">
-      <nav className="flex items-center gap-2 text-xs text-stone-400">
-        <Link href="/" className="hover:text-stone-600">Home</Link>
+      <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
+        <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
-        <Link href="/learn" className="hover:text-stone-600">Learn</Link>
+        <Link href="/learn" className="hover:text-[#8892B8]">Learn</Link>
         <span>/</span>
         <span>Men vs. Women</span>
       </nav>
 
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 md:p-8 space-y-8">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 md:p-8 space-y-8">
         <header>
-          <div className="inline-block rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 mb-4">
+          <div className="inline-block rounded-full bg-[#201800] border border-[#EAB308]/30 px-3 py-1 text-xs font-medium text-[#EAB308] mb-4">
             Science
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 leading-snug">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
             Shilajit for Men and Women: Are the Effects Different?
           </h1>
-          <p className="mt-3 text-sm text-stone-500">Last reviewed April 2026 · 8 min read</p>
+          <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 8 min read</p>
         </header>
 
-        <section className="space-y-4 text-sm text-slate-700 leading-relaxed">
+        <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
           <p className="text-base">
             Shilajit's traditional use has historically been associated with male vitality —
             the Sanskrit term <em>shilajit</em> translates roughly to "conqueror of mountains and
@@ -47,9 +47,9 @@ export default function MenVsWomenPage() {
             sex-specific.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">For Men: Testosterone and Reproductive Health</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">For Men: Testosterone and Reproductive Health</h2>
 
-          <h3 className="font-semibold text-slate-800 mt-4">What the research shows</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">What the research shows</h3>
           <p>
             The strongest clinical evidence for shilajit centres on male hormonal health.
             Two well-designed randomised controlled trials have examined this:
@@ -60,7 +60,7 @@ export default function MenVsWomenPage() {
               shilajit (250 mg twice daily) or placebo for 90 days. The shilajit group showed
               statistically significant increases in total testosterone (+20.45%), free testosterone
               (+19.22%), and DHEAS. No adverse effects were reported.{" "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-slate-900">
+              <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
                 PubMed 26395129
               </a>
               .
@@ -69,14 +69,14 @@ export default function MenVsWomenPage() {
               <strong>Biswas et al. (2010)</strong> — 60 infertile men received processed shilajit
               for 90 days. Significant improvements were observed in total sperm count (+61.4%),
               sperm motility (+12.4–17.4%), and testosterone levels.{" "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-slate-900">
+              <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
                 PubMed 25575901
               </a>
               .
             </li>
           </ul>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Proposed mechanisms</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Proposed mechanisms</h3>
           <p>
             The testosterone-raising mechanism of shilajit is not fully elucidated, but several
             pathways have been proposed:
@@ -96,21 +96,21 @@ export default function MenVsWomenPage() {
             </li>
           </ul>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Physical performance and muscle recovery</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Physical performance and muscle recovery</h3>
           <p>
             A study by Keller et al. (2019) enrolled healthy active men and found that 500 mg/day
             of shilajit for 8 weeks attenuated the decline in maximum strength during a fatiguing
             exercise protocol and increased serum hydroxyproline levels, suggesting a role in
             connective tissue recovery.{" "}
-            <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-slate-900">
+            <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
               PubMed 30870558
             </a>
             . Whether this effect is specific to men is unknown — women were not enrolled.
           </p>
 
           <div className="rounded-xl bg-slate-50 border border-slate-200 p-5 mt-4">
-            <p className="text-xs font-semibold text-slate-700 mb-1">Important note on testosterone and women</p>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs font-semibold text-[#8892B8] mb-1">Important note on testosterone and women</p>
+            <p className="text-xs text-[#8892B8]">
               Testosterone is present and physiologically important in women (in smaller amounts than in men),
               and some women use shilajit with the aim of supporting testosterone-related functions such as
               libido, muscle tone, and energy. However, no controlled trials have examined testosterone
@@ -120,9 +120,9 @@ export default function MenVsWomenPage() {
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-3">For Women: Iron, Energy, and Hormonal Context</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-3">For Women: Iron, Energy, and Hormonal Context</h2>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Iron bioavailability</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Iron bioavailability</h3>
           <p>
             The most well-supported benefit of shilajit specifically relevant to women is its
             effect on iron absorption. Fulvic acid chelates non-haem iron and maintains it in
@@ -134,13 +134,13 @@ export default function MenVsWomenPage() {
             A study in women with iron deficiency anaemia found significant improvements in
             haemoglobin, red blood cell count, and haematocrit after 12 weeks of shilajit
             supplementation.{" "}
-            <a href="https://pubmed.ncbi.nlm.nih.gov/21116018/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-slate-900">
+            <a href="https://pubmed.ncbi.nlm.nih.gov/21116018/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
               Trivedi NA et al., J Ethnopharmacol 2011
             </a>
             .
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Adaptogenic effects and stress response</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Adaptogenic effects and stress response</h3>
           <p>
             Shilajit is classified as an adaptogen in Ayurvedic medicine — a substance that helps
             the body maintain homeostasis under stress. The fulvic acid and DBP content may support
@@ -149,7 +149,7 @@ export default function MenVsWomenPage() {
             mitochondrial support documented in the general fatigue literature.
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Menopause and hormonal transition</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Menopause and hormonal transition</h3>
           <p>
             There is no published RCT examining shilajit's effects in perimenopausal or
             postmenopausal women. Some practitioners in integrative medicine have used shilajit
@@ -158,9 +158,9 @@ export default function MenVsWomenPage() {
             outpaces research.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Safety Considerations by Sex</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Safety Considerations by Sex</h2>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Pregnancy and breastfeeding</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Pregnancy and breastfeeding</h3>
           <p>
             No safety data exists for shilajit use during pregnancy or breastfeeding. Given the
             heavy metal risks associated with unverified shilajit products, and the absence of
@@ -169,7 +169,7 @@ export default function MenVsWomenPage() {
             in this context.
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Hormonal conditions</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Hormonal conditions</h3>
           <p>
             Women with hormonal conditions — PCOS, endometriosis, oestrogen-sensitive conditions —
             should consult an endocrinologist or gynaecologist before using shilajit. While no
@@ -177,14 +177,14 @@ export default function MenVsWomenPage() {
             effects of shilajit have not been studied in these contexts.
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Iron overload</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Iron overload</h3>
           <p>
             Because shilajit improves iron absorption, individuals with haemochromatosis
             (hereditary iron overload) or elevated serum ferritin should use caution. Enhancing
             iron absorption in this context could worsen an existing condition.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Shared Benefits: What Applies to Both</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Shared Benefits: What Applies to Both</h2>
           <p>
             Several researched effects are not sex-specific:
           </p>
@@ -197,9 +197,9 @@ export default function MenVsWomenPage() {
           </ul>
         </section>
 
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-5">
-          <p className="text-sm font-medium text-slate-900">Browse all products in our database</p>
-          <p className="mt-1 text-xs text-stone-600">
+        <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
+          <p className="text-sm font-medium text-[#EEF0F8]">Browse all products in our database</p>
+          <p className="mt-1 text-xs text-[#8892B8]">
             Filter by quality tier, COA status, and testing credentials to find verified options.
           </p>
           <Link
@@ -210,9 +210,9 @@ export default function MenVsWomenPage() {
           </Link>
         </div>
 
-        <footer className="border-t border-stone-100 pt-6">
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-stone-500">
+        <footer className="border-t border-[#252A40] pt-6">
+          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#4A5070]">
             <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
             <li>2. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 25575901</a></li>
             <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
@@ -223,13 +223,13 @@ export default function MenVsWomenPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Link href="/learn/shilajit-dosing-timeline" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Up next</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">How Long Does Shilajit Take to Work? →</p>
+        <Link href="/learn/shilajit-dosing-timeline" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Up next</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How Long Does Shilajit Take to Work? →</p>
         </Link>
-        <Link href="/learn/shilajit-benefits" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">Shilajit Benefits: Full Evidence Review →</p>
+        <Link href="/learn/shilajit-benefits" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Shilajit Benefits: Full Evidence Review →</p>
         </Link>
       </div>
     </article>

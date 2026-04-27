@@ -18,26 +18,26 @@ export const metadata: Metadata = {
 export default function FormsComparedPage() {
   return (
     <article className="space-y-6 max-w-3xl">
-      <nav className="flex items-center gap-2 text-xs text-stone-400">
-        <Link href="/" className="hover:text-stone-600">Home</Link>
+      <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
+        <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
-        <Link href="/learn" className="hover:text-stone-600">Learn</Link>
+        <Link href="/learn" className="hover:text-[#8892B8]">Learn</Link>
         <span>/</span>
         <span>Forms Compared</span>
       </nav>
 
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 md:p-8 space-y-8">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 md:p-8 space-y-8">
         <header>
-          <div className="inline-block rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700 mb-4">
+          <div className="inline-block rounded-full bg-[#160F28] border border-[#A78BFA]/30 px-3 py-1 text-xs font-medium text-[#A78BFA] mb-4">
             Buying Guide
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 leading-snug">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
             Resin vs. Capsules vs. Powder vs. Gummies: Which Shilajit Form Is Best?
           </h1>
-          <p className="mt-3 text-sm text-stone-500">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
         </header>
 
-        <section className="space-y-4 text-sm text-slate-700 leading-relaxed">
+        <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
           <p className="text-base">
             Shilajit is sold in four main forms: resin, capsules, powder, and gummies. Each involves
             a different level of processing, carries different authenticity risks, and suits
@@ -45,7 +45,7 @@ export default function FormsComparedPage() {
             between them are large enough to be worth understanding before you buy.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Resin — Least Processed, Hardest to Fake</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Resin — Least Processed, Hardest to Fake</h2>
           <p>
             Resin is the closest thing to shilajit in its natural state after purification. It is
             a thick, dark, tar-like substance that dissolves in warm water or can be taken directly
@@ -65,15 +65,15 @@ export default function FormsComparedPage() {
             for travel than capsules.
           </p>
 
-          <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 mt-2">
-            <p className="text-xs font-semibold text-emerald-700 mb-1">Best for</p>
-            <p className="text-xs text-emerald-700">
+          <div className="rounded-lg bg-[#052010] border border-[#22C55E]/30 p-4 mt-2">
+            <p className="text-xs font-semibold text-[#22C55E] mb-1">Best for</p>
+            <p className="text-xs text-[#22C55E]">
               Buyers who prioritise authenticity, full-spectrum composition, and who are willing
               to measure doses. The gold standard for comparing products on price per gram.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Capsules — Convenient, but Check What's Inside</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Capsules — Convenient, but Check What's Inside</h2>
           <p>
             Capsules contain dried, powdered shilajit extract encased in a gelatine or plant-based
             shell. The convenience is obvious — a fixed dose, no measuring, no taste. The tradeoff
@@ -92,15 +92,15 @@ export default function FormsComparedPage() {
             lack of transparency around the capsule contents that creates risk.
           </p>
 
-          <div className="rounded-xl bg-sky-50 border border-sky-200 p-4 mt-2">
-            <p className="text-xs font-semibold text-sky-700 mb-1">Best for</p>
-            <p className="text-xs text-sky-700">
+          <div className="rounded-lg bg-[#041828] border border-[#38BDF8]/30 p-4 mt-2">
+            <p className="text-xs font-semibold text-[#38BDF8] mb-1">Best for</p>
+            <p className="text-xs text-[#38BDF8]">
               Buyers who value consistency and convenience. Look for capsules with a stated
               fulvic acid % and a public COA that covers the final encapsulated product.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Powder — High Adulteration Risk</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Powder — High Adulteration Risk</h2>
           <p>
             Powdered shilajit is the most processed and the easiest to adulterate. Adding cheap
             fillers — humic acid powder, plant extracts, peat, or inert bulking agents — to a
@@ -115,15 +115,15 @@ export default function FormsComparedPage() {
             important for powder than for any other form.
           </p>
 
-          <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 mt-2">
-            <p className="text-xs font-semibold text-amber-700 mb-1">Best for</p>
-            <p className="text-xs text-amber-700">
+          <div className="rounded-lg bg-[#201800] border border-[#EAB308]/30 p-4 mt-2">
+            <p className="text-xs font-semibold text-[#EAB308] mb-1">Best for</p>
+            <p className="text-xs text-[#EAB308]">
               Adding to smoothies or drinks. Only buy from brands with a public COA that includes
               a fulvic acid panel. Treat any powder product without a COA as unverifiable.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Gummies — Entertainment, Not Medicine</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Gummies — Entertainment, Not Medicine</h2>
           <p>
             Gummies are the furthest from authentic shilajit. The shilajit content per gummy is
             typically low (often 50–200 mg), it is usually a processed extract rather than
@@ -138,62 +138,62 @@ export default function FormsComparedPage() {
             They are also the form most likely to contain artificial additives.
           </p>
 
-          <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 mt-2">
-            <p className="text-xs font-semibold text-rose-700 mb-1">Best for</p>
-            <p className="text-xs text-rose-700">
+          <div className="rounded-lg bg-[#200505] border border-[#EF4444]/30 p-4 mt-2">
+            <p className="text-xs font-semibold text-[#EF4444] mb-1">Best for</p>
+            <p className="text-xs text-[#EF4444]">
               Beginners who want to try shilajit without the taste. Understand that gummies likely
               deliver a lower effective dose than resin or capsules at equivalent label quantities.
               Check whether the shilajit content is standardised to a fulvic acid percentage.
             </p>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Form Comparison at a Glance</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Form Comparison at a Glance</h2>
 
-          <div className="rounded-xl border border-stone-200 overflow-hidden">
+          <div className="rounded-xl border border-[#252A40] overflow-hidden">
             <table className="w-full text-xs">
-              <thead className="bg-stone-50 border-b border-stone-200">
+              <thead className="bg-[#171C2E] border-b border-[#252A40]">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Form</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Processing</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Adulteration risk</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Convenience</th>
-                  <th className="text-left px-4 py-3 font-semibold text-stone-700">Value for money</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Form</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Processing</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Adulteration risk</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Convenience</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Value for money</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-[#252A40]">
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Resin</td>
-                  <td className="px-4 py-3 text-stone-600">Minimal</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Resin</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Minimal</td>
                   <td className="px-4 py-3 text-emerald-700 font-medium">Low</td>
-                  <td className="px-4 py-3 text-stone-600">Medium</td>
-                  <td className="px-4 py-3 text-stone-600">High (price per g)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Medium</td>
+                  <td className="px-4 py-3 text-[#8892B8]">High (price per g)</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Capsules</td>
-                  <td className="px-4 py-3 text-stone-600">Moderate</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Capsules</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Moderate</td>
                   <td className="px-4 py-3 text-amber-700 font-medium">Medium</td>
-                  <td className="px-4 py-3 text-stone-600">High</td>
-                  <td className="px-4 py-3 text-stone-600">Medium</td>
+                  <td className="px-4 py-3 text-[#8892B8]">High</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Medium</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Powder</td>
-                  <td className="px-4 py-3 text-stone-600">High</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Powder</td>
+                  <td className="px-4 py-3 text-[#8892B8]">High</td>
                   <td className="px-4 py-3 text-rose-700 font-medium">High</td>
-                  <td className="px-4 py-3 text-stone-600">Medium</td>
-                  <td className="px-4 py-3 text-stone-600">Variable</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Medium</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Variable</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 font-medium text-slate-800">Gummies</td>
-                  <td className="px-4 py-3 text-stone-600">Very high</td>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Gummies</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Very high</td>
                   <td className="px-4 py-3 text-rose-700 font-medium">High</td>
-                  <td className="px-4 py-3 text-stone-600">Very high</td>
-                  <td className="px-4 py-3 text-stone-600">Low (per mg shilajit)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Very high</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Low (per mg shilajit)</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What About Liquid Drops?</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What About Liquid Drops?</h2>
           <p>
             Some products offer liquid shilajit — typically a fulvic acid solution or a shilajit
             extract dissolved in water or alcohol. These can be legitimate but are difficult to
@@ -201,7 +201,7 @@ export default function FormsComparedPage() {
             serving. Liquid forms are also susceptible to degradation if not properly stabilised.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">The Bottom Line</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">The Bottom Line</h2>
           <p>
             Form matters less than quality verification. A well-documented capsule product with a
             public COA from a named laboratory is a better choice than an unverified resin from an
@@ -214,9 +214,9 @@ export default function FormsComparedPage() {
           </p>
         </section>
 
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-5">
-          <p className="text-sm font-medium text-slate-900">Filter by product form</p>
-          <p className="mt-1 text-xs text-stone-600">
+        <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
+          <p className="text-sm font-medium text-[#EEF0F8]">Filter by product form</p>
+          <p className="mt-1 text-xs text-[#8892B8]">
             Browse resin, capsule, powder, and gummy products in the database — with COA status visible for each.
           </p>
           <div className="flex flex-wrap gap-2 mt-3">
@@ -227,9 +227,9 @@ export default function FormsComparedPage() {
           </div>
         </div>
 
-        <footer className="border-t border-stone-100 pt-6">
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-stone-500">
+        <footer className="border-t border-[#252A40] pt-6">
+          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#4A5070]">
             <li>
               1. Stohs SJ. "Safety and efficacy of shilajit (mumie, moomiyo)."{" "}
               <em>Phytother Res</em>. 2014;28(4):475–479.{" "}
@@ -250,13 +250,13 @@ export default function FormsComparedPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Link href="/learn/fulvic-acid-shilajit" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Up next</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">What Is Fulvic Acid? →</p>
+        <Link href="/learn/fulvic-acid-shilajit" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Up next</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">What Is Fulvic Acid? →</p>
         </Link>
-        <Link href="/learn/fake-shilajit-how-to-spot" className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all">
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">How to Spot Fake or Adulterated Shilajit →</p>
+        <Link href="/learn/fake-shilajit-how-to-spot" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How to Spot Fake or Adulterated Shilajit →</p>
         </Link>
       </div>
     </article>

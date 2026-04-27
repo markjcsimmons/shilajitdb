@@ -172,25 +172,25 @@ export default async function BestTagPage({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-stone-200 bg-white p-6">
-        <div className="flex items-center gap-2 text-xs text-stone-400 mb-3">
-          <Link href="/" className="hover:text-stone-600">Home</Link>
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
+        <div className="flex items-center gap-2 text-xs text-[#4A5070] mb-3">
+          <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
           <span>/</span>
           <span>{meta.label}</span>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+        <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8]">
           ★ {meta.label} Shilajit
         </h1>
-        <p className="mt-2 text-sm text-slate-600 max-w-2xl">{meta.description}</p>
-        <p className="mt-1 text-xs text-stone-400">{products.length} product{products.length !== 1 ? "s" : ""} in this list</p>
+        <p className="mt-2 text-sm text-[#8892B8] max-w-2xl">{meta.description}</p>
+        <p className="mt-1 text-xs text-[#4A5070]">{products.length} product{products.length !== 1 ? "s" : ""} in this list</p>
       </div>
 
       {products.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-500">
+        <div className="rounded-lg border border-dashed border-[#252A40] bg-[#0F1320] p-8 text-center text-sm text-[#8892B8]">
           No products matched this category yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {products.map(p => (
             <ProductCard key={p.id} product={p} />
           ))}

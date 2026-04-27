@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function MethodologyPage() {
   return (
-    <article className="prose prose-slate max-w-none">
+    <article className="prose prose-invert max-w-none">
       <h1>Scoring Methodology</h1>
       <p>
         This database grades shilajit products using objective, publicly verifiable signals.
@@ -79,42 +79,42 @@ export default function MethodologyPage() {
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left">
-              <th className="p-3 font-medium text-slate-700">Signal</th>
-              <th className="p-3 font-medium text-slate-700 text-center">Points</th>
-              <th className="p-3 font-medium text-slate-700">Justification</th>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Signal</th>
+              <th className="p-3 font-medium text-[#8892B8] text-center">Points</th>
+              <th className="p-3 font-medium text-[#8892B8]">Justification</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 text-slate-900">COA publicly available</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+4</td>
-              <td className="p-3 text-slate-600">Highest weight: the FTC and FDA both require that testing claims be substantiated and results be &ldquo;available for review.&rdquo; Publicly posted results are the gold standard — only ~33% of products in our database qualify.</td>
+              <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
+              <td className="p-3 text-[#8892B8]">Highest weight: the FTC and FDA both require that testing claims be substantiated and results be &ldquo;available for review.&rdquo; Publicly posted results are the gold standard — only ~33% of products in our database qualify.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Named third-party testing lab</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+3</td>
-              <td className="p-3 text-slate-600">Naming the specific laboratory makes results checkable and accountable. An unnamed &ldquo;independent lab&rdquo; claim cannot be verified. Only ~31% of products name their lab.</td>
+              <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+3</td>
+              <td className="p-3 text-[#8892B8]">Naming the specific laboratory makes results checkable and accountable. An unnamed &ldquo;independent lab&rdquo; claim cannot be verified. Only ~31% of products name their lab.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Manufacturing country: USA</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+2</td>
-              <td className="p-3 text-slate-600">US manufacturers are subject to FDA 21 CFR Part 111 cGMP regulations, providing regulatory accountability and third-party audit trails beyond a self-reported GMP claim.</td>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country: USA</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">US manufacturers are subject to FDA 21 CFR Part 111 cGMP regulations, providing regulatory accountability and third-party audit trails beyond a self-reported GMP claim.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">COA available on request</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">Partial credit: the product has been tested but results are gated. Testing without public disclosure limits consumer verifiability.</td>
+              <td className="p-3 text-[#EEF0F8]">COA available on request</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">Partial credit: the product has been tested but results are gated. Testing without public disclosure limits consumer verifiability.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Manufacturing country: other stated country</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">At minimum, the manufacturing origin is disclosed and traceable — even if outside a strong regulatory framework.</td>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated country</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">At minimum, the manufacturing origin is disclosed and traceable — even if outside a strong regulatory framework.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">GMP certified</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">A documented manufacturing standard, but ~80% of products in our database claim it, making it a weak differentiator. Awarded one point as evidence of a documented process.</td>
+              <td className="p-3 text-[#EEF0F8]">GMP certified</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">A documented manufacturing standard, but ~80% of products in our database claim it, making it a weak differentiator. Awarded one point as evidence of a documented process.</td>
             </tr>
           </tbody>
         </table>
@@ -124,18 +124,18 @@ export default function MethodologyPage() {
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left">
-              <th className="p-3 font-medium text-slate-700">Grade</th>
-              <th className="p-3 font-medium text-slate-700">Score required</th>
-              <th className="p-3 font-medium text-slate-700">Example profile</th>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Grade</th>
+              <th className="p-3 font-medium text-[#8892B8]">Score required</th>
+              <th className="p-3 font-medium text-[#8892B8]">Example profile</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            <tr><td className="p-3 font-semibold text-green-700">A</td><td className="p-3">≥ 9</td><td className="p-3 text-slate-600">Public COA + named lab + US manufacturing (9)</td></tr>
-            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-slate-600">Public COA + US manufacturing + GMP (7)</td></tr>
-            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-slate-600">Public COA only (4)</td></tr>
-            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 1</td><td className="p-3 text-slate-600">COA on request + stated country (2)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-slate-600">No COA, no disclosed manufacturing country</td></tr>
+          <tbody className="divide-y divide-[#252A40]">
+            <tr><td className="p-3 font-semibold text-green-700">A</td><td className="p-3">≥ 9</td><td className="p-3 text-[#8892B8]">Public COA + named lab + US manufacturing (9)</td></tr>
+            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-[#8892B8]">Public COA + US manufacturing + GMP (7)</td></tr>
+            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-[#8892B8]">Public COA only (4)</td></tr>
+            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">COA on request + stated country (2)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No COA, no disclosed manufacturing country</td></tr>
           </tbody>
         </table>
       </div>
@@ -154,33 +154,33 @@ export default function MethodologyPage() {
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left">
-              <th className="p-3 font-medium text-slate-700">Tier</th>
-              <th className="p-3 font-medium text-slate-700">All of the following must be true</th>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Tier</th>
+              <th className="p-3 font-medium text-[#8892B8]">All of the following must be true</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 font-semibold text-purple-700 whitespace-nowrap">Ultra-Premium</td>
-              <td className="p-3 text-slate-600">
+              <td className="p-3 font-semibold text-[#A78BFA] whitespace-nowrap">Ultra-Premium</td>
+              <td className="p-3 text-[#8892B8]">
                 Resin form <em>and</em> COA publicly available <em>and</em> named third-party lab <em>and</em> manufacturing country stated <em>and</em> GMP certified
               </td>
             </tr>
             <tr>
               <td className="p-3 font-semibold text-blue-700">Premium</td>
-              <td className="p-3 text-slate-600">
+              <td className="p-3 text-[#8892B8]">
                 Resin form <em>and</em> COA public or on request <em>and</em> named third-party lab <em>and</em> manufacturing country stated
               </td>
             </tr>
             <tr>
-              <td className="p-3 font-semibold text-slate-700">Average</td>
-              <td className="p-3 text-slate-600">
+              <td className="p-3 font-semibold text-[#EAB308]">Average</td>
+              <td className="p-3 text-[#8892B8]">
                 COA public or on request, <em>or</em> named lab (but not qualifying for Premium)
               </td>
             </tr>
             <tr>
               <td className="p-3 font-semibold text-red-700">Poor</td>
-              <td className="p-3 text-slate-600">
+              <td className="p-3 text-[#8892B8]">
                 No COA of any kind, and no named third-party lab
               </td>
             </tr>
@@ -226,52 +226,52 @@ export default function MethodologyPage() {
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left">
-              <th className="p-3 font-medium text-slate-700">Signal</th>
-              <th className="p-3 font-medium text-slate-700 text-center">Points</th>
-              <th className="p-3 font-medium text-slate-700">Scientific basis</th>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Signal</th>
+              <th className="p-3 font-medium text-[#8892B8] text-center">Points</th>
+              <th className="p-3 font-medium text-[#8892B8]">Scientific basis</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 text-slate-900">COA publicly available</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+4</td>
-              <td className="p-3 text-slate-600">Contaminant and heavy metal testing with publicly available results is the most important consumer safety signal. Heavy metal contamination is a documented concern for shilajit raw material.<sup><a href="#ref-frontiers">11</a></sup></td>
+              <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
+              <td className="p-3 text-[#8892B8]">Contaminant and heavy metal testing with publicly available results is the most important consumer safety signal. Heavy metal contamination is a documented concern for shilajit raw material.<sup><a href="#ref-frontiers">11</a></sup></td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Named third-party testing lab</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+3</td>
-              <td className="p-3 text-slate-600">Independent verification by a named, checkable laboratory is the second-most critical signal. Lamar et al. (2014) demonstrated that standardised humic substance testing requires specific analytical methods — naming the lab confirms which protocol was applied.<sup><a href="#ref-lamar">5</a></sup></td>
+              <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+3</td>
+              <td className="p-3 text-[#8892B8]">Independent verification by a named, checkable laboratory is the second-most critical signal. Lamar et al. (2014) demonstrated that standardised humic substance testing requires specific analytical methods — naming the lab confirms which protocol was applied.<sup><a href="#ref-lamar">5</a></sup></td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Form = Resin</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+2</td>
-              <td className="p-3 text-slate-600">Least-processed form; best preserves fulvic-humic molecular matrix (Piccolo 2002).<sup><a href="#ref-piccolo">1</a></sup> Weighted below verified independent testing: a well-tested capsule demonstrates more verifiable quality than an untested resin.</td>
+              <td className="p-3 text-[#EEF0F8]">Form = Resin</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">Least-processed form; best preserves fulvic-humic molecular matrix (Piccolo 2002).<sup><a href="#ref-piccolo">1</a></sup> Weighted below verified independent testing: a well-tested capsule demonstrates more verifiable quality than an untested resin.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Manufacturing country: USA</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+2</td>
-              <td className="p-3 text-slate-600">FDA 21 CFR Part 111 mandates identity, purity, strength, and composition testing for dietary supplements manufactured in the US — providing a regulatory audit trail beyond self-certification.</td>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country: USA</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">FDA 21 CFR Part 111 mandates identity, purity, strength, and composition testing for dietary supplements manufactured in the US — providing a regulatory audit trail beyond self-certification.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">COA available on request</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">Testing exists but is not openly disclosed; guide criteria say results should be &ldquo;available for review.&rdquo; Partial credit only.</td>
+              <td className="p-3 text-[#EEF0F8]">COA available on request</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">Testing exists but is not openly disclosed; guide criteria say results should be &ldquo;available for review.&rdquo; Partial credit only.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">Manufacturing country: other stated</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">Origin is disclosed, enabling traceability even without a strong local regulatory framework.</td>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">Origin is disclosed, enabling traceability even without a strong local regulatory framework.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900">GMP certified</td>
-              <td className="p-3 text-center font-semibold text-slate-900">+1</td>
-              <td className="p-3 text-slate-600">A documented process standard; low discriminative value at 80% prevalence but still evidence of a baseline manufacturing protocol.</td>
+              <td className="p-3 text-[#EEF0F8]">GMP certified</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">A documented process standard; low discriminative value at 80% prevalence but still evidence of a baseline manufacturing protocol.</td>
             </tr>
             <tr>
-              <td className="p-3 text-slate-900 italic">Patent claim</td>
-              <td className="p-3 text-center text-slate-500 italic">display only</td>
-              <td className="p-3 text-slate-600 italic">See note below.</td>
+              <td className="p-3 text-[#EEF0F8] italic">Patent claim</td>
+              <td className="p-3 text-center text-[#4A5070] italic">display only</td>
+              <td className="p-3 text-[#8892B8] italic">See note below.</td>
             </tr>
           </tbody>
         </table>
@@ -281,20 +281,20 @@ export default function MethodologyPage() {
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50 text-left">
-              <th className="p-3 font-medium text-slate-700">Grade</th>
-              <th className="p-3 font-medium text-slate-700">Score required</th>
-              <th className="p-3 font-medium text-slate-700">Example profile</th>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Grade</th>
+              <th className="p-3 font-medium text-[#8892B8]">Score required</th>
+              <th className="p-3 font-medium text-[#8892B8]">Example profile</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            <tr><td className="p-3 font-semibold text-green-700">A+</td><td className="p-3">≥ 12</td><td className="p-3 text-slate-600">Public COA + named lab + resin + USA + GMP (12)</td></tr>
-            <tr><td className="p-3 font-semibold text-green-600">A</td><td className="p-3">≥ 9</td><td className="p-3 text-slate-600">Public COA + named lab + USA (9); or public COA + named lab + resin (9)</td></tr>
-            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-slate-600">Public COA + resin + USA (8); or public COA + named lab (7)</td></tr>
-            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-slate-600">Public COA + other stated country (5); or resin + COA on request (3)</td></tr>
-            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 2</td><td className="p-3 text-slate-600">COA on request + stated country (2)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-600">E</td><td className="p-3">≥ 1</td><td className="p-3 text-slate-600">A single weak signal (e.g., GMP claimed only)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-slate-600">No verifiable quality signal of any kind</td></tr>
+          <tbody className="divide-y divide-[#252A40]">
+            <tr><td className="p-3 font-semibold text-green-700">A+</td><td className="p-3">≥ 12</td><td className="p-3 text-[#8892B8]">Public COA + named lab + resin + USA + GMP (12)</td></tr>
+            <tr><td className="p-3 font-semibold text-green-600">A</td><td className="p-3">≥ 9</td><td className="p-3 text-[#8892B8]">Public COA + named lab + USA (9); or public COA + named lab + resin (9)</td></tr>
+            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-[#8892B8]">Public COA + resin + USA (8); or public COA + named lab (7)</td></tr>
+            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-[#8892B8]">Public COA + other stated country (5); or resin + COA on request (3)</td></tr>
+            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 2</td><td className="p-3 text-[#8892B8]">COA on request + stated country (2)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-600">E</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">A single weak signal (e.g., GMP claimed only)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No verifiable quality signal of any kind</td></tr>
           </tbody>
         </table>
       </div>

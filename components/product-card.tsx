@@ -3,7 +3,6 @@ import Link from "next/link";
 import { cn } from "@/components/ui";
 import {
   gradeBadgeClasses,
-  gradeAccentClass,
   gradeLabel,
   qualityTierClasses,
   coaStatusClasses,
@@ -49,12 +48,12 @@ function formLabel(form: ProductForm): string {
 }
 
 const TAG_STYLES: Record<string, string> = {
-  best_tested:   "bg-sky-50 border-sky-200 text-sky-800",
-  best_value:    "bg-emerald-50 border-emerald-200 text-emerald-800",
-  best_resin:    "bg-amber-50 border-amber-200 text-amber-800",
-  best_capsules: "bg-violet-50 border-violet-200 text-violet-800",
-  best_gummies:  "bg-pink-50 border-pink-200 text-pink-800",
-  editors_pick:  "bg-rose-50 border-rose-200 text-rose-800",
+  best_tested:   "text-[#38BDF8] bg-[#041828] border border-[#38BDF8]/30",
+  best_value:    "text-[#22C55E] bg-[#052010] border border-[#22C55E]/30",
+  best_resin:    "text-[#EAB308] bg-[#201800] border border-[#EAB308]/30",
+  best_capsules: "text-[#A78BFA] bg-[#160F28] border border-[#A78BFA]/30",
+  best_gummies:  "text-[#F472B6] bg-[#1E0618] border border-[#F472B6]/30",
+  editors_pick:  "text-[#FB923C] bg-[#1E0805] border border-[#FB923C]/30",
 };
 
 function tagLabel(tag: string): string {
@@ -63,19 +62,37 @@ function tagLabel(tag: string): string {
 
 export function ProductCard({ product: p }: { product: ProductCardData }) {
   return (
-    <div
-      className={cn(
-        "group rounded-2xl border border-stone-200 border-l-4 bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-stone-300",
-        gradeAccentClass(p.overallGrade)
-      )}
-    >
-      <div className="flex items-stretch">
+    <div className="group rounded-lg border border-[#252A40] bg-[#0F1320] transition-all duration-100 hover:bg-[#171C2E] hover:shadow-[0_4px_16px_rgba(0,0,0,0.65)] shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
+      <div className="p-4">
 
-        {/* Grade badge column */}
-        <div className="flex w-20 shrink-0 flex-col items-center justify-center px-3 py-5">
+        {/* Top: brand + name + grade badge */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className="text-[10px] font-medium uppercase tracking-[0.07em] text-[#4A5070]">
+                {p.brand.name}
+              </span>
+              {p.dataCompleteness === "LOW" && (
+                <span className="text-[10px] text-[#4A5070] border border-[#252A40] rounded px-1.5 py-px">
+                  Unverified
+                </span>
+              )}
+            </div>
+            <Link
+              href={`/product/${p.slug}`}
+              className="text-sm font-semibold text-[#EEF0F8] leading-snug hover:text-[#6E9FFF] transition-colors"
+            >
+              {p.name}
+            </Link>
+            <div className="mt-1 text-xs text-[#4A5070]">
+              {formLabel(p.form)}
+            </div>
+          </div>
+
+          {/* Grade badge */}
           <div
             className={cn(
-              "flex h-[72px] w-[72px] items-center justify-center rounded-2xl text-2xl font-black tracking-tight shadow-sm",
+              "shrink-0 text-xs font-semibold px-2 py-1 rounded text-center min-w-[36px]",
               gradeBadgeClasses(p.overallGrade)
             )}
           >
@@ -83,102 +100,75 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="w-px bg-stone-100 my-4" />
-
-        {/* Main content — 3 tiers */}
-        <div className="min-w-0 flex-1 flex flex-col gap-3 px-5 py-5">
-
-          {/* Tier 1: Name + brand */}
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Link
-                href={`/product/${p.slug}`}
-                className="text-base font-bold tracking-tight text-slate-900 hover:text-slate-700 hover:underline underline-offset-2 transition-colors leading-snug"
-              >
-                {p.name}
-              </Link>
-              {p.dataCompleteness === "LOW" && (
-                <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-400">
-                  Unverified
-                </span>
+        {/* Pills: quality tier + COA + signals */}
+        <div className="flex flex-wrap gap-1.5">
+          <span className={cn("inline-flex items-center rounded px-1.5 py-px text-xs font-medium", qualityTierClasses(p.qualityTier))}>
+            {qualityTierLabel(p.qualityTier)}
+          </span>
+          <span className={cn("inline-flex items-center rounded px-1.5 py-px text-xs", coaStatusClasses(p.coaStatus))}>
+            {coaLabel(p.coaStatus)}
+          </span>
+          {p.heavyMetalsTested === "CONFIRMED" && (
+            <span className="inline-flex items-center gap-1 rounded px-1.5 py-px text-xs text-[#22C55E] bg-[#052010] border border-[#22C55E]/30">
+              <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-5"/></svg>
+              Heavy metals
+            </span>
+          )}
+          {p.heavyMetalsTested === "CLAIMED" && (
+            <span className="inline-flex items-center rounded px-1.5 py-px text-xs text-[#EAB308] bg-[#201800] border border-[#EAB308]/30">
+              Heavy metals (claimed)
+            </span>
+          )}
+          {p.bestForTags.map(tag => (
+            <span
+              key={tag}
+              className={cn(
+                "inline-flex items-center rounded px-1.5 py-px text-xs font-medium",
+                TAG_STYLES[tag] ?? "text-[#EAB308] bg-[#201800] border border-[#EAB308]/30"
               )}
-            </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-              <span className="font-medium text-slate-600">{p.brand.name}</span>
-              <span className="text-stone-300">·</span>
-              <span>{formLabel(p.form)}</span>
-            </div>
-          </div>
-
-          {/* Tier 2: Key signals */}
-          <div className="flex flex-wrap gap-1.5">
-            <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold", qualityTierClasses(p.qualityTier))}>
-              {qualityTierLabel(p.qualityTier)}
+            >
+              ★ {tagLabel(tag)}
             </span>
-            <span className={cn("inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium", coaStatusClasses(p.coaStatus))}>
-              {coaLabel(p.coaStatus)}
-            </span>
-            {p.heavyMetalsTested === "CONFIRMED" && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-                <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-5"/></svg>
-                Heavy metals
-              </span>
-            )}
-            {p.heavyMetalsTested === "CLAIMED" && (
-              <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-700">
-                Heavy metals (claimed)
-              </span>
-            )}
-            {p.bestForTags.map(tag => (
-              <span
-                key={tag}
-                className={cn(
-                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                  TAG_STYLES[tag] ?? "bg-amber-50 border-amber-200 text-amber-800"
-                )}
-              >
-                ★ {tagLabel(tag)}
-              </span>
-            ))}
-          </div>
+          ))}
+        </div>
 
-          {/* Tier 3: Price + secondary meta */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-stone-400">
+        {/* Bottom: price + meta */}
+        <div className="mt-3 pt-3 border-t border-[#252A40] flex items-end justify-between gap-3">
+          <div className="text-xs text-[#4A5070] space-y-0.5">
             {p.pricePerGramCents != null && (
-              <span>
-                <span className="font-semibold text-slate-700">${(p.pricePerGramCents / 100).toFixed(2)}</span>
+              <div>
+                <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerGramCents / 100).toFixed(2)}</span>
                 <span className="ml-0.5">/gram</span>
-              </span>
+              </div>
             )}
             {p.pricePerServingCents != null && (
-              <span>
-                <span className="font-semibold text-slate-700">${(p.pricePerServingCents / 100).toFixed(2)}</span>
+              <div>
+                <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerServingCents / 100).toFixed(2)}</span>
                 <span className="ml-0.5">/serving</span>
-              </span>
+              </div>
             )}
             {p.manufacturingCountryClaim && (
-              <span>Made in <span className="text-slate-600">{p.manufacturingCountryClaim}</span></span>
+              <div>Made in <span className="text-[#8892B8]">{p.manufacturingCountryClaim}</span></div>
             )}
             {p.thirdPartyTestingLab && (
-              <span>Lab: <span className="text-slate-600">{p.thirdPartyTestingLab}</span></span>
+              <div>Lab: <span className="text-[#8892B8]">{p.thirdPartyTestingLab}</span></div>
             )}
             {p.lastVerifiedAt && (
-              <span>Verified <span className="text-slate-600">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></span>
+              <div>Verified <span className="text-[#8892B8]">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div>
             )}
           </div>
 
-          {/* COA button — full-width block when public */}
+          {/* COA button */}
           {p.coaUrl && (
             <a
               href={p.coaUrl}
               target="_blank"
               rel="nofollow noopener noreferrer"
               className={cn(
-                "inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold transition-colors",
+                "shrink-0 inline-flex items-center gap-1 rounded px-3 py-1.5 text-xs font-semibold transition-colors",
                 p.coaStatus === "PUBLIC"
-                  ? "w-full bg-emerald-600 text-white hover:bg-emerald-700"
-                  : "border border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-slate-100"
+                  ? "bg-[#3D7AFF] text-[#080B14] hover:bg-[#6E9FFF]"
+                  : "border border-[#252A40] text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8]"
               )}
             >
               View COA
@@ -187,7 +177,6 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               </svg>
             </a>
           )}
-
         </div>
       </div>
     </div>

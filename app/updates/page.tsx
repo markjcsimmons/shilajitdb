@@ -48,9 +48,9 @@ export default async function UpdatesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-stone-200 bg-white p-6">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">Recent updates</h1>
-        <p className="mt-1 text-sm text-slate-500">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
+        <h1 className="font-serif text-xl font-semibold text-[#EEF0F8]">Recent updates</h1>
+        <p className="mt-1 text-sm text-[#8892B8]">
           Latest product additions and data changes — most recent first.
         </p>
       </div>
@@ -58,26 +58,26 @@ export default async function UpdatesPage() {
       <div className="space-y-6">
         {Array.from(groups.entries()).map(([date, items]) => (
           <div key={date}>
-            <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-stone-400">
+            <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-[#4A5070]">
               {date}
             </div>
-            <div className="rounded-2xl border border-stone-200 bg-white divide-y divide-stone-100">
+            <div className="rounded-lg border border-[#252A40] bg-[#0F1320] divide-y divide-[#252A40]">
               {items.map((p) => (
                 <div key={p.id} className="flex items-center gap-3 px-5 py-3">
                   {/* Grade badge */}
-                  <div className="shrink-0 w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-700">
+                  <div className="shrink-0 w-8 h-8 rounded-lg bg-[#1F2540] flex items-center justify-center text-xs font-bold font-mono text-[#8892B8]">
                     {gradeLabel(p.overallGrade)}
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/product/${p.slug}`}
-                      className="text-sm font-medium text-slate-900 hover:underline"
+                      className="text-sm font-medium text-[#EEF0F8] hover:text-[#6E9FFF] transition-colors"
                     >
                       {p.name}
                     </Link>
-                    <div className="text-xs text-stone-400 mt-0.5">
-                      <Link href={`/brand/${p.brand.slug}`} className="hover:underline">
+                    <div className="text-xs text-[#4A5070] mt-0.5">
+                      <Link href={`/brand/${p.brand.slug}`} className="hover:text-[#8892B8] transition-colors">
                         {p.brand.name}
                       </Link>
                       {" · "}
@@ -87,8 +87,8 @@ export default async function UpdatesPage() {
 
                   <span className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
                     isNew(p.createdAt, p.updatedAt)
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                      : "bg-stone-50 text-stone-500 border border-stone-200"
+                      ? "bg-[#052010] text-[#22C55E] border border-[#22C55E]/30"
+                      : "bg-[#1F2540] text-[#4A5070] border border-[#252A40]"
                   }`}>
                     {isNew(p.createdAt, p.updatedAt) ? "New" : "Updated"}
                   </span>

@@ -19,28 +19,28 @@ export default function WhatIsShilajitPage() {
   return (
     <article className="space-y-6 max-w-3xl">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-stone-400">
-        <Link href="/" className="hover:text-stone-600">Home</Link>
+      <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
+        <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
-        <Link href="/learn" className="hover:text-stone-600">Learn</Link>
+        <Link href="/learn" className="hover:text-[#8892B8]">Learn</Link>
         <span>/</span>
         <span>What Is Shilajit?</span>
       </nav>
 
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 md:p-8 space-y-8">
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 md:p-8 space-y-8">
         <header>
-          <div className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 mb-4">
+          <div className="inline-block rounded-full bg-[#052010] border border-[#22C55E]/30 px-3 py-1 text-xs font-medium text-[#22C55E] mb-4">
             Foundation
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 leading-snug">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
             What Is Shilajit? Formation, Composition &amp; What the Research Says
           </h1>
-          <p className="mt-3 text-sm text-stone-500">
+          <p className="mt-3 text-sm text-[#4A5070]">
             Last reviewed April 2026 · 8 min read
           </p>
         </header>
 
-        <section className="prose prose-sm prose-stone max-w-none space-y-4 text-slate-700 leading-relaxed">
+        <section className="prose prose-sm prose-invert max-w-none space-y-4 text-[#8892B8] leading-relaxed">
           <p className="text-base">
             Shilajit is a thick, tar-like exudate that seeps from cracks in mountain rock at high altitude.
             It has been used in Ayurvedic and Central Asian traditional medicine for over 3,000 years —
@@ -48,7 +48,7 @@ export default function WhatIsShilajitPage() {
             its bioactive compounds.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">How Shilajit Forms</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">How Shilajit Forms</h2>
           <p>
             Shilajit is not mined like a mineral or harvested like a plant. It is the end product of
             millions of years of geological and biological pressure. Organic material — largely plant
@@ -65,9 +65,9 @@ export default function WhatIsShilajitPage() {
             and less exposed to degradation.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Key Compounds</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Key Compounds</h2>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Fulvic Acid</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Fulvic Acid</h3>
           <p>
             Fulvic acid is the most researched bioactive in shilajit. It is a low-molecular-weight
             humic substance that acts as a natural electrolyte and mineral chelator — meaning it binds
@@ -78,13 +78,13 @@ export default function WhatIsShilajitPage() {
           </p>
           <p>
             See our full explainer:{" "}
-            <Link href="/learn/fulvic-acid-shilajit" className="underline underline-offset-2 text-slate-900">
+            <Link href="/learn/fulvic-acid-shilajit" className="underline underline-offset-2 text-[#EEF0F8]">
               What Is Fulvic Acid? The Primary Bioactive in Shilajit
             </Link>
             .
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Dibenzo-α-Pyrones (DBPs)</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Dibenzo-α-Pyrones (DBPs)</h3>
           <p>
             DBPs are a class of molecules unique to shilajit, not found in other humic substances.
             They appear to interact with mitochondrial energy production pathways and have been
@@ -93,7 +93,7 @@ export default function WhatIsShilajitPage() {
             for much of the subsequent shilajit literature.
           </p>
 
-          <h3 className="font-semibold text-slate-800 mt-4">Humic Acid, Minerals &amp; Trace Elements</h3>
+          <h3 className="font-semibold text-[#EEF0F8] mt-4">Humic Acid, Minerals &amp; Trace Elements</h3>
           <p>
             Beyond fulvic acid and DBPs, shilajit contains humic acid (higher molecular weight than
             fulvic acid, less bioavailable), plant-derived amino acids, phenolic compounds, and over
@@ -101,7 +101,7 @@ export default function WhatIsShilajitPage() {
             ionic form, which is thought to improve absorption compared with standard mineral supplements.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What the Clinical Research Shows</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What the Clinical Research Shows</h2>
           <p>
             The honest picture is this: shilajit has a robust body of in-vitro and animal research,
             a smaller body of human clinical trials, and a large volume of brand-funded studies.
@@ -117,7 +117,7 @@ export default function WhatIsShilajitPage() {
                 href="https://pubmed.ncbi.nlm.nih.gov/26395129/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 text-slate-900"
+                className="underline underline-offset-2 text-[#EEF0F8]"
               >
                 Pandit S et al., Andrologia 2016
               </a>
@@ -131,7 +131,7 @@ export default function WhatIsShilajitPage() {
                 href="https://pubmed.ncbi.nlm.nih.gov/22771318/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 text-slate-900"
+                className="underline underline-offset-2 text-[#EEF0F8]"
               >
                 Surapaneni DK et al., J Ethnopharmacol 2012
               </a>
@@ -145,7 +145,7 @@ export default function WhatIsShilajitPage() {
                 href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3296184/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 text-slate-900"
+                className="underline underline-offset-2 text-[#EEF0F8]"
               >
                 Carrasco-Gallardo C et al., Int J Alzheimers Dis 2012
               </a>
@@ -160,14 +160,14 @@ export default function WhatIsShilajitPage() {
               href="https://pubmed.ncbi.nlm.nih.gov/23876888/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 text-slate-900"
+              className="underline underline-offset-2 text-[#EEF0F8]"
             >
               Stohs SJ, Phytother Res 2014
             </a>
             .
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">What the Research Does Not Support (Yet)</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What the Research Does Not Support (Yet)</h2>
           <p>
             Many popular health claims — anti-ageing effects, fertility in women, liver detoxification,
             bone healing — rest on animal studies or traditional use rather than controlled human trials.
@@ -176,7 +176,7 @@ export default function WhatIsShilajitPage() {
             not equivalent to a randomised controlled trial for efficacy.
           </p>
 
-          <h2 className="text-lg font-semibold text-slate-900 mt-6 mb-2">Quality Depends on Purity and Source</h2>
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Quality Depends on Purity and Source</h2>
           <p>
             Raw shilajit can contain heavy metals, mycotoxins, and microbial contamination.
             Authentic, purified shilajit that passes third-party laboratory testing is a different
@@ -191,9 +191,9 @@ export default function WhatIsShilajitPage() {
         </section>
 
         {/* CTA to database */}
-        <div className="rounded-xl border border-stone-200 bg-stone-50 p-5">
-          <p className="text-sm font-medium text-slate-900">Use the database</p>
-          <p className="mt-1 text-xs text-stone-600">
+        <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
+          <p className="text-sm font-medium text-[#EEF0F8]">Use the database</p>
+          <p className="mt-1 text-xs text-[#8892B8]">
             Filter for products with public COAs, named testing labs, and verified heavy metal testing.
           </p>
           <Link
@@ -205,9 +205,9 @@ export default function WhatIsShilajitPage() {
         </div>
 
         {/* Sources */}
-        <footer className="border-t border-stone-100 pt-6">
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-stone-500">
+        <footer className="border-t border-[#252A40] pt-6">
+          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#4A5070]">
             <li>
               1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels in healthy volunteers."{" "}
               <em>Andrologia</em>. 2016;48(5):570–575.{" "}
@@ -258,19 +258,19 @@ export default function WhatIsShilajitPage() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Link
           href="/learn/shilajit-sourcing-regions"
-          className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all"
+          className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all"
         >
-          <p className="text-xs text-stone-400 mb-1">Up next</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">
+          <p className="text-xs text-[#4A5070] mb-1">Up next</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">
             Where Shilajit Comes From: Mountain Regions Compared →
           </p>
         </Link>
         <Link
           href="/learn/fulvic-acid-shilajit"
-          className="group rounded-2xl border border-stone-200 bg-white p-5 hover:border-stone-300 hover:shadow-sm transition-all"
+          className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all"
         >
-          <p className="text-xs text-stone-400 mb-1">Related</p>
-          <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">
+          <p className="text-xs text-[#4A5070] mb-1">Related</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">
             What Is Fulvic Acid? The Primary Bioactive in Shilajit →
           </p>
         </Link>

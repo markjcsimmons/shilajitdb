@@ -16,10 +16,10 @@ export function Badge({
 }) {
   const cls =
     variant === "outline"
-      ? "border border-slate-200 bg-white text-slate-700"
+      ? "border border-[#252A40] bg-transparent text-[#8892B8]"
       : variant === "muted"
-        ? "bg-slate-100 text-slate-700"
-        : "bg-slate-900 text-white";
+        ? "bg-[#1F2540] text-[#8892B8]"
+        : "bg-[#3D7AFF] text-[#080B14]";
   return (
     <span
       {...rest}
@@ -42,13 +42,13 @@ export function Button({
   variant?: "primary" | "secondary" | "ghost";
 }) {
   const base =
-    "inline-flex items-center justify-center rounded-xl px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-50";
+    "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D7AFF] disabled:opacity-50";
   const cls =
     variant === "secondary"
-      ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
+      ? "border border-[#252A40] bg-[#171C2E] text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8]"
       : variant === "ghost"
-        ? "bg-transparent text-slate-900 hover:bg-slate-100"
-        : "bg-slate-900 text-white hover:bg-slate-800";
+        ? "bg-transparent text-[#8892B8] hover:bg-[#171C2E] hover:text-[#EEF0F8]"
+        : "bg-[#3D7AFF] text-[#080B14] hover:bg-[#6E9FFF]";
   const finalClassName = cn(base, cls, className);
 
   if (href) {
@@ -71,7 +71,7 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={cn(
-        "h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/20",
+        "h-10 w-full rounded-lg border border-[#252A40] bg-[#1F2540] px-3 text-sm text-[#EEF0F8] placeholder:text-[#4A5070] focus:outline-none focus:border-[#3D7AFF] focus:ring-1 focus:ring-[#3D7AFF]/30",
         props.className
       )}
     />
@@ -83,7 +83,7 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     <select
       {...props}
       className={cn(
-        "h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20",
+        "h-10 w-full rounded-lg border border-[#252A40] bg-[#1F2540] px-3 text-sm text-[#EEF0F8] focus:outline-none focus:border-[#3D7AFF] focus:ring-1 focus:ring-[#3D7AFF]/30",
         props.className
       )}
     />
