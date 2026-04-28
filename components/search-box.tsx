@@ -7,6 +7,7 @@ import type { FilterState } from "@/components/filter-bar";
 type Props = {
   initialQ?: string;
   filters: FilterState;
+  hero?: boolean;
 };
 
 function buildUrl(params: Record<string, string | undefined>): string {
@@ -29,7 +30,7 @@ function filtersToParams(f: FilterState, q: string | undefined): Record<string, 
   };
 }
 
-export function SearchBox({ initialQ, filters }: Props) {
+export function SearchBox({ initialQ, filters, hero }: Props) {
   const router = useRouter();
   const [value, setValue] = useState(initialQ ?? "");
 
@@ -56,9 +57,9 @@ export function SearchBox({ initialQ, filters }: Props) {
   }
 
   return (
-    <div className="relative mt-4">
+    <div className="relative">
       <svg
-        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#4A5070]"
+        className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${hero ? "h-5 w-5 text-[#3D7AFF]" : "h-5 w-5 text-[#4A5070]"}`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -72,7 +73,11 @@ export function SearchBox({ initialQ, filters }: Props) {
         placeholder="Search brand or product name…"
         onChange={handleChange}
         onKeyDown={handleKey}
-        className="w-full rounded-lg border border-[#252A40] bg-[#0F1320] py-3.5 pl-12 pr-20 text-base text-[#EEF0F8] placeholder:text-[#4A5070] focus:border-[#3D7AFF] focus:outline-none focus:ring-1 focus:ring-[#3D7AFF]/30"
+        className={
+          hero
+            ? "w-full rounded-lg border border-[#3D7AFF] bg-[#0A0E1F] py-4 pl-12 pr-20 text-base text-[#EEF0F8] placeholder:text-[#4A5070] focus:outline-none focus:ring-2 focus:ring-[#3D7AFF]/40"
+            : "w-full rounded-lg border border-[#252A40] bg-[#0F1320] py-3.5 pl-12 pr-20 text-base text-[#EEF0F8] placeholder:text-[#4A5070] focus:border-[#3D7AFF] focus:outline-none focus:ring-1 focus:ring-[#3D7AFF]/30"
+        }
       />
       <span className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded border border-[#252A40] bg-[#1F2540] px-1.5 py-0.5 text-xs text-[#4A5070] sm:block">
         ↵ Enter

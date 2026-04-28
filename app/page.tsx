@@ -145,8 +145,25 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
+      {/* ── Stats strip ── */}
+      <div className="-mx-4 border-b border-[#252A40] px-4 py-2">
+        <div className="max-w-6xl mx-auto flex items-center gap-6 overflow-x-auto">
+          {[
+            { value: String(productCount), label: "products graded" },
+            { value: String(brandCount), label: "brands tracked" },
+            { value: `${coaPercent}%`, label: "with public COA" },
+            { value: lastVerifiedLabel ?? "—", label: "last updated" },
+          ].map((s) => (
+            <div key={s.label} className="flex items-baseline gap-1.5 whitespace-nowrap shrink-0">
+              <span className="font-mono text-sm font-semibold text-[#EEF0F8]">{s.value}</span>
+              <span className="text-xs text-[#4A5070]">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── Hero ── */}
-      <div className="-mx-4 border-b border-[#252A40] px-4 py-16 md:py-20">
+      <div className="-mx-4 border-b border-[#252A40] px-4 pt-12 pb-10 md:pt-16 md:pb-12">
         <div className="max-w-6xl mx-auto">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#3D7AFF] mb-4">
@@ -156,56 +173,37 @@ export default async function HomePage({
               Shilajit<br />
               <span className="italic font-normal text-[#8892B8]">Transparency</span> Database
             </h1>
-            <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-8">
+            <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-6">
               Every product graded on COA quality, testing lab credibility, heavy metal safety,
               and manufacturing transparency — so you can buy with confidence. We do not earn
               revenue from this site; our goal is to educate and inform.
             </p>
-            <div className="flex gap-3 flex-wrap">
-              <Link
-                href="/?q="
-                className="inline-flex items-center bg-[#3D7AFF] text-[#080B14] font-bold text-sm px-6 py-3 rounded-md hover:bg-[#6E9FFF] transition-colors"
-              >
-                Browse the Database →
-              </Link>
-              <Link
-                href="/methodology"
-                className="inline-flex items-center border border-[#313760] text-[#EEF0F8] font-semibold text-sm px-6 py-3 rounded-md hover:bg-[#171C2E] transition-colors"
-              >
-                How We Grade
-              </Link>
+          </div>
+
+          {/* Search + How We Grade */}
+          <div className="flex gap-2 items-stretch max-w-2xl">
+            <div className="flex-1">
+              <SearchBox initialQ={filters.q} filters={filterState} hero />
             </div>
+            <Link
+              href="/methodology"
+              className="shrink-0 inline-flex items-center border border-[#313760] text-[#EEF0F8] font-semibold text-sm px-4 rounded-lg hover:bg-[#171C2E] transition-colors whitespace-nowrap"
+            >
+              How We Grade
+            </Link>
           </div>
 
-          {/* Stats bar */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 overflow-hidden rounded-lg border border-[#252A40]">
-            {[
-              { value: String(productCount), label: "products graded" },
-              { value: String(brandCount), label: "brands tracked" },
-              { value: `${coaPercent}%`, label: "with public COA" },
-              { value: lastVerifiedLabel ?? "—", label: "last updated" },
-            ].map((s, i) => (
-              <div
-                key={s.label}
-                className={`px-5 py-5 border-r border-[#252A40] last:border-r-0 ${i % 2 === 0 ? "bg-[#0F1320]" : "bg-[#0F1320]"}`}
-              >
-                <div className="font-mono text-2xl font-semibold text-[#EEF0F8] leading-none">{s.value}</div>
-                <div className="text-xs text-[#4A5070] mt-1.5">{s.label}</div>
-              </div>
-            ))}
+          {/* Filter chips */}
+          <div className="mt-3 max-w-2xl">
+            <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
           </div>
+
+          {hasActiveFilter && (
+            <div className="flex justify-end max-w-2xl mt-2">
+              <SortSelect current={filters.sort} filters={filterState} />
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* ── Search + filters (always visible) ── */}
-      <div className="mt-8 space-y-4">
-        <SearchBox initialQ={filters.q} filters={filterState} />
-        <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
-        {hasActiveFilter && (
-          <div className="flex justify-end">
-            <SortSelect current={filters.sort} filters={filterState} />
-          </div>
-        )}
       </div>
 
       {/* ── Product list / discovery ── */}
