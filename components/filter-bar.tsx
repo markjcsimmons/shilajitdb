@@ -243,7 +243,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
             <div className="font-semibold text-[#EEF0F8] mb-1.5">Other filters</div>
             <ul className="space-y-1.5 text-[#8892B8]">
               <li><span className="font-medium text-[#EEF0F8]">Named lab</span> — the brand publicly identifies the third-party testing laboratory (e.g. Eurofins, NSF)</li>
-              <li><span className="font-medium text-[#EEF0F8]">Heavy metals tested</span> — tested for lead, mercury, arsenic, and cadmium. &ldquo;Confirmed&rdquo; = verifiable evidence; &ldquo;Claimed&rdquo; = brand states testing but no independent verification</li>
+              <li><span className="font-medium text-[#EEF0F8]">Heavy metals tested</span> — tested for lead, mercury, arsenic, and cadmium. &ldquo;Confirmed&rdquo; = verifiable evidence; &ldquo;Unverified&rdquo; = brand states testing but no independent verification</li>
               <li><span className="font-medium text-[#EEF0F8]">Form</span> — the physical format of the supplement (resin, capsule, powder, etc.)</li>
               <li><span className="font-medium text-[#EEF0F8]">US Made</span> — brand claims the product is manufactured in the United States</li>
             </ul>

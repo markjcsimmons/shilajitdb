@@ -116,7 +116,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
           )}
           {p.heavyMetalsTested === "CLAIMED" && (
             <span className="inline-flex items-center rounded px-1.5 py-px text-xs text-[#EAB308] bg-[#201800] border border-[#EAB308]/30">
-              Heavy metals (claimed)
+              Heavy metals tested (unverified)
             </span>
           )}
           {p.bestForTags.map(tag => (
