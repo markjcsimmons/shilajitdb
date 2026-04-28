@@ -1,0 +1,226 @@
+/* ============================================================
+   ShilajitDB — Design Tokens
+   Bold & Modern · Dark · High Contrast
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ─── Base Colors ─────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --color-bg:            #080B14;   /* page background */
+  --color-surface:       #0F1320;   /* card / panel */
+  --color-surface-2:     #171C2E;   /* elevated card, hover row */
+  --color-surface-3:     #1F2540;   /* nested / deepest surface */
+
+  /* Borders */
+  --color-border:        #252A40;   /* default border */
+  --color-border-strong: #313760;   /* stronger separator */
+
+  /* Text */
+  --color-text-1:        #FFFFFF;   /* primary text */
+  --color-text-2:        #A0AACC;   /* secondary / subtext */
+  --color-text-3:        #636A90;   /* muted / placeholder */
+  --color-text-inv:      #080B14;   /* text on light/accent bg */
+
+  /* Accent — Cobalt blue (data / trust) */
+  --color-accent:        #3D7AFF;
+  --color-accent-bright: #6E9FFF;
+  --color-accent-dim:    #060E28;
+  --color-accent-text:   #6E9FFF;   /* accent for text on dark */
+
+  /* Grade — Semantic */
+  --color-grade-ultra:   #22C55E;   /* Ultra Premium */
+  --color-grade-premium: #3B82F6;   /* Premium */
+  --color-grade-avg:     #EAB308;   /* Average */
+  --color-grade-poor:    #EF4444;   /* Poor */
+
+  /* Grade — Dim backgrounds */
+  --color-grade-ultra-dim:   #052010;
+  --color-grade-premium-dim: #051428;
+  --color-grade-avg-dim:     #201800;
+  --color-grade-poor-dim:    #200505;
+
+  /* Utility */
+  --color-white:         #FFFFFF;
+  --color-black:         #000000;
+}
+
+/* ─── Typography ──────────────────────────────────────────── */
+:root {
+  /* Font families */
+  --font-display:  'Playfair Display', Georgia, serif;
+  --font-body:     'DM Sans', system-ui, sans-serif;
+  --font-mono:     'JetBrains Mono', 'Courier New', monospace;
+
+  /* Font sizes — fluid scale */
+  --text-xs:    0.75rem;    /* 12px */
+  --text-sm:    0.875rem;   /* 14px */
+  --text-base:  1rem;       /* 16px */
+  --text-lg:    1.125rem;   /* 18px */
+  --text-xl:    1.25rem;    /* 20px */
+  --text-2xl:   1.5rem;     /* 24px */
+  --text-3xl:   1.875rem;   /* 30px */
+  --text-4xl:   2.25rem;    /* 36px */
+  --text-5xl:   3rem;       /* 48px */
+  --text-6xl:   3.75rem;    /* 60px */
+  --text-7xl:   4.5rem;     /* 72px */
+
+  /* Line heights */
+  --leading-none:   1;
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.65;
+
+  /* Letter spacing */
+  --tracking-tight:  -0.03em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.04em;
+  --tracking-wider:   0.08em;
+  --tracking-widest:  0.15em;
+
+  /* Font weights */
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-black:   900;
+}
+
+/* ─── Spacing ─────────────────────────────────────────────── */
+:root {
+  --space-1:   0.25rem;   /* 4px */
+  --space-2:   0.5rem;    /* 8px */
+  --space-3:   0.75rem;   /* 12px */
+  --space-4:   1rem;      /* 16px */
+  --space-5:   1.25rem;   /* 20px */
+  --space-6:   1.5rem;    /* 24px */
+  --space-8:   2rem;      /* 32px */
+  --space-10:  2.5rem;    /* 40px */
+  --space-12:  3rem;      /* 48px */
+  --space-16:  4rem;      /* 64px */
+  --space-20:  5rem;      /* 80px */
+  --space-24:  6rem;      /* 96px */
+  --space-32:  8rem;      /* 128px */
+}
+
+/* ─── Radii ───────────────────────────────────────────────── */
+:root {
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-2xl:  16px;
+  --radius-pill: 9999px;
+}
+
+/* ─── Shadows ─────────────────────────────────────────────── */
+:root {
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.45), 0 0 0 1px var(--color-border);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.5),  0 0 0 1px var(--color-border);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,.6),  0 0 0 1px var(--color-border);
+  --shadow-glow-accent: 0 0 20px rgba(212,146,10,.25);
+}
+
+/* ─── Semantic Typography Roles ───────────────────────────── */
+:root {
+  /* Headings use display serif */
+  --h1-font:   var(--font-display);
+  --h1-size:   var(--text-5xl);
+  --h1-weight: var(--weight-bold);
+  --h1-leading:var(--leading-tight);
+  --h1-tracking: var(--tracking-tight);
+
+  --h2-font:   var(--font-display);
+  --h2-size:   var(--text-3xl);
+  --h2-weight: var(--weight-semibold);
+  --h2-leading:var(--leading-tight);
+
+  --h3-font:   var(--font-body);
+  --h3-size:   var(--text-xl);
+  --h3-weight: var(--weight-semibold);
+  --h3-leading:var(--leading-snug);
+
+  /* Body text */
+  --body-font:   var(--font-body);
+  --body-size:   var(--text-base);
+  --body-weight: var(--weight-regular);
+  --body-leading:var(--leading-relaxed);
+
+  --body-sm-size: var(--text-sm);
+
+  /* Labels / caps */
+  --label-font:     var(--font-body);
+  --label-size:     var(--text-xs);
+  --label-weight:   var(--weight-semibold);
+  --label-tracking: var(--tracking-widest);
+  --label-transform: uppercase;
+
+  /* Data / scores */
+  --data-font:   var(--font-mono);
+  --data-size:   var(--text-sm);
+  --data-weight: var(--weight-medium);
+
+  /* Nav */
+  --nav-font:   var(--font-body);
+  --nav-size:   var(--text-sm);
+  --nav-weight: var(--weight-medium);
+}
+
+/* ─── Base Resets ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text-1);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1 {
+  font-family: var(--h1-font);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-leading);
+  letter-spacing: var(--h1-tracking);
+}
+
+h2 {
+  font-family: var(--h2-font);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-leading);
+}
+
+h3 {
+  font-family: var(--h3-font);
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-leading);
+}
+
+p {
+  font-family: var(--body-font);
+  font-size: var(--body-size);
+  line-height: var(--body-leading);
+  color: var(--color-text-2);
+}
+
+a {
+  color: var(--color-accent-text);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code, kbd, pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
