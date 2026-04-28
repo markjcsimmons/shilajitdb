@@ -201,14 +201,14 @@ export default async function HomePage({
             </div>
 
             {/* Right: Top Picks */}
-            <div className="mt-10 lg:mt-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-3">Top Picks</p>
-              <div className="grid grid-cols-3 lg:grid-cols-2 gap-2">
+            <div className="mt-10 lg:mt-0 lg:flex lg:flex-col">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-3 shrink-0">Top Picks</p>
+              <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 lg:flex-1 lg:grid-rows-3">
                 {BEST_FOR_CATEGORIES.map((cat) => (
                   <Link
                     key={cat.tag}
                     href={`/best/${cat.tag.replace(/_/g, "-")}`}
-                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-3 transition-colors hover:bg-[#171C2E] hover:border-[#313760]"
+                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-3 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex flex-col"
                   >
                     <div className="text-xl mb-1.5">{cat.icon}</div>
                     <div className="text-xs font-semibold text-[#EEF0F8] mb-1 leading-snug">{cat.label}</div>
