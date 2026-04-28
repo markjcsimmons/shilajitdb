@@ -126,6 +126,11 @@ export function FilterBar({ filters, total, active = false }: Props) {
       {/* Filter groups */}
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] px-4 py-3 space-y-2.5">
 
+        {/* Header */}
+        <div className="flex items-center justify-between pb-1 border-b border-[#252A40]">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#4A5070]">Filter by</span>
+        </div>
+
         {/* Quality row */}
         <div className="flex flex-wrap items-center gap-2">
           <GroupLabel>Quality</GroupLabel>

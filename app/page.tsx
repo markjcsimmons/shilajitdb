@@ -146,16 +146,16 @@ export default async function HomePage({
       />
 
       {/* ── Stats strip ── */}
-      <div className="-mx-4 border-b border-[#252A40] px-4 py-2">
-        <div className="max-w-6xl mx-auto flex items-center gap-6 overflow-x-auto">
+      <div className="-mx-4 border-b border-[#252A40] px-4 py-2.5">
+        <div className="max-w-6xl mx-auto flex items-center gap-8 overflow-x-auto">
           {[
             { value: String(productCount), label: "products graded" },
             { value: String(brandCount), label: "brands tracked" },
             { value: `${coaPercent}%`, label: "with public COA" },
             { value: lastVerifiedLabel ?? "—", label: "last updated" },
           ].map((s) => (
-            <div key={s.label} className="flex items-baseline gap-1.5 whitespace-nowrap shrink-0">
-              <span className="font-mono text-sm font-semibold text-[#EEF0F8]">{s.value}</span>
+            <div key={s.label} className="flex items-baseline gap-2 whitespace-nowrap shrink-0">
+              <span className="font-mono text-base font-bold text-[#EEF0F8]">{s.value}</span>
               <span className="text-xs text-[#4A5070]">{s.label}</span>
             </div>
           ))}
@@ -165,73 +165,66 @@ export default async function HomePage({
       {/* ── Hero ── */}
       <div className="-mx-4 border-b border-[#252A40] px-4 pt-12 pb-10 md:pt-16 md:pb-12">
         <div className="max-w-6xl mx-auto">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#3D7AFF] mb-4">
-              Independent · Unaffiliated · Free
-            </p>
-            <h1 className="font-serif text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#EEF0F8] mb-4">
-              Shilajit<br />
-              <span className="italic font-normal text-[#8892B8]">Transparency</span> Database
-            </h1>
-            <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-6">
-              Every product graded on COA quality, testing lab credibility, heavy metal safety,
-              and manufacturing transparency — so you can buy with confidence. We do not earn
-              revenue from this site; our goal is to educate and inform.
-            </p>
-          </div>
+          <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-14 xl:gap-20">
 
-          {/* Search + How We Grade */}
-          <div className="flex gap-2 items-stretch max-w-2xl">
-            <div className="flex-1">
-              <SearchBox initialQ={filters.q} filters={filterState} hero />
+            {/* Left: headline + search + filters */}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#3D7AFF] mb-4">
+                Independent · Unaffiliated · Free
+              </p>
+              <h1 className="font-serif text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#EEF0F8] mb-4">
+                Shilajit<br />
+                <span className="italic font-normal text-[#8892B8]">Transparency</span> Database
+              </h1>
+              <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-2">
+                Every product graded on COA quality, lab credibility, heavy metal safety, and manufacturing transparency.
+              </p>
+              <Link href="/methodology" className="text-sm text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors mb-6 inline-block">
+                How do we grade? →
+              </Link>
+
+              {/* Search */}
+              <div className="mt-2">
+                <SearchBox initialQ={filters.q} filters={filterState} hero />
+              </div>
+
+              {/* Filter chips */}
+              <div className="mt-3">
+                <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
+              </div>
+
+              {hasActiveFilter && (
+                <div className="flex justify-end mt-2">
+                  <SortSelect current={filters.sort} filters={filterState} />
+                </div>
+              )}
             </div>
-            <Link
-              href="/methodology"
-              className="shrink-0 inline-flex items-center border border-[#313760] text-[#EEF0F8] font-semibold text-sm px-4 rounded-lg hover:bg-[#171C2E] transition-colors whitespace-nowrap"
-            >
-              How We Grade
-            </Link>
-          </div>
 
-          {/* Filter chips */}
-          <div className="mt-3 max-w-2xl">
-            <FilterBar filters={filterState} total={total} active={hasActiveFilter} />
-          </div>
-
-          {hasActiveFilter && (
-            <div className="flex justify-end max-w-2xl mt-2">
-              <SortSelect current={filters.sort} filters={filterState} />
+            {/* Right: Top Picks */}
+            <div className="mt-10 lg:mt-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-3">Top Picks</p>
+              <div className="grid grid-cols-3 lg:grid-cols-2 gap-2">
+                {BEST_FOR_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.tag}
+                    href={`/best/${cat.tag.replace(/_/g, "-")}`}
+                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-3 transition-colors hover:bg-[#171C2E] hover:border-[#313760]"
+                  >
+                    <div className="text-xl mb-1.5">{cat.icon}</div>
+                    <div className="text-xs font-semibold text-[#EEF0F8] mb-1 leading-snug">{cat.label}</div>
+                    <div className="hidden lg:block text-[11px] text-[#4A5070] leading-snug">{cat.description}</div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          )}
+
+          </div>
         </div>
       </div>
 
       {/* ── Product list / discovery ── */}
       {!hasActiveFilter ? (
         <div className="space-y-12 pt-8">
-
-          {/* Top picks */}
-          <div className="-mx-4 border-t border-b border-[#252A40] py-10 px-4">
-            <div className="max-w-6xl mx-auto">
-              <div className="mb-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-1.5">Top Picks</p>
-                <h2 className="font-serif text-2xl font-semibold text-[#EEF0F8]">Editor-curated categories</h2>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {BEST_FOR_CATEGORIES.map((cat) => (
-                  <Link
-                    key={cat.tag}
-                    href={`/best/${cat.tag.replace(/_/g, "-")}`}
-                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-4 transition-colors hover:bg-[#171C2E] hover:border-[#313760]"
-                  >
-                    <div className="text-2xl mb-2">{cat.icon}</div>
-                    <div className="text-sm font-semibold text-[#EEF0F8] mb-1">{cat.label}</div>
-                    <div className="text-xs text-[#4A5070] leading-snug">{cat.description}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
 
           {/* How we grade */}
           <div>
