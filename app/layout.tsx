@@ -114,10 +114,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </ul>
                 </div>
               </div>
-              <div className="mt-8 border-t border-[#252A40] pt-6 flex items-center justify-between">
+              <div className="mt-8 border-t border-[#252A40] pt-6 flex items-center justify-between flex-wrap gap-3">
                 <span className="text-xs text-[#4A5070]">Independent and unaffiliated with any shilajit brand.</span>
-                <span className="font-mono text-[10px] text-[#313760] tracking-widest">Unbiased · Comprehensive · Free</span>
+                <div className="flex items-center gap-4">
+                  <Link href="/terms" className="text-xs text-[#4A5070] hover:text-[#8892B8] transition-colors">Terms of Use</Link>
+                  <span className="font-mono text-[10px] text-[#313760] tracking-widest">Unbiased · Comprehensive · Free</span>
+                </div>
               </div>
+              {/* Honeypot — hidden from humans, visible to scrapers */}
+              <a href="/honeypot" aria-hidden="true" tabIndex={-1} style={{ display: "none" }}>
+                Data export
+              </a>
             </div>
           </footer>
         </div>
