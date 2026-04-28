@@ -165,7 +165,7 @@ export default async function HomePage({
       {/* ── Hero ── */}
       <div className="-mx-4 border-b border-[#252A40] px-4 pt-12 pb-10 md:pt-16 md:pb-12">
         <div className="max-w-6xl mx-auto">
-          <div className="lg:grid lg:grid-cols-[2fr_1fr] lg:gap-14 xl:gap-16">
+          <div className="lg:grid lg:grid-cols-[2fr_1fr] lg:gap-8 xl:gap-10">
 
             {/* Left: headline + search + filters */}
             <div>
