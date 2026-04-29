@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 // ── Tag metadata ──────────────────────────────────────────────────────────────
 
 const TAG_META: Record<string, { label: string; description: string }> = {
-  best_value:    { label: "Best Value",     description: "Highest quality-to-price ratio — strong testing credentials at a competitive price per serving." },
+  best_value:    { label: "Best Budget",     description: "Best quality-to-price ratio — well-tested shilajit at a competitive price per gram." },
   best_tested:   { label: "Best Tested",    description: "Products with a publicly available COA from a named independent laboratory and confirmed heavy metals testing." },
   best_resin:    { label: "Best Resin",     description: "Top-rated resin-form shilajit — the least processed format, preserving the fulvic-humic mineral matrix." },
   best_capsules: { label: "Best Capsules",  description: "Top capsule-form shilajit products, curated by grade, testing transparency, and value." },

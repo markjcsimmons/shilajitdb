@@ -331,7 +331,7 @@ export default async function AdminProductEditPage({
                 placeholder="e.g. 3.67"
                 defaultValue={product.pricePerGramCents != null ? (product.pricePerGramCents / 100).toFixed(2) : ""}
               />
-              <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size (grams). Used for Best Value ranking.</p>
+              <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size (grams). Used for Best Budget ranking.</p>
             </div>
           </div>
 

@@ -25,7 +25,7 @@ const BEST_FOR_CATEGORIES = [
   },
   {
     tag: "best_value",
-    label: "Best Value",
+    label: "Best Budget",
     description: "Strong testing credentials at a competitive price",
     icon: "💰",
   },

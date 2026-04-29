@@ -211,7 +211,7 @@ export default async function AdminProductNewPage({
               min="0"
               placeholder="e.g. 3.67"
             />
-            <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size. Used for Best Value ranking.</p>
+            <p className="mt-1 text-xs text-slate-500">Derived from price ÷ unit_size. Used for Best Budget ranking.</p>
           </div>
         </div>
 
