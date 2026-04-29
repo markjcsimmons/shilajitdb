@@ -578,15 +578,25 @@ export default async function ProductPage({
 
         {/* Right column — grade summary */}
         <div className="mt-5 md:mt-0 md:flex md:items-start">
-          <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-2">Why this grade?</p>
-            <p className="text-sm text-[#8892B8] leading-relaxed">{gradeSummary}</p>
-            <Link
-              href="/methodology"
-              className="mt-3 inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] underline underline-offset-2 transition-colors"
-            >
-              See full methodology →
-            </Link>
+          <div className="space-y-3 w-full">
+            <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-2">Why this grade?</p>
+              <p className="text-sm text-[#8892B8] leading-relaxed">{gradeSummary}</p>
+              <Link
+                href="/methodology"
+                className="mt-3 inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] underline underline-offset-2 transition-colors"
+              >
+                See full methodology →
+              </Link>
+            </div>
+
+            {/* COA Quality Warning */}
+            {product.metaDescription?.includes("COA") && (
+              <div className="rounded-lg border border-[#EAB308]/30 bg-[#201800] p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#EAB308] mb-2">⚠️ COA Quality Issue</p>
+                <p className="text-sm text-[#8892B8] leading-relaxed">{product.metaDescription}</p>
+              </div>
+            )}
           </div>
         </div>
 

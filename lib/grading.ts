@@ -211,25 +211,24 @@ export function computeQualityTier(
 
 // ---------------------------------------------------------------------------
 // Overall Grade (A+ through F)
-// Weighted score out of 14 based on scientific quality signals.
+// Weighted score out of 14 based on physical quality + documentation signals.
 //
 // Scoring:
-//   COA PUBLIC:           +4  (FDA/FTC transparency standard; only 33% of products)
-//   Named 3rd-party lab:  +3  (names the tester — checkable & accountable; only 31%)
-//   Form = RESIN:         +2  (least processed; preserves fulvic-humic matrix — Piccolo 2002)
-//   Manufacturing USA:    +2  (FDA 21 CFR Part 111 oversight)
+//   Form = RESIN:         +4  (least processed; preserves fulvic-humic matrix — Piccolo 2002)
+//   Manufacturing USA:    +3  (FDA 21 CFR Part 111 oversight + proven location)
+//   Patent/IP claim:      +2  (proprietary process = confidence in differentiation)
+//   COA PUBLIC:           +2  (FDA/FTC transparency standard; only 33% of products)
+//   Named 3rd-party lab:  +2  (names the tester — checkable & accountable; only 31%)
+//   COA PUBLIC_EMBEDDED:  +1  (visible on page but not independently auditable)
 //   COA REQUEST_ONLY:     +1  (tested but not openly disclosed)
-//   Mfg country other:   +1  (at least traceable)
+//   Mfg country other:    +1  (at least traceable)
 //   GMP certified:        +1  (documented standard; 80% of products claim it — weak signal)
 //
-// Patent claim: displayed on product page but NOT scored.
-//   (Patents protect IP, not product quality. No independent authority uses patents as quality signals.)
-//
 // Grade thresholds (max 14):
-//   A+: ≥12  (requires all top signals: public COA + named lab + resin + USA + GMP = 12)
-//   A:  ≥9
-//   B:  ≥6
-//   C:  ≥3
+//   A+: ≥13  (e.g., resin + USA + patent + COA public + named lab + GMP = 4+3+2+2+2+1 = 14, or similar high-signal combos)
+//   A:  ≥10  (e.g., resin + USA + COA public + named lab = 4+3+2+2 = 11, or gummy + USA + patent + COA + lab = 0+3+2+2+2 = 9)
+//   B:  ≥7
+//   C:  ≥4
 //   D:  ≥2
 //   E:  ≥1
 //   F:  0
@@ -237,14 +236,15 @@ export function computeQualityTier(
 
 export const overallRubric = {
   score: {
-    coaPublic: 4,
-    coaPublicEmbedded: 2,
+    coaPublic: 2,
+    coaPublicEmbedded: 1,
     coaRequestOnly: 1,
-    namedThirdPartyLab: 3,
-    formResin: 2,
-    manufacturingUSA: 2,
+    namedThirdPartyLab: 2,
+    formResin: 4,
+    manufacturingUSA: 3,
     manufacturingOther: 1,
     gmpCertified: 1,
+    hasPatent: 2,
   },
 } as const;
 
@@ -266,16 +266,18 @@ export function overallGradeScore(product: ProductForGrading): number {
 
   if (product.gmpCertified) score += overallRubric.score.gmpCertified;
 
+  if (product.hasPatentClaim) score += overallRubric.score.hasPatent;
+
   return score;
 }
 
 /** Compute the overall grade (A+ through F). */
 export function computeOverallGrade(product: ProductForGrading): OverallGrade {
   const score = overallGradeScore(product);
-  if (score >= 12) return "A_PLUS";
-  if (score >= 9) return "A";
-  if (score >= 6) return "B";
-  if (score >= 3) return "C";
+  if (score >= 13) return "A_PLUS";
+  if (score >= 10) return "A";
+  if (score >= 7) return "B";
+  if (score >= 4) return "C";
   if (score >= 2) return "D";
   if (score >= 1) return "E";
   return "F";

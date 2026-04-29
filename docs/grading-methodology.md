@@ -1,220 +1,142 @@
 # Grading Methodology
 
-Quality and transparency scores are based only on **data already in the database** or **data we can obtain from crawl**. The **overall grade (A+–F)** uses a **weighted scoring system** (see “Overall grade: weighted scoring system” below); factors and possible extensions are described in the rest of the doc.
+ShilajitDB uses two independent evaluation systems:
 
-**Objective data only.** We do not encode “manufactured by” or any other unverifiable relationship. Every product receives the grade that the **objective, available data** supports. The only brand-specific rule is Purblack (A by default; A+ when COA is present). All other brands are graded solely by the weighted criteria.
-
----
-
-## 1. Purity (how much shilajit is in the product)
-
-**Idea:** Prefer products that are predominantly or solely shilajit; blends and “proprietary blends” score lower.
-
-**Data today:**
-
-- `ingredientText` – full disclosure text from the label/page  
-- `ingredientsNormalized` – normalized list (e.g. `["shilajit resin", "vegetarian capsule"]`)
-
-**Scoring options (using existing data):**
-
-- **Shilajit-only (no other actives):**  
-  Normalized list contains only shilajit-related terms + allowed inactives (capsule, cellulose, etc.) → **high purity**.
-- **Shilajit plus other actives / “blend”:**  
-  Other herbs, nootropics, “proprietary blend”, etc. → **medium or low purity** (e.g. downgrade or cap tier).
-
-**Optional (crawl addition):**  
-If we add parsing in the official-product extractor we can support:
-
-- **Stated concentration:** e.g. “X% shilajit”, “X mg shilajit per serving” in `ingredientText` (regex).  
-- Store in a new field, e.g. `shilajitPercentClaim` or `shilajitMgPerServingClaim`, and use bands (e.g. ≥X% or ≥Y mg → higher purity score).
-
-**Recommendation:**  
-Use “shilajit-only vs blend/other actives” from current fields for v1; add concentration parsing later if we want finer purity bands.
+1. **Quality Tier** (ULTRA_PREMIUM, PREMIUM, AVERAGE, POOR) — criteria-based, all-or-nothing signals
+2. **Overall Grade** (A+ through F) — weighted numeric scoring system
 
 ---
 
-## 2. Form (resin preferred; other forms “insufficient” for top tier)
+## Quality Tier (Criteria-Based)
 
-**Idea:** Resin is treated as the best form; other forms (capsule, powder, gummy, liquid, blend) are sufficient for lower tiers but not for the highest.
+### ULTRA_PREMIUM
+**All 5 of the following:**
+- Form = RESIN
+- COA Status = PUBLIC (standalone, downloadable document)
+- Named 3rd-party lab (e.g., Cambium Analytica, NSF, Eurofins)
+- Manufacturing country stated
+- GMP certified
 
-**Data today:**
+Example: Pürblack products
 
-- `Product.form` – enum: `RESIN | CAPSULE | POWDER | GUMMY | LIQUID | BLEND | OTHER`  
-- Set from crawl (title + page text) and admin.
+### PREMIUM
+**Both of the following:**
+- COA Status = PUBLIC
+- Named 3rd-party lab
 
-**Scoring (implemented):**
+Form and manufacturing country are NOT required. A well-tested product of any form (gummy, capsule, powder, resin) with public COA from a named lab qualifies.
 
-- **RESIN** → 2 points in overall weighted score; only resin gets any form points.  
-- **CAPSULE / POWDER / GUMMY / LIQUID / BLEND / OTHER** → 0 form points.
+Example: Pure Indian Foods Shilajit (Resin, USA, public COA, named lab, GMP) — missing only patent claim for ULTRA_PREMIUM
 
-**No schema or crawl change needed** – use `form` as-is.
+### AVERAGE
+**Has some testing transparency but gaps remain:**
+- COA exists (PUBLIC, PUBLIC_EMBEDDED, or REQUEST_ONLY) OR a named 3rd-party lab is disclosed
+- But does NOT meet PREMIUM or ULTRA_PREMIUM criteria
 
----
+Examples: Products with embedded COA only, or testing from a named lab but COA not independently available
 
-## 3. Third-party testing and COA
-
-**Idea:** We distinguish between (1) **actual COA** (a real certificate or document) and (2) **testing mentioned only** (e.g. “third-party tested” or “tested by Lab X” with no link to the certificate). Only actual COA gets full weight; “testing mentioned” gets a small credit so we don’t ignore it.
-
-### How we assess it
-
-| Situation | How we record it | Points (overall grade) |
-|-----------|-------------------|-------------------------|
-| **Actual COA on page** | `coaStatus = PUBLIC`, set `coaUrl` (and add Evidence `type: "COA"` with the link). | 3 |
-| **COA on request** | `coaStatus = REQUEST_ONLY` (company says they’ll provide COA). | 2 |
-| **Testing mentioned, no COA** | `coaStatus = NONE` or `UNKNOWN`. Add Evidence `type: "TESTING"` with a quote (e.g. “Tested by X for heavy metals”). | 1 (if at least one TESTING evidence and no COA) |
-| **No COA, no testing claim** | `coaStatus = NONE` or `UNKNOWN`, no TESTING evidence. | 0 |
-
-So: **actual COA** = document or link (PUBLIC/REQUEST_ONLY). **Testing mentioned only** = no document, but we record it as TESTING evidence and give 1 point so it’s above “nothing”.
-
-**Data today:**
-
-- `coaStatus` – `PUBLIC | REQUEST_ONLY | NONE | UNKNOWN`  
-- `coaUrl` – link to the actual COA when available  
-- Evidence `type: "COA"` – link to the certificate (from crawl or admin)  
-- Evidence `type: "TESTING"` – quote/capture where the product page mentions third-party testing without providing the actual COA
+### POOR
+**No verifiable testing transparency:**
+- No COA on record AND no named 3rd-party lab disclosed
 
 ---
 
-## 4. Transparency of manufacturing (where it’s made)
+## Overall Grade (A+ through F) — Weighted Scoring System
 
-**Idea:** We score manufacturing transparency by **country of manufacture only** (no separate “manufacture clarity” field). A stated country → credit; USA gets the most; not stated → no points.
+### Scoring Rubric (max 14 points)
 
-**Data today:**
+| Factor | Data Field | Points | Notes |
+|--------|-----------|--------|-------|
+| **Form** | `Product.form` | RESIN = +4; others = 0 | Resin is least processed |
+| **Manufacturing Country** | `manufacturingCountryClaim` | USA = +3; other = +1; none = 0 | USA has FDA 21 CFR Part 111 oversight |
+| **Patent/IP Claim** | `hasPatentClaim` | +2 | Proprietary process signals differentiation |
+| **COA Status** | `coaStatus` | PUBLIC = +2; PUBLIC_EMBEDDED = +1; REQUEST_ONLY = +1; else = 0 | PUBLIC is independently auditable |
+| **Named 3rd-party Lab** | `thirdPartyTestingLab` | +2 if present; 0 if null/empty | Lab must be named (checkable & accountable) |
+| **GMP Certified** | `gmpCertified` | +1 | Documented facility standard |
 
-- `manufacturingCountryClaim` – e.g. “USA”, “India” (country of manufacture)  
-- `manufacturingClaimText` – full claim  
-- `manufacturingEvidenceUrl` – optional link  
-- Evidence `type: "MANUFACTURING"` from crawl.
+**Example calculations:**
 
-**Scoring:**
-
-- **Country of manufacture stated:** USA (or “US” / “United States”) → 3 points; any other country → 1 point.  
-- **Not stated** → 0 manufacturing points.
-
----
-
-## 5. Patents
-
-**Idea:** Patented process or formulation can be a positive signal (innovation / substantiation).
-
-**Data today:**
-
-- **None.** We do not store patent info.  
-- Evidence types: `COA | MANUFACTURING | INGREDIENTS | TESTING | OTHER` – no `PATENT`.
-
-**Options (crawl + schema):**
-
-- **A. Evidence-based:**  
-  - Add `EvidenceType.PATENT`.  
-  - In official-product extractor: detect “patent”, “patented”, “US Patent”, “USPTO”, patent numbers in page text and links; create Evidence with `type: PATENT`, `url` (link or USPTO/search link), optional `quote`.  
-  - Grading: e.g. “has at least one PATENT evidence” → +1 factor or small boost.  
-- **B. Boolean on product:**  
-  - Add `hasPatentClaim: Boolean` on Product; set from same crawl logic; grading reads the flag.  
-- **C. No patents:**  
-  - Leave patents out until we add one of the above.
-
-**Recommendation:**  
-Add patent detection in crawl (regex + link heuristics) and either Evidence `PATENT` or `hasPatentClaim`; use as one factor in the overall score so it doesn’t dominate.
+| Product | Resin | USA | Patent | COA | Lab | GMP | Score | Grade |
+|---------|-------|-----|--------|-----|-----|-----|-------|-------|
+| Pürblack Shilajit | 4 | 3 | 2 | 2 | 2 | 1 | 14 | A+ |
+| Pure Indian Foods | 4 | 3 | 0 | 2 | 2 | 1 | 12 | A |
+| Life Cykel Gummies | 0 | 3 | 2 | 2 | 2 | 1 | 10 | A |
+| Nurojit Gummies | 0 | 3 | 0 | 2 | 2 | 1 | 8 | B |
 
 ---
 
-## 6. Other factors (recommended, using existing or easy crawl data)
+### Grade Bands (Score → Letter Grade)
 
-- **Third-party testing / certifications**  
-  - We have Evidence `type: "TESTING"`.  
-  - Use “has at least one TESTING evidence” as a positive factor (e.g. small boost or requirement for top tier).
-
-- **Official labeling / trust**  
-  - `evidence.length` and `sourceDsldLabelId` already used for “official labels”.  
-  - Keep using: e.g. 2+ evidence items or DSLD label → qualifies for higher tiers when other criteria (form, COA, manufacturing, purity) are met.
-
-- **Net quantity / serving clarity**  
-  - `netQuantityText`, `servingsCount`, `capsuleCount` – already on Product.  
-  - Optional: “has clear net quantity and/or serving info” as a small positive (label transparency).
-
-- **Data completeness**  
-  - `dataCompleteness` – `LOW | MEDIUM | HIGH`.  
-  - Optional: use as a modifier (e.g. HIGH completeness can slightly boost, LOW can cap tier) so we favor well-filled records.
+| Score | Grade | Interpretation |
+|-------|-------|-----------------|
+| **≥13** | **A+** | Exceptional: all major signals present (typically resin + USA + patent + COA + lab + GMP, or similar high-signal combination) |
+| **10–12** | **A** | Excellent: strong manufacturing quality and/or testing transparency (e.g., resin + USA + COA + lab, or non-resin with all documentation signals) |
+| **7–9** | **B** | Good: some quality signals but gaps remain (e.g., resin + USA but minimal testing, or good testing but non-resin form) |
+| **4–6** | **C** | Acceptable: basic transparency or quality signals present |
+| **2–3** | **D** | Limited: minimal disclosure or verification |
+| **1** | **E** | Poor: almost no supporting data |
+| **0** | **F** | Failing: no verifiable quality or transparency signals |
 
 ---
 
-## Summary: factors and data source
+## Signals Explained
 
-| Factor                    | In DB / crawl today?        | Needed for scoring              |
-|---------------------------|-----------------------------|----------------------------------|
-| Purity                    | Yes (ingredients only)      | Optional: % or mg from crawl    |
-| Form                      | Yes (`form`)                | Nothing                         |
-| COA                       | Yes (`coaStatus`, evidence) | Nothing                         |
-| Manufacturing (country)   | Yes (`manufacturingCountryClaim`)   | Nothing                  |
-| Patents                   | No                          | Crawl + PATENT evidence or flag |
-| Third-party testing       | Yes (Evidence TESTING)      | Nothing                         |
-| Official / trust          | Yes (evidence count, DSLD)  | Nothing                         |
-| Net qty / serving clarity | Yes                         | Optional                         |
-| Data completeness         | Yes                         | Optional                         |
+### Form (Resin preferred)
+- **Resin** is minimally processed and preserves the fulvic-humic matrix (Piccolo 2002). Scores highest.
+- Capsule, powder, gummy, liquid, blend, and other forms are processed and score zero on form alone.
 
----
+### Manufacturing Country
+- **USA manufacturing** signals FDA 21 CFR Part 111 oversight and proven location. Scores +3.
+- Any stated country (India, Nepal, etc.) scores +1 for traceability.
+- No stated country scores 0.
 
-## Overall grade: weighted scoring system (implemented)
+### Patents
+- Claimed patent or proprietary process signals innovation and differentiation. Scores +2.
+- Only included if `hasPatentClaim` is true in the database.
 
-**Output:** One overall grade per product: **A+**, **A**, **B**, **C**, **D**, **E**, **F**.  
-All grades are determined only from objective data in the database (and evidence from crawl).  
-**COA = third-party testing** — we use it as a single factor and do not double-count.
+### COA (Certificate of Analysis)
+- **PUBLIC:** Standalone, downloadable document (e.g., PDF link on product page or Shopify CDN). **+2 points.** ← Only this is independently auditable by consumers.
+- **PUBLIC_EMBEDDED:** COA shown as an image on the product page but not independently downloadable. **+1 point.** Visible but not audit-able.
+- **REQUEST_ONLY:** Brand claims COA exists but must be requested. **+1 point.** Tested, but not openly disclosed.
+- **NONE / UNKNOWN:** No COA found. **0 points.**
 
----
+### Named 3rd-party Lab
+- Lab must be **named and identifiable** (e.g., "Cambium Analytica", "NSF International", "Eurofins", "Matrix Sciences").
+- Generic claims like "third-party tested" without a lab name do not count.
+- Scores **+2** if present and named; 0 otherwise.
 
-### 1. Weighted score (max 10)
-
-Each product gets a **numeric score** from the following. Partial credit means one strong signal (e.g. COA) can already move the grade up.
-
-| Factor | Data | Points |
-|--------|------|--------|
-| **COA / third-party testing** | `coaStatus` + Evidence TESTING | PUBLIC → 3 · REQUEST_ONLY → 2 · NONE/UNKNOWN but ≥1 TESTING evidence → 1 · else → 0 |
-| **Country of manufacture** | `manufacturingCountryClaim` | USA → 3 · other country → 1 · not stated → 0 |
-| **Form** | `Product.form` | RESIN → 2 · all other forms → 0 |
-| **Purity** | `ingredientText` + `ingredientsNormalized` | Shilajit-only (with allowed inactives) → 2 · else → 0 |
-| **Ingredients list** | `ingredientsNormalized` | Non-empty list → 1 · empty → 0 |
-| **Ingredient disclosure** | `ingredientText` | Non-empty text → 1 · empty → 0 |
-
-Total score is capped at 10. “Shilajit-only” uses the same rules as elsewhere (allowed inactives: capsule, cellulose, magnesium stearate, etc.; no proprietary blend / other actives).
+### GMP (Good Manufacturing Practice)
+- Facility claims GMP certification. Scores **+1**.
+- 80% of products claim GMP, so it's a weak signal alone.
 
 ---
 
-### 2. Score → grade bands
+## COA Quality Expectations
 
-| Score | Grade | Meaning |
-|-------|--------|--------|
-| **7+** | **A** or **A+** | A+ only if resin + high purity; else A. |
-| **5–6** | **B** | Good transparency; missing some top signals. |
-| **4** | **C** | Adequate; e.g. COA or clear mfg plus some form/purity. |
-| **2–3** | **D** | Limited disclosure. |
-| **1** | **E** | Minimal data (e.g. only ingredient text). |
-| **0** | **F** | No supporting data, or proprietary blend with no COA and no clear mfg. |
+A **comprehensive COA** tests for:
+- Heavy metals (As, Cd, Hg, Pb, Cr, etc.)
+- Microbial contaminants (E. coli, Salmonella, coliforms)
+- Mold/mycotoxins (aflatoxins, etc.)
+- Active compounds (fulvic acids, dibenzo-α-pyrones) for potency
+- Pesticide residues
 
-**Proprietary blend:** If the product has a “proprietary blend”–style claim and no COA and no clear manufacturing, grade is **F** regardless of score.
+A **minimal COA** (flagged on product pages) tests only:
+- Heavy metals
+- Or only one major category
 
----
-
-### 3. Purblack (only brand-specific rule)
-
-- **If brand is Purblack** (slug matches e.g. purblack, pur-black):  
-  - **Default grade = A** (no points required).  
-  - **If the product has COA (public or request)** → **grade = A+**.  
-- All other brands use the weighted score and bands above only.
+Products with minimal COAs that are otherwise eligible for high grades (A or A+) will have a **COA Quality Issue warning** added to their product page to inform consumers.
 
 ---
 
-### 4. Computation flow (as implemented)
+## Implementation
 
-1. **Brand:** If Purblack → apply Purblack rule; done.  
-2. **F override:** If proprietary blend and no COA and no clear mfg → F.  
-3. **Score:** Sum points from COA, country of manufacture, form, purity, ingredients list, ingredient text (see table).  
-4. **Band:** Map score to A+ / A / B / C / D / E / F using the score bands.  
-5. **Store:** Persist in `Product.overallGrade`; recompute on save/crawl or via `npm run db:recompute-overall-grades`.
+**Score calculation:** `lib/grading.ts` → `overallGradeScore()` function.  
+**Grade mapping:** `lib/grading.ts` → `computeOverallGrade()` function.  
+**Recomputation:** Run `node recompute-grades.mjs` after database updates.
 
 ---
 
-### 5. Data sources
+## History
 
-- **Product:** `form`, `coaStatus`, `coaUrl`, `manufacturingCountryClaim`, `manufacturingClaimText`, `ingredientText`, `ingredientsNormalized`, `brandId` (→ brand slug).  
-- **Evidence:** used indirectly (e.g. COA evidence when setting `coaStatus`).  
-- **No** “manufactured by” or similar; grade depends only on these objective fields.
+- **v1 (old):** 10-point max, no patents, different scoring.
+- **v2 (current):** 14-point max, patents +2, resin +4, USA +3, fair weighting of manufacturing quality + documentation.
