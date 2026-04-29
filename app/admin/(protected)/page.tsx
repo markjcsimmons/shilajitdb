@@ -38,9 +38,9 @@ export default async function AdminDashboardPage({
           Update all product grades based on the latest grading algorithm. Use this after updating the rubric or when deploying grade changes.
         </p>
         <div className="mt-4">
-          <form action={adminRecomputeAllGrades}>
+          
             <RecomputeGradesButton />
-          </form>
+          
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export default async function AdminDashboardPage({
               <Button type="submit" variant="secondary">
                 Remove {brandsWithNoProducts} brands with no products
               </Button>
-            </form>
+            
           )}
         </div>
       </div>

@@ -4,7 +4,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Implement grading logic inline
+// ---------------------------------------------------------------------------
+// Grading logic (mirrors lib/grading.ts)
+// ---------------------------------------------------------------------------
+
+function hasManufacturingCountry(country) {
+  return (country ?? "").trim().length > 0;
+}
+
 function manufacturingPointsFromCountry(country) {
   const c = (country ?? "").trim();
   if (!c) return 0;
@@ -13,28 +20,50 @@ function manufacturingPointsFromCountry(country) {
   return 1;
 }
 
+function computeQualityTier(product) {
+  const isResin = product.form === "RESIN";
+  const isPublicCoa = product.coaStatus === "PUBLIC";
+  const hasNamedLab = !!product.thirdPartyTestingLab?.trim();
+  const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
+  const isGmp = !!product.gmpCertified;
+
+  // ULTRA_PREMIUM: all 5 signals
+  if (isResin && isPublicCoa && hasNamedLab && hasMfgCountry && isGmp) {
+    return "ULTRA_PREMIUM";
+  }
+
+  // PREMIUM: public COA + named lab (any form)
+  if (isPublicCoa && hasNamedLab) {
+    return "PREMIUM";
+  }
+
+  // AVERAGE: some transparency but not premium
+  const hasCoa =
+    product.coaStatus === "PUBLIC" ||
+    product.coaStatus === "PUBLIC_EMBEDDED" ||
+    product.coaStatus === "REQUEST_ONLY";
+
+  if (hasCoa || hasNamedLab) {
+    return "AVERAGE";
+  }
+
+  return "POOR";
+}
+
 function overallGradeScore(product) {
   let score = 0;
 
-  // COA scoring
   if (product.coaStatus === "PUBLIC") score += 2;
   else if (product.coaStatus === "PUBLIC_EMBEDDED") score += 1;
   else if (product.coaStatus === "REQUEST_ONLY") score += 1;
 
-  // Named 3rd-party lab
   if (product.thirdPartyTestingLab?.trim()) score += 2;
-
-  // Form = RESIN
   if (product.form === "RESIN") score += 4;
 
-  // Manufacturing country
   const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
   score += mfgPoints;
 
-  // GMP certified
   if (product.gmpCertified) score += 1;
-
-  // Patents
   if (product.hasPatentClaim) score += 2;
 
   return score;
@@ -50,13 +79,16 @@ function computeOverallGrade(score) {
   return "F";
 }
 
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
 async function recomputeAllGrades() {
   console.log("🔄 Fetching all products...\n");
 
   const products = await prisma.product.findMany({
     select: {
       id: true,
-      slug: true,
       name: true,
       form: true,
       coaStatus: true,
@@ -65,106 +97,58 @@ async function recomputeAllGrades() {
       gmpCertified: true,
       hasPatentClaim: true,
       overallGrade: true,
+      qualityTier: true,
       brand: { select: { name: true, slug: true } },
     },
   });
 
-  console.log(`Found ${products.length} products. Computing new grades...\n`);
+  console.log(`Found ${products.length} products. Computing grades...\n`);
 
   const updates = [];
-  const purblackResults = [];
-  let totalChanged = 0;
 
   for (const p of products) {
     const score = overallGradeScore(p);
     const newGrade = computeOverallGrade(score);
+    const newTier = computeQualityTier(p);
 
-    if (newGrade !== p.overallGrade) {
-      updates.push({
-        id: p.id,
-        name: p.name,
-        oldGrade: p.overallGrade,
-        newGrade,
-        score,
-      });
-      totalChanged++;
-    }
+    const gradeChanged = newGrade !== p.overallGrade;
+    const tierChanged = newTier !== p.qualityTier;
 
-    // Track Purblack separately
-    if (p.brand.slug === "purblack") {
-      purblackResults.push({
-        name: p.name,
-        form: p.form,
-        coa: p.coaStatus,
-        lab: p.thirdPartyTestingLab || "None",
-        usa: p.manufacturingCountryClaim === "USA" ? "✓" : "✗",
-        gmp: p.gmpCertified ? "✓" : "✗",
-        patent: p.hasPatentClaim ? "✓" : "✗",
-        score,
-        oldGrade: p.overallGrade,
-        newGrade,
-      });
+    if (gradeChanged || tierChanged) {
+      updates.push({ id: p.id, name: p.name, brand: p.brand.name, newGrade, newTier, oldGrade: p.overallGrade, oldTier: p.qualityTier, score });
     }
   }
 
-  // Show Purblack results first
-  if (purblackResults.length > 0) {
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("🎯 PURBLACK PRODUCTS (New Grades)");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-
-    for (const p of purblackResults) {
-      const arrow = p.oldGrade === p.newGrade ? "→" : "⬆️ ";
-      console.log(`${p.name}`);
-      console.log(
-        `  Score: ${p.score}/14 | Grade: ${p.oldGrade} ${arrow} ${p.newGrade}`
-      );
-      console.log(`  Form: ${p.form} | COA: ${p.coa} | Lab: ${p.lab}`);
-      console.log(
-        `  USA: ${p.usa} | GMP: ${p.gmp} | Patent: ${p.patent}`
-      );
-      console.log();
-    }
-  }
-
-  // Summary
+  // Show changes
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("📊 OVERALL CHANGES");
+  console.log("📊 CHANGES");
   console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   console.log(`Total products: ${products.length}`);
-  console.log(`Grades changed: ${totalChanged}\n`);
+  console.log(`Products needing update: ${updates.length}\n`);
 
-  // Grade distribution
-  const gradeChanges = {};
   for (const u of updates) {
-    const key = `${u.oldGrade} → ${u.newGrade}`;
-    gradeChanges[key] = (gradeChanges[key] || 0) + 1;
+    console.log(`${u.brand} — ${u.name}`);
+    console.log(`  Grade: ${u.oldGrade} → ${u.newGrade} | Tier: ${u.oldTier} → ${u.newTier} | Score: ${u.score}/14`);
   }
 
-  if (Object.keys(gradeChanges).length > 0) {
-    console.log("Grade transitions:");
-    for (const [key, count] of Object.entries(gradeChanges).sort()) {
-      console.log(`  ${key}: ${count} products`);
-    }
-    console.log();
-  }
-
-  // Apply updates
-  if (updates.length > 0) {
-    console.log(`✅ Applying ${updates.length} grade updates to database...\n`);
-
-    for (const u of updates) {
-      await prisma.product.update({
-        where: { id: u.id },
-        data: { overallGrade: u.newGrade },
-      });
-    }
-
-    console.log("✅ All grades updated successfully!");
-  } else {
+  if (updates.length === 0) {
     console.log("ℹ️  No changes needed.");
+    await prisma.$disconnect();
+    return;
   }
 
+  console.log(`\n✅ Applying ${updates.length} updates...\n`);
+
+  await prisma.$transaction(
+    updates.map((u) =>
+      prisma.product.update({
+        where: { id: u.id },
+        data: { overallGrade: u.newGrade, qualityTier: u.newTier },
+      })
+    )
+  );
+
+  console.log("✅ Done!");
   await prisma.$disconnect();
 }
 
