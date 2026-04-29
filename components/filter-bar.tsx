@@ -224,7 +224,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <div>
             <div className="font-semibold text-[#EEF0F8] mb-1.5">Quality Tier</div>
             <ul className="space-y-1.5 text-[#8892B8]">
-              <li><span className="font-medium text-[#22C55E]">Ultra Premium</span> — standalone, verifiable COA from a named third-party lab; GMP certified</li>
+              <li><span className="font-medium text-[#22C55E]">Ultra Premium</span> — resin form, standalone public COA from a named third-party lab, stated manufacturing country, GMP certified, and patented process</li>
               <li><span className="font-medium text-[#3B82F6]">Premium</span> — public COA and at least one other major transparency signal</li>
               <li><span className="font-medium text-[#EAB308]">Average</span> — some transparency signals present but gaps remain</li>
               <li><span className="font-medium text-[#EF4444]">Poor</span> — little or no verifiable transparency information</li>

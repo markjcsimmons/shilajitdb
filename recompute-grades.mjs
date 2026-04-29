@@ -27,8 +27,9 @@ function computeQualityTier(product) {
   const hasMfgCountry = hasManufacturingCountry(product.manufacturingCountryClaim);
   const isGmp = !!product.gmpCertified;
 
-  // ULTRA_PREMIUM: all 5 signals
-  if (isResin && isPublicCoa && hasNamedLab && hasMfgCountry && isGmp) {
+  // ULTRA_PREMIUM: all 6 signals (resin + public COA + named lab + country + GMP + patent)
+  const hasPatent = !!product.hasPatentClaim;
+  if (isResin && isPublicCoa && hasNamedLab && hasMfgCountry && isGmp && hasPatent) {
     return "ULTRA_PREMIUM";
   }
 

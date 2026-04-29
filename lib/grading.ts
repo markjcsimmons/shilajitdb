@@ -141,10 +141,10 @@ export function computeTransparencyGrade(
 
 /**
  * Criteria for ULTRA_PREMIUM: ALL of
- *   form=RESIN + coaStatus=PUBLIC + named 3rd-party lab + mfg country stated + GMP certified
+ *   form=RESIN + coaStatus=PUBLIC + named 3rd-party lab + mfg country stated + GMP certified + patent claim
  *
- * This is the highest verifiable bar. Any brand meeting all 5 criteria qualifies.
- * Pürblack is currently the only brand in the database meeting all 5.
+ * This is the highest verifiable bar. All 6 criteria must be met simultaneously.
+ * Pürblack (and Life Cykel Pure Resin, which white-labels Pürblack) currently qualify.
  */
 function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
   return (
@@ -152,7 +152,8 @@ function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
     product.coaStatus === "PUBLIC" &&
     !!product.thirdPartyTestingLab?.trim() &&
     hasManufacturingCountry(product.manufacturingCountryClaim) &&
-    !!product.gmpCertified
+    !!product.gmpCertified &&
+    !!product.hasPatentClaim
   );
 }
 
