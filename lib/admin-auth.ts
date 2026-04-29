@@ -80,7 +80,7 @@ export async function setAdminSessionCookie() {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    path: "/admin",
+    path: "/",
     maxAge: SESSION_TTL_SECONDS,
   });
 }
@@ -92,7 +92,7 @@ export async function clearAdminSessionCookie() {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    path: "/admin",
+    path: "/",
     maxAge: 0,
   });
 }
