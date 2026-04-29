@@ -312,17 +312,51 @@ export async function adminRecomputeGrades(formData: FormData) {
 
 export async function adminRecomputeAllGrades(formData: FormData) {
   await requireAdmin();
+
+  // Fetch all products in one query
   const products = await prisma.product.findMany({
-    select: { id: true },
+    select: {
+      id: true,
+      form: true,
+      coaStatus: true,
+      manufacturingCountryClaim: true,
+      thirdPartyTestingLab: true,
+      gmpCertified: true,
+      hasPatentClaim: true,
+      brand: { select: { slug: true } },
+    },
   });
 
-  let count = 0;
-  for (const product of products) {
-    await recomputeAndSaveProductGrades(product.id);
-    count++;
-  }
+  // Compute all grades in memory
+  const updates = products.map((p) => {
+    const productForGrading = {
+      form: p.form,
+      coaStatus: p.coaStatus,
+      manufacturingCountryClaim: p.manufacturingCountryClaim,
+      thirdPartyTestingLab: p.thirdPartyTestingLab,
+      gmpCertified: p.gmpCertified,
+      hasPatentClaim: p.hasPatentClaim,
+      brandSlug: p.brand.slug,
+    };
+    return {
+      id: p.id,
+      transparencyGrade: computeTransparencyGrade(productForGrading).grade,
+      qualityTier: computeQualityTier(productForGrading).tier,
+      overallGrade: computeOverallGrade(productForGrading),
+    };
+  });
 
-  redirect(`/admin?recomputedAll=${count}`);
+  // Batch all updates in a single transaction
+  await prisma.$transaction(
+    updates.map(({ id, transparencyGrade, qualityTier, overallGrade }) =>
+      prisma.product.update({
+        where: { id },
+        data: { transparencyGrade, qualityTier, overallGrade },
+      })
+    )
+  );
+
+  redirect(`/admin?recomputedAll=${updates.length}`);
 }
 
 export async function adminPromoteToCanonical(formData: FormData) {
