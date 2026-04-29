@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import { removeBrandsWithNoProductsAction, adminRecomputeAllGrades } from "@/app/admin/actions";
+import { RecomputeGradesButton } from "@/app/admin/recompute-grades-button";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -37,10 +38,8 @@ export default async function AdminDashboardPage({
           Update all product grades based on the latest grading algorithm. Use this after updating the rubric or when deploying grade changes.
         </p>
         <div className="mt-4">
-          <form action={adminRecomputeAllGrades} className="inline">
-            <Button type="submit" className="bg-white text-slate-900 hover:bg-slate-100">
-              Recompute All Grades
-            </Button>
+          <form action={adminRecomputeAllGrades}>
+            <RecomputeGradesButton />
           </form>
         </div>
       </div>
