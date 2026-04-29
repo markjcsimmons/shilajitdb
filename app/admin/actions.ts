@@ -310,6 +310,21 @@ export async function adminRecomputeGrades(formData: FormData) {
   redirect(`/admin/products/${productId}?recomputed=1`);
 }
 
+export async function adminRecomputeAllGrades(formData: FormData) {
+  await requireAdmin();
+  const products = await prisma.product.findMany({
+    select: { id: true },
+  });
+
+  let count = 0;
+  for (const product of products) {
+    await recomputeAndSaveProductGrades(product.id);
+    count++;
+  }
+
+  redirect(`/admin?recomputedAll=${count}`);
+}
+
 export async function adminPromoteToCanonical(formData: FormData) {
   await requireAdmin();
   const productId = String(formData.get("productId") ?? "").trim();

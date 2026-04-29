@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
-import { removeBrandsWithNoProductsAction } from "@/app/admin/actions";
+import { removeBrandsWithNoProductsAction, adminRecomputeAllGrades } from "@/app/admin/actions";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -8,9 +8,9 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ran?: string; removed?: string }>;
+  searchParams: Promise<{ ran?: string; removed?: string; recomputedAll?: string }>;
 }) {
-  const { ran, removed } = await searchParams;
+  const { ran, removed, recomputedAll } = await searchParams;
   const [brandCount, productCount, evidenceCount, brandsWithNoProducts] = await Promise.all([
     prisma.brand.count(),
     prisma.product.count(),
@@ -25,6 +25,26 @@ export default async function AdminDashboardPage({
           Removed <strong>{removed ?? "0"}</strong> brand(s) with no products. Database now only lists brands that have at least one (shilajit) product.
         </div>
       )}
+      {recomputedAll && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+          ✅ Recomputed grades for <strong>{recomputedAll}</strong> product(s). All products now use the updated grading algorithm.
+        </div>
+      )}
+      <div className="rounded-2xl border-2 border-slate-900 bg-slate-900 p-6 text-white">
+        <div className="text-sm font-medium uppercase tracking-wide text-slate-300">Grading</div>
+        <div className="mt-2 text-xl font-semibold">Recompute all product grades</div>
+        <p className="mt-2 text-sm text-slate-300">
+          Update all product grades based on the latest grading algorithm. Use this after updating the rubric or when deploying grade changes.
+        </p>
+        <div className="mt-4">
+          <form action={adminRecomputeAllGrades} className="inline">
+            <Button type="submit" className="bg-white text-slate-900 hover:bg-slate-100">
+              Recompute All Grades
+            </Button>
+          </form>
+        </div>
+      </div>
+
       <div className="rounded-2xl border-2 border-slate-900 bg-slate-900 p-6 text-white">
         <div className="text-sm font-medium uppercase tracking-wide text-slate-300">Get data in</div>
         <div className="mt-2 text-xl font-semibold">Populate database</div>
@@ -81,7 +101,7 @@ export default async function AdminDashboardPage({
           {evidenceCount}
         </div>
         <p className="mt-3 text-sm text-slate-700">
-          Evidence is the backbone of the database. Add sources and update “last verified” when
+          Evidence is the backbone of the database. Add sources and update "last verified" when
           claims change.
         </p>
       </div>
@@ -89,4 +109,3 @@ export default async function AdminDashboardPage({
     </div>
   );
 }
-
