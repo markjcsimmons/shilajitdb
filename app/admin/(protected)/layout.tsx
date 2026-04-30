@@ -13,32 +13,20 @@ export default async function AdminProtectedLayout({
   if (!(await isAdminAuthed())) redirect("/admin/login");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <nav className="flex flex-wrap items-center gap-2 text-sm">
-          <Link href="/admin" className="text-slate-700 hover:text-slate-900">
-            Dashboard
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/admin/populate" className="text-slate-700 hover:text-slate-900">
-            Populate
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/admin/brands" className="text-slate-700 hover:text-slate-900">
-            Brands
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/admin/products" className="text-slate-700 hover:text-slate-900">
-            Products
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/admin/data" className="text-slate-700 hover:text-slate-900">
-            Data
-          </Link>
-          <span className="text-slate-400">/</span>
-          <Link href="/admin/editors-picks" className="text-slate-700 hover:text-slate-900">
-            Editor&apos;s Picks
-          </Link>
+        <nav className="flex flex-wrap items-center gap-1.5 text-sm font-medium text-slate-500">
+          <Link href="/admin" className="hover:text-slate-900 transition-colors">Dashboard</Link>
+          <span className="text-slate-300 select-none">·</span>
+          <Link href="/admin/populate" className="hover:text-slate-900 transition-colors">Populate</Link>
+          <span className="text-slate-300 select-none">·</span>
+          <Link href="/admin/brands" className="hover:text-slate-900 transition-colors">Brands</Link>
+          <span className="text-slate-300 select-none">·</span>
+          <Link href="/admin/products" className="hover:text-slate-900 transition-colors">Products</Link>
+          <span className="text-slate-300 select-none">·</span>
+          <Link href="/admin/data" className="hover:text-slate-900 transition-colors">Data</Link>
+          <span className="text-slate-300 select-none">·</span>
+          <Link href="/admin/editors-picks" className="hover:text-slate-900 transition-colors">Editor&apos;s Picks</Link>
         </nav>
         <form action="/admin/logout" method="POST">
           <Button type="submit" variant="secondary">
