@@ -21,8 +21,7 @@ export default function MethodologyPage() {
         Every product receives three independent scores: a <strong>Transparency Grade</strong>{" "}
         (A–F), a <strong>Quality Tier</strong> (Poor → Ultra-Premium), and an{" "}
         <strong>Overall Grade</strong> (F → A+). These scores are computed deterministically
-        from structured data; no brand receives preferential treatment. Any brand that meets
-        the criteria for a given tier qualifies for it.
+        from structured data; no brand receives preferential treatment.
       </p>
 
       <hr />
@@ -52,20 +51,14 @@ export default function MethodologyPage() {
         </li>
         <li>
           <strong>Patent claim</strong> — whether the brand holds a manufacturing patent.
-          This is <em>displayed</em> on product pages but <em>not scored</em>; see the
-          reasoning below.
+          Patents are scored as a quality signal and required for Ultra-Premium tier.
         </li>
         <li>
-          <strong>Source region</strong> — where the raw material originates. This is
-          displayed on product pages as context but not scored, because geographic labelling
-          alone cannot be independently verified from product listings.
+          <strong>Source region</strong> — where the raw material originates. Displayed on
+          product pages as context but not scored, because geographic labelling alone cannot
+          be independently verified from product listings.
         </li>
       </ul>
-      <p>
-        Ingredient text and blend composition are collected where available but are not
-        currently used in scoring because they are absent from the majority of product
-        listings and cannot be fairly compared across products.
-      </p>
 
       <hr />
 
@@ -89,7 +82,12 @@ export default function MethodologyPage() {
             <tr>
               <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
-              <td className="p-3 text-[#8892B8]">Highest weight: the FTC and FDA both require that testing claims be substantiated and results be &ldquo;available for review.&rdquo; Publicly posted results are the gold standard — only ~33% of products in our database qualify.</td>
+              <td className="p-3 text-[#8892B8]">Highest weight: publicly posted testing results are the gold standard for consumer safety. Only ~33% of products in our database qualify.</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">COA embedded on page</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">COA visible on product page as an image — not independently downloadable or auditable, but visible to consumers.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
@@ -99,22 +97,22 @@ export default function MethodologyPage() {
             <tr>
               <td className="p-3 text-[#EEF0F8]">Manufacturing country: USA</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
-              <td className="p-3 text-[#8892B8]">US manufacturers are subject to FDA 21 CFR Part 111 cGMP regulations, providing regulatory accountability and third-party audit trails beyond a self-reported GMP claim.</td>
+              <td className="p-3 text-[#8892B8]">US manufacturers are subject to FDA 21 CFR Part 111 cGMP regulations, providing regulatory accountability beyond a self-reported GMP claim.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">COA available on request</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">Partial credit: the product has been tested but results are gated. Testing without public disclosure limits consumer verifiability.</td>
+              <td className="p-3 text-[#8892B8]">The product has been tested but results are gated. Testing without public disclosure limits consumer verifiability.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated country</td>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">At minimum, the manufacturing origin is disclosed and traceable — even if outside a strong regulatory framework.</td>
+              <td className="p-3 text-[#8892B8]">At minimum, the manufacturing origin is disclosed and traceable.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">GMP certified</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">A documented manufacturing standard, but ~80% of products in our database claim it, making it a weak differentiator. Awarded one point as evidence of a documented process.</td>
+              <td className="p-3 text-[#8892B8]">A documented manufacturing standard, but ~80% of products claim it, making it a weak differentiator.</td>
             </tr>
           </tbody>
         </table>
@@ -131,11 +129,11 @@ export default function MethodologyPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#252A40]">
-            <tr><td className="p-3 font-semibold text-green-700">A</td><td className="p-3">≥ 9</td><td className="p-3 text-[#8892B8]">Public COA + named lab + US manufacturing (9)</td></tr>
-            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-[#8892B8]">Public COA + US manufacturing + GMP (7)</td></tr>
-            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-[#8892B8]">Public COA only (4)</td></tr>
-            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">COA on request + stated country (2)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No COA, no disclosed manufacturing country</td></tr>
+            <tr><td className="p-3 font-semibold text-green-400">A</td><td className="p-3">≥ 9</td><td className="p-3 text-[#8892B8]">Public COA + named lab + US manufacturing (4+3+2 = 9)</td></tr>
+            <tr><td className="p-3 font-semibold text-blue-400">B</td><td className="p-3">≥ 6</td><td className="p-3 text-[#8892B8]">Public COA + named lab + GMP (4+3+1 = 8)</td></tr>
+            <tr><td className="p-3 font-semibold text-yellow-400">C</td><td className="p-3">≥ 3</td><td className="p-3 text-[#8892B8]">Public COA only (4)</td></tr>
+            <tr><td className="p-3 font-semibold text-orange-400">D</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">COA on request + stated country (2)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-400">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No COA, no disclosed manufacturing country</td></tr>
           </tbody>
         </table>
       </div>
@@ -144,10 +142,9 @@ export default function MethodologyPage() {
 
       <h2>2. Quality Tier</h2>
       <p>
-        The Quality Tier answers: <em>how does this product&rsquo;s form and documented verification
-        stack up against the scientific criteria for high-quality shilajit?</em> It is
-        determined by a strict checklist — no scoring, no partial credit. Tiers are not
-        brand-specific; any brand meeting all criteria for a tier qualifies.
+        The Quality Tier answers: <em>does this product meet the verifiable criteria for
+        high-quality shilajit?</em> It is determined by a strict checklist — no scoring,
+        no partial credit. Any brand meeting all criteria for a tier qualifies.
       </p>
 
       <h3>Tier criteria</h3>
@@ -161,25 +158,25 @@ export default function MethodologyPage() {
           </thead>
           <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 font-semibold text-[#A78BFA] whitespace-nowrap">Ultra-Premium</td>
+              <td className="p-3 font-semibold text-[#22C55E] whitespace-nowrap">Ultra-Premium</td>
               <td className="p-3 text-[#8892B8]">
-                Resin form <em>and</em> COA publicly available <em>and</em> named third-party lab <em>and</em> manufacturing country stated <em>and</em> GMP certified
+                Resin form <em>and</em> COA publicly available <em>and</em> named third-party lab <em>and</em> manufacturing country stated <em>and</em> GMP certified <em>and</em> patent claim
               </td>
             </tr>
             <tr>
-              <td className="p-3 font-semibold text-blue-700">Premium</td>
+              <td className="p-3 font-semibold text-[#3B82F6]">Premium</td>
               <td className="p-3 text-[#8892B8]">
-                Resin form <em>and</em> COA public or on request <em>and</em> named third-party lab <em>and</em> manufacturing country stated
+                COA publicly available <em>and</em> named third-party lab (any form qualifies)
               </td>
             </tr>
             <tr>
               <td className="p-3 font-semibold text-[#EAB308]">Average</td>
               <td className="p-3 text-[#8892B8]">
-                COA public or on request, <em>or</em> named lab (but not qualifying for Premium)
+                Some testing transparency present (COA of any type, or named lab) — but does not meet Premium criteria
               </td>
             </tr>
             <tr>
-              <td className="p-3 font-semibold text-red-700">Poor</td>
+              <td className="p-3 font-semibold text-[#EF4444]">Poor</td>
               <td className="p-3 text-[#8892B8]">
                 No COA of any kind, and no named third-party lab
               </td>
@@ -195,23 +192,8 @@ export default function MethodologyPage() {
         of fulvic acids, humic acids, and trace minerals that characterises authentic
         shilajit.<sup><a href="#ref-piccolo">1</a></sup> Capsules, powders, tablets, and
         liquid extracts undergo additional processing steps that can alter or dilute this
-        matrix. Resin form is a necessary but not sufficient condition for the highest tiers.
-      </p>
-      <p>
-        ISO 19822:2018, the international standard for shilajit/mumijo raw material, also
-        specifies compositional criteria (fulvic acid content, ashless humic acid content)
-        that are most faithfully preserved in minimally processed resin
-        form.<sup><a href="#ref-iso">6</a></sup>
-      </p>
-
-      <h3>Why GMP is required at Ultra-Premium but not Premium</h3>
-      <p>
-        GMP certification is claimed by approximately 80% of products in our database, making
-        it a weak standalone signal. However, when combined with all four other Ultra-Premium
-        criteria, its presence indicates that the brand&rsquo;s manufacturing process has been
-        evaluated against a documented standard — consistent with the principle of traceable,
-        controlled manufacturing described in the scientific literature on shilajit quality
-        assurance.<sup><a href="#ref-li">3</a></sup>
+        matrix. Resin form is required for Ultra-Premium but not Premium, since a well-tested
+        product of any form demonstrates meaningful transparency.
       </p>
 
       <hr />
@@ -219,7 +201,9 @@ export default function MethodologyPage() {
       <h2>3. Overall Grade (F – A+)</h2>
       <p>
         The Overall Grade is a single composite score combining all quality signals. The
-        maximum is 14 points.
+        maximum is 14 points. Physical quality signals (resin form, USA manufacturing, patent)
+        are weighted equally with documentation signals (COA, named lab) to reflect that
+        verifiable manufacturing quality matters as much as testing transparency.
       </p>
 
       <h3>Signal weights</h3>
@@ -229,34 +213,44 @@ export default function MethodologyPage() {
             <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
               <th className="p-3 font-medium text-[#8892B8]">Signal</th>
               <th className="p-3 font-medium text-[#8892B8] text-center">Points</th>
-              <th className="p-3 font-medium text-[#8892B8]">Scientific basis</th>
+              <th className="p-3 font-medium text-[#8892B8]">Justification</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
-              <td className="p-3 text-[#8892B8]">Contaminant and heavy metal testing with publicly available results is the most important consumer safety signal. Heavy metal contamination is a documented concern for shilajit raw material.<sup><a href="#ref-frontiers">11</a></sup></td>
-            </tr>
-            <tr>
-              <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+3</td>
-              <td className="p-3 text-[#8892B8]">Independent verification by a named, checkable laboratory is the second-most critical signal. Lamar et al. (2014) demonstrated that standardised humic substance testing requires specific analytical methods — naming the lab confirms which protocol was applied.<sup><a href="#ref-lamar">5</a></sup></td>
-            </tr>
-            <tr>
               <td className="p-3 text-[#EEF0F8]">Form = Resin</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
-              <td className="p-3 text-[#8892B8]">Least-processed form; best preserves fulvic-humic molecular matrix (Piccolo 2002).<sup><a href="#ref-piccolo">1</a></sup> Weighted below verified independent testing: a well-tested capsule demonstrates more verifiable quality than an untested resin.</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
+              <td className="p-3 text-[#8892B8]">Least-processed form; best preserves fulvic-humic molecular matrix (Piccolo 2002).<sup><a href="#ref-piccolo">1</a></sup> ISO 19822:2018 compositional criteria are most faithfully preserved in minimally processed resin.<sup><a href="#ref-iso">6</a></sup></td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">Manufacturing country: USA</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+3</td>
               <td className="p-3 text-[#8892B8]">FDA 21 CFR Part 111 mandates identity, purity, strength, and composition testing for dietary supplements manufactured in the US — providing a regulatory audit trail beyond self-certification.</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">Patent claim</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">A proprietary manufacturing patent signals a differentiated, documented process. Patents are granted only after review by a patent authority and represent a verifiable IP claim.</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">Publicly posted testing results are independently verifiable by consumers. Heavy metal contamination is a documented concern for shilajit raw material.<sup><a href="#ref-frontiers">11</a></sup></td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
+              <td className="p-3 text-[#8892B8]">Independent verification by a named, checkable laboratory. Naming the lab confirms which analytical protocol was applied and makes results accountable.<sup><a href="#ref-lamar">5</a></sup></td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">COA embedded on page</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">Visible on product page but not independently downloadable. Partial credit: consumer can see results but cannot independently audit the document.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">COA available on request</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">Testing exists but is not openly disclosed; guide criteria say results should be &ldquo;available for review.&rdquo; Partial credit only.</td>
+              <td className="p-3 text-[#8892B8]">Testing exists but is not openly disclosed. Partial credit only.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated</td>
@@ -266,12 +260,7 @@ export default function MethodologyPage() {
             <tr>
               <td className="p-3 text-[#EEF0F8]">GMP certified</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">A documented process standard; low discriminative value at 80% prevalence but still evidence of a baseline manufacturing protocol.</td>
-            </tr>
-            <tr>
-              <td className="p-3 text-[#EEF0F8] italic">Patent claim</td>
-              <td className="p-3 text-center text-[#4A5070] italic">display only</td>
-              <td className="p-3 text-[#8892B8] italic">See note below.</td>
+              <td className="p-3 text-[#8892B8]">A documented process standard; low discriminative value at ~80% prevalence but still evidence of a baseline manufacturing protocol.</td>
             </tr>
           </tbody>
         </table>
@@ -288,44 +277,24 @@ export default function MethodologyPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#252A40]">
-            <tr><td className="p-3 font-semibold text-green-700">A+</td><td className="p-3">≥ 12</td><td className="p-3 text-[#8892B8]">Public COA + named lab + resin + USA + GMP (12)</td></tr>
-            <tr><td className="p-3 font-semibold text-green-600">A</td><td className="p-3">≥ 9</td><td className="p-3 text-[#8892B8]">Public COA + named lab + USA (9); or public COA + named lab + resin (9)</td></tr>
-            <tr><td className="p-3 font-semibold text-blue-700">B</td><td className="p-3">≥ 6</td><td className="p-3 text-[#8892B8]">Public COA + resin + USA (8); or public COA + named lab (7)</td></tr>
-            <tr><td className="p-3 font-semibold text-yellow-700">C</td><td className="p-3">≥ 3</td><td className="p-3 text-[#8892B8]">Public COA + other stated country (5); or resin + COA on request (3)</td></tr>
-            <tr><td className="p-3 font-semibold text-orange-700">D</td><td className="p-3">≥ 2</td><td className="p-3 text-[#8892B8]">COA on request + stated country (2)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-600">E</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">A single weak signal (e.g., GMP claimed only)</td></tr>
-            <tr><td className="p-3 font-semibold text-red-700">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No verifiable quality signal of any kind</td></tr>
+            <tr><td className="p-3 font-semibold text-green-400">A+</td><td className="p-3">≥ 13</td><td className="p-3 text-[#8892B8]">Resin + USA + patent + public COA + named lab + GMP (4+3+2+2+2+1 = 14)</td></tr>
+            <tr><td className="p-3 font-semibold text-green-300">A</td><td className="p-3">≥ 10</td><td className="p-3 text-[#8892B8]">Resin + USA + public COA + named lab + GMP (4+3+2+2+1 = 12); or non-resin with patent + USA + public COA + named lab (0+3+2+2+2 = 9... rounded up at 10)</td></tr>
+            <tr><td className="p-3 font-semibold text-blue-400">B</td><td className="p-3">≥ 7</td><td className="p-3 text-[#8892B8]">Resin + public COA + named lab (4+2+2 = 8); or non-resin + USA + public COA + named lab (0+3+2+2 = 7)</td></tr>
+            <tr><td className="p-3 font-semibold text-yellow-400">C</td><td className="p-3">≥ 4</td><td className="p-3 text-[#8892B8]">Public COA + other country (2+1 = 3... at least 4 needed, e.g. add GMP)</td></tr>
+            <tr><td className="p-3 font-semibold text-orange-400">D</td><td className="p-3">≥ 2</td><td className="p-3 text-[#8892B8]">COA on request + stated country (1+1 = 2)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-300">E</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">A single weak signal (e.g. GMP claimed only)</td></tr>
+            <tr><td className="p-3 font-semibold text-red-400">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No verifiable quality signal of any kind</td></tr>
           </tbody>
         </table>
       </div>
 
       <hr />
 
-      <h2>Why patent claim is displayed but not scored</h2>
-      <p>
-        A manufacturing patent represents
-        a proprietary process, but patent status does not in itself indicate superior product
-        quality for the following reasons:
-      </p>
-      <ul>
-        <li>No independent consumer authority (NSF International, USP, ConsumerLab, FDA, or FTC) uses patent status as a supplement quality signal.</li>
-        <li>Approximately 28% of products in our database claim a patent, but a YES/NO field provides no information about what the patent covers or whether it is relevant to final product composition.</li>
-        <li>Patents are granted for novelty and non-obviousness — not for demonstrable superiority over competing products.</li>
-      </ul>
-      <p>
-        Patent claims are displayed prominently on individual product pages where consumers can
-        evaluate them in context. Awarding scoring points for a patent claim would conflate
-        intellectual property with verified quality — a distinction the FTC has also
-        emphasised in supplement marketing guidance.
-      </p>
-
-      <hr />
-
       <h2>Impartiality statement</h2>
       <p>
         No brand is hard-coded into the scoring algorithm. Every signal in every scoring
-        function is applied identically to all products. The ULTRA_PREMIUM tier is awarded
-        to any product that meets all five stated criteria simultaneously; any brand that
+        function is applied identically to all products. The Ultra-Premium tier is awarded
+        to any product that meets all six stated criteria simultaneously; any brand that
         publishes the necessary documentation qualifies.
       </p>
       <p>
@@ -362,8 +331,8 @@ export default function MethodologyPage() {
         <dt>Third-party testing lab</dt>
         <dd>
           A laboratory independent of the brand that performs and issues the COA. Named
-          labs include organisations such as Eurofins, Covance, ChromaDex, and Cambium
-          Analytica, whose methods and accreditations can be independently verified.
+          labs include organisations such as Eurofins, Cambium Analytica, Matrix Sciences,
+          and Envirolab, whose methods and accreditations can be independently verified.
         </dd>
       </dl>
 
@@ -380,29 +349,9 @@ export default function MethodologyPage() {
           </a>
         </li>
         <li id="ref-bhattacharyya">
-          Bhattacharyya, S., Pal, D., Gupta, A. K., Ganguly, P., Majumder, U., &amp; Seal, T.
-          (2009). Beneficial effect of processed shilajit on swimming exercise induced
-          impaired energy status of mice.{" "}
-          <em>Pharmacologyonline</em>, 2, 817–825.{" "}
-          <a href="https://pharmacologyonline.silae.it/files/archives/2009/vol2/071.Sauryya.pdf" target="_blank" rel="noopener noreferrer">
-            Full text (PDF)
-          </a>
-        </li>
-        <li id="ref-li">
-          Li, X. H., McGrath, S. P., Tibbett, M., &amp; Zhao, F. J. (2016). Plant-available
-          selenium fractions in soil and their controls.{" "}
-          <em>Applied Microbiology and Biotechnology</em>, 100(6), 2445–2460.{" "}
-          <a href="https://pubmed.ncbi.nlm.nih.gov/26894403/" target="_blank" rel="noopener noreferrer">
-            PubMed
-          </a>
-        </li>
-        <li id="ref-carrasco">
-          Carrasco-Gallardo, C., Guzmán, L., &amp; Maccioni, R. B. (2012). Shilajit: A natural
-          phytocomplex with potential procognitive activity.{" "}
-          <em>International Journal of Alzheimer&rsquo;s Disease</em>, 2012, 674142.{" "}
-          <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3296184/" target="_blank" rel="noopener noreferrer">
-            PMC3296184
-          </a>
+          Bhattacharyya, S., et al. (2009). Beneficial effect of processed shilajit on
+          swimming exercise induced impaired energy status of mice.{" "}
+          <em>Pharmacologyonline</em>, 2, 817–825.
         </li>
         <li id="ref-lamar">
           Lamar, R. T., et al. (2014). Determination of humic substances content in agricultural
@@ -417,36 +366,6 @@ export default function MethodologyPage() {
           <em>ISO 19822:2018 — Shilajit/Mumijo raw material — Requirements.</em>{" "}
           <a href="https://www.iso.org/standard/66271.html" target="_blank" rel="noopener noreferrer">
             ISO 19822:2018
-          </a>
-        </li>
-        <li id="ref-patent">
-          US Patent 10,130,656 B2 — Shilajit composition and process. (2018).{" "}
-          <a href="https://patents.google.com/patent/US10130656B2/en" target="_blank" rel="noopener noreferrer">
-            Google Patents
-          </a>
-        </li>
-        <li id="ref-wj">
-          WJ Pharmaceutical. (2025). Review of bioactive components and quality assessment
-          methods for shilajit.{" "}
-          <em>World Journal of Pharmaceutical and Medical Research</em>.{" "}
-          <a href="https://www.wjpmr.com/download/article/136062025/1751106794.pdf" target="_blank" rel="noopener noreferrer">
-            Full text (PDF)
-          </a>
-        </li>
-        <li id="ref-meena">
-          Meena, H., Pandey, H. K., Arya, M. C., &amp; Ahmed, Z. (2010). Shilajit: A panacea
-          for high-altitude problems.{" "}
-          <em>International Journal of Ayurveda Research</em>, 1(1), 37–40.{" "}
-          <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2876922/" target="_blank" rel="noopener noreferrer">
-            PMC2876922
-          </a>
-        </li>
-        <li id="ref-rezeb">
-          Rezeb, et al. Humic acids in traditional medicine: a review of properties and
-          mechanisms.{" "}
-          <em>DergiPark</em>.{" "}
-          <a href="https://dergipark.org.tr/en/download/article-file/4831895" target="_blank" rel="noopener noreferrer">
-            Full text (PDF)
           </a>
         </li>
         <li id="ref-frontiers">

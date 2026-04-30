@@ -224,28 +224,28 @@ export function FilterBar({ filters, total, active = false }: Props) {
           <div>
             <div className="font-semibold text-[#EEF0F8] mb-1.5">Quality Tier</div>
             <ul className="space-y-1.5 text-[#8892B8]">
-              <li><span className="font-medium text-[#22C55E]">Ultra Premium</span> — resin form, standalone public COA from a named third-party lab, stated manufacturing country, GMP certified, and patented process</li>
-              <li><span className="font-medium text-[#3B82F6]">Premium</span> — public COA and at least one other major transparency signal</li>
-              <li><span className="font-medium text-[#EAB308]">Average</span> — some transparency signals present but gaps remain</li>
-              <li><span className="font-medium text-[#EF4444]">Poor</span> — little or no verifiable transparency information</li>
+              <li><span className="font-medium text-[#22C55E]">Ultra Premium</span> — all six signals simultaneously: resin form, standalone public COA, named third-party lab, stated manufacturing country, GMP certified, and a patented process</li>
+              <li><span className="font-medium text-[#3B82F6]">Premium</span> — public COA from a named third-party lab (any product form qualifies)</li>
+              <li><span className="font-medium text-[#EAB308]">Average</span> — some testing transparency (a COA of any kind, or a named lab) but does not meet all Premium criteria</li>
+              <li><span className="font-medium text-[#EF4444]">Poor</span> — no COA and no named independent testing lab</li>
             </ul>
           </div>
           <div>
             <div className="font-semibold text-[#EEF0F8] mb-1.5">COA Status</div>
             <ul className="space-y-1.5 text-[#8892B8]">
-              <li><span className="font-medium text-[#EEF0F8]">Public</span> — a downloadable or directly linkable Certificate of Analysis is publicly available</li>
-              <li><span className="font-medium text-[#EEF0F8]">Page-embedded</span> — COA shown as an image on the product page but not independently downloadable</li>
-              <li><span className="font-medium text-[#EEF0F8]">On request</span> — brand states a COA exists but you must contact them to receive it</li>
-              <li><span className="font-medium text-[#EEF0F8]">None / Unknown</span> — no COA evidence found</li>
+              <li><span className="font-medium text-[#EEF0F8]">Public</span> — a downloadable or directly linkable Certificate of Analysis is publicly available (+2 pts)</li>
+              <li><span className="font-medium text-[#EEF0F8]">Page-embedded</span> — COA shown as an image on the product page but not independently downloadable (+1 pt)</li>
+              <li><span className="font-medium text-[#EEF0F8]">On request</span> — brand states a COA exists but you must contact them to receive it (+1 pt)</li>
+              <li><span className="font-medium text-[#EEF0F8]">None / Unknown</span> — no COA evidence found (+0 pts)</li>
             </ul>
           </div>
           <div>
             <div className="font-semibold text-[#EEF0F8] mb-1.5">Other filters</div>
             <ul className="space-y-1.5 text-[#8892B8]">
-              <li><span className="font-medium text-[#EEF0F8]">Named lab</span> — the brand publicly identifies the third-party testing laboratory (e.g. Eurofins, NSF)</li>
+              <li><span className="font-medium text-[#EEF0F8]">Named lab</span> — the brand publicly identifies the third-party testing laboratory (e.g. Eurofins, NSF) (+2 pts)</li>
               <li><span className="font-medium text-[#EEF0F8]">Heavy metals tested</span> — tested for lead, mercury, arsenic, and cadmium. &ldquo;Confirmed&rdquo; = verifiable evidence; &ldquo;Unverified&rdquo; = brand states testing but no independent verification</li>
-              <li><span className="font-medium text-[#EEF0F8]">Form</span> — the physical format of the supplement (resin, capsule, powder, etc.)</li>
-              <li><span className="font-medium text-[#EEF0F8]">US Made</span> — brand claims the product is manufactured in the United States</li>
+              <li><span className="font-medium text-[#EEF0F8]">Form</span> — the physical format of the supplement; resin is least processed and scores highest (+4 pts)</li>
+              <li><span className="font-medium text-[#EEF0F8]">US Made</span> — brand claims US manufacturing, which carries FDA 21 CFR Part 111 oversight (+3 pts)</li>
             </ul>
           </div>
         </div>
