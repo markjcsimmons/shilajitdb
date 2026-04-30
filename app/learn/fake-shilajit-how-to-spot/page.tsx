@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "How to Spot Fake or Adulterated Shilajit",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function FakeShilajitPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="fake-shilajit-how-to-spot"
+        title="How to Spot Fake or Adulterated Shilajit"
+        description="Visual and physical tests, what laboratory analysis reveals, and why a public COA from a named lab is still the most reliable verification method."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -226,5 +234,6 @@ export default function FakeShilajitPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "Shilajit and Heavy Metals: Safety, Testing & Acceptable Levels",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function HeavyMetalsPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="shilajit-heavy-metals"
+        title="Shilajit and Heavy Metals: Safety, Testing & Acceptable Levels"
+        description="Which heavy metals appear in shilajit, what safe limits look like, how to read a heavy metals panel on a COA, and why some products fail testing."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -234,5 +242,6 @@ export default function HeavyMetalsPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

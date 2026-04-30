@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "What Is Fulvic Acid? The Primary Bioactive in Shilajit Explained",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function FulvicAcidPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="fulvic-acid-shilajit"
+        title="What Is Fulvic Acid? The Primary Bioactive in Shilajit Explained"
+        description="How fulvic acid works as a mineral transporter and antioxidant, why its concentration matters, what research supports, and how to verify it on a COA."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -241,5 +249,6 @@ export default function FulvicAcidPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

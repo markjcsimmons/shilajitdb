@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "Shilajit Benefits: What the Evidence Actually Supports",
@@ -32,7 +33,14 @@ function EvidenceBadge({ level }: { level: "strong" | "moderate" | "limited" | "
 
 export default function ShilajitBenefitsPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="shilajit-benefits"
+        title="Shilajit Benefits: What the Evidence Actually Supports"
+        description="A research-framed survey of shilajit health claims — testosterone, energy, cognitive function, sleep, and iron absorption — with honest confidence levels for each."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -279,5 +287,6 @@ export default function ShilajitBenefitsPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

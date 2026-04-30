@@ -32,6 +32,12 @@ export const metadata: Metadata = {
       "A neutral, evidence-based database of shilajit products sold in the United States.",
     url: siteUrl,
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shilajit Transparency Database",
+    description:
+      "189 shilajit products graded on COA quality, lab credibility, heavy metal safety, and manufacturing transparency.",
+  },
   alternates: {
     canonical: siteUrl,
   },
@@ -128,6 +134,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </footer>
         </div>
+        {/* Organization schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Shilajit Transparency Database",
+              url: siteUrl,
+              description:
+                "A neutral, evidence-based database of shilajit supplement products graded on testing transparency, lab credibility, and manufacturing safety.",
+              sameAs: [],
+            }),
+          }}
+        />
         {/* Google Analytics */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}

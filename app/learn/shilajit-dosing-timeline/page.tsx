@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "How Long Does Shilajit Take to Work? Dosing, Timeline & Expectations",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function DosingTimelinePage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="shilajit-dosing-timeline"
+        title="How Long Does Shilajit Take to Work? Dosing, Timeline & Expectations"
+        description="Standard doses, how to take resin vs capsules, what to expect in week 1 vs month 3, cycling considerations, and why product quality affects results."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -260,5 +268,6 @@ export default function DosingTimelinePage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

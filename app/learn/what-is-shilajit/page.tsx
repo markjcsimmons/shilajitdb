@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "What Is Shilajit? Formation, Composition & Research",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function WhatIsShilajitPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="what-is-shilajit"
+        title="What Is Shilajit? Formation, Composition & Research"
+        description="A science-based overview of shilajit: how it forms over millennia, its key compounds (fulvic acid, DBPs, minerals), and what clinical research actually supports."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
@@ -276,5 +284,6 @@ export default function WhatIsShilajitPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

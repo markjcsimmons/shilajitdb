@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
   title: "Where Shilajit Comes From: Mountain Regions Compared",
@@ -17,7 +18,14 @@ export const metadata: Metadata = {
 
 export default function SourcingRegionsPage() {
   return (
-    <article className="space-y-6 max-w-3xl">
+    <>
+      <ArticleSchema
+        slug="shilajit-sourcing-regions"
+        title="Where Shilajit Comes From: Mountain Regions Compared"
+        description="Himalayan shilajit is famous, but Altai, Caucasus, and other mountain ranges also produce high-quality deposits. What actually determines shilajit quality."
+        datePublished="2025-01-15"
+      />
+      <article className="space-y-6 max-w-3xl">
       <nav className="flex items-center gap-2 text-xs text-[#4A5070]">
         <Link href="/" className="hover:text-[#8892B8]">Home</Link>
         <span>/</span>
@@ -245,5 +253,6 @@ export default function SourcingRegionsPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

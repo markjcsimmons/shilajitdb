@@ -1,15 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { absoluteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About",
   description:
     "Why we built an independent grading database for shilajit — the market problem, what matters for quality, and how products are scored.",
+  alternates: { canonical: absoluteUrl("/about") },
+  openGraph: {
+    title: "About — Shilajit Transparency Database",
+    description:
+      "Why we built an independent grading database for shilajit — the market problem, what matters for quality, and how products are scored.",
+    url: absoluteUrl("/about"),
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About — Shilajit Transparency Database",
+    description: "Why we built an independent grading database for shilajit supplements.",
+  },
 };
 
 export default function AboutPage() {
   return (
-    <article className="prose prose-invert max-w-none">
+    <article className="prose prose-invert max-w-3xl">
       <h1>Why this database exists</h1>
 
       <p>

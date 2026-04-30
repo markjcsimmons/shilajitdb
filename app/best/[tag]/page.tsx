@@ -170,7 +170,28 @@ export default async function BestTagPage({
 
   const products = await fetchProducts(dbTag);
 
+  const canonicalUrl = absoluteUrl(`/best/${tag}`);
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${meta.label} Shilajit`,
+    description: meta.description,
+    url: canonicalUrl,
+    numberOfItems: products.length,
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: absoluteUrl(`/product/${p.slug}`),
+      name: p.name,
+    })),
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+    />
     <div className="space-y-4">
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex items-center gap-2 text-xs text-[#6E7A9A] mb-3">
@@ -197,5 +218,6 @@ export default async function BestTagPage({
         </div>
       )}
     </div>
+    </>
   );
 }

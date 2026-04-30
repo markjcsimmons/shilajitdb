@@ -1,13 +1,78 @@
 import type { Metadata } from "next";
+import { absoluteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Scoring Methodology",
   description:
     "How the Shilajit Transparency Database evaluates products: the scientific basis for our Transparency Grade, Quality Tier, and Overall Grade scoring system.",
+  alternates: { canonical: absoluteUrl("/methodology") },
+  openGraph: {
+    title: "Scoring Methodology — Shilajit Transparency Database",
+    description:
+      "How we grade shilajit products: Transparency Grade (A–F), Quality Tier (Poor → Ultra Premium), and Overall Grade (F → A+).",
+    url: absoluteUrl("/methodology"),
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Scoring Methodology — Shilajit Transparency Database",
+    description: "How we grade shilajit products: Transparency Grade, Quality Tier, and Overall Grade explained.",
+  },
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How does ShilajitDB grade products?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Each product receives three independent scores: a Transparency Grade (A–F) based on COA availability, lab disclosure, and manufacturing claims; a Quality Tier (Poor → Ultra Premium) based on a strict checklist of six criteria; and an Overall Grade (F → A+) using a weighted 14-point score combining all quality signals.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is an Ultra Premium shilajit product?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Ultra Premium requires all six signals simultaneously: resin form, publicly available COA, named third-party testing lab, stated manufacturing country, GMP certification, and a patented manufacturing process.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does a Public COA mean for shilajit?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A Public COA means a Certificate of Analysis is publicly available as a downloadable or directly linkable document from the brand. This is the gold standard for supplement transparency and earns the highest transparency score.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why does shilajit form matter for grading?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Resin is the least-processed form of shilajit, best preserving the fulvic-humic mineral matrix. It earns the highest form score (+4 points). Capsules, powders, and gummies involve additional processing that can affect composition.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does ShilajitDB accept payment from brands?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. ShilajitDB is fully independent and unaffiliated with any shilajit brand. No brand is hard-coded into the scoring algorithm — all signals are applied identically to every product.",
+      },
+    },
+  ],
 };
 
 export default function MethodologyPage() {
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+    />
     <article className="prose prose-invert max-w-3xl">
       <h1>Scoring Methodology</h1>
       <p>
@@ -377,5 +442,6 @@ export default function MethodologyPage() {
         </li>
       </ol>
     </article>
+    </>
   );
 }
