@@ -412,13 +412,13 @@ export default async function ProductPage({
             </div>
             <Link
               href="/methodology"
-              className="text-xs leading-tight text-[#4A5070] hover:text-[#8892B8] tabular-nums transition-colors"
+              className="text-xs leading-tight text-[#8892B8] hover:text-[#EEF0F8] tabular-nums transition-colors"
               title="See grading methodology"
             >
               {score} / {MAX_SCORE} pts
             </Link>
             {categoryRank && (
-              <span className="text-xs leading-tight text-[#4A5070] text-center">
+              <span className="text-xs leading-tight text-[#8892B8] text-center">
                 #{categoryRank.rank} of {categoryRank.total}
               </span>
             )}
@@ -426,8 +426,8 @@ export default async function ProductPage({
 
           {/* Name + meta */}
           <div className="min-w-0 flex-1">
-            <p className="text-sm text-[#4A5070]">
-              <Link href={`/brand/${product.brand.slug}`} className="hover:text-[#8892B8] font-medium transition-colors">
+            <p className="text-sm text-[#8892B8]">
+              <Link href={`/brand/${product.brand.slug}`} className="hover:text-[#EEF0F8] font-medium transition-colors">
                 {product.brand.name}
               </Link>
             </p>
@@ -451,7 +451,7 @@ export default async function ProductPage({
                 </span>
               )}
               {product.lastVerifiedAt && (
-                <span className="text-xs text-[#4A5070]">
+                <span className="text-xs text-[#8892B8]">
                   Verified{" "}
                   {new Date(product.lastVerifiedAt).toLocaleDateString("en-US", {
                     month: "short",
@@ -529,7 +529,7 @@ export default async function ProductPage({
         </div>
 
         {/* Secondary meta strip */}
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#4A5070] px-0.5">
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#8892B8] px-0.5">
           {product.heavyMetalsTested === "CONFIRMED" && (
             <span className="font-medium text-[#22C55E]">Heavy metals tested ✓</span>
           )}
