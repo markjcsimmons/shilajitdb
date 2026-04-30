@@ -84,7 +84,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
             >
               {p.name}
             </Link>
-            <div className="mt-1 text-xs text-[#4A5070]">
+            <div className="mt-1 text-xs text-[#8892B8]">
               {formLabel(p.form)}
             </div>
           </div>
@@ -92,7 +92,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
           {/* Grade badge */}
           <div
             className={cn(
-              "shrink-0 text-xs font-semibold px-2 py-1 rounded text-center min-w-[36px]",
+              "shrink-0 h-12 w-12 rounded-lg flex items-center justify-center text-xl font-bold",
               gradeBadgeClasses(p.overallGrade)
             )}
           >
