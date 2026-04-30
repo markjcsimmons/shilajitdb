@@ -114,7 +114,7 @@ export default function AboutPage() {
         </li>
         <li>
           <strong>Quality Tier (Poor &rarr; Ultra Premium)</strong> &mdash; based on product
-          form, third-party testing, manufacturing standards, and country of origin.
+          form, third-party testing, manufacturing standards, country of origin, and patent claim.
         </li>
         <li>
           <strong>Overall Grade (F &rarr; A+)</strong> &mdash; a composite score combining
