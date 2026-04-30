@@ -18,22 +18,28 @@ export const dynamic = "force-dynamic";
 
 const BEST_FOR_CATEGORIES = [
   {
+    tag: "editors_pick",
+    label: "Editor's Picks",
+    description: "Hand-selected across quality, transparency, and value",
+    icon: "⭐",
+  },
+  {
     tag: "best_tested",
     label: "Best Tested",
     description: "Public COA from a named independent lab, heavy metals confirmed",
     icon: "🔬",
   },
   {
-    tag: "best_value",
-    label: "Best Budget",
-    description: "Strong testing credentials at a competitive price",
-    icon: "💰",
-  },
-  {
     tag: "best_resin",
     label: "Best Resin",
     description: "Top-rated resin — the least processed, most traditional form",
     icon: "🪨",
+  },
+  {
+    tag: "best_value",
+    label: "Best Budget",
+    description: "Strong testing credentials at a competitive price",
+    icon: "💰",
   },
   {
     tag: "best_capsules",
@@ -46,12 +52,6 @@ const BEST_FOR_CATEGORIES = [
     label: "Best Gummies",
     description: "Top gummy-form shilajit products by grade and transparency",
     icon: "🍬",
-  },
-  {
-    tag: "editors_pick",
-    label: "Editor's Picks",
-    description: "Hand-selected across quality, transparency, and value",
-    icon: "⭐",
   },
 ];
 
