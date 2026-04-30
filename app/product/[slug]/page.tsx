@@ -166,7 +166,7 @@ function StatChip({
 }) {
   return (
     <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-3">
-      <div className="text-xs text-[#4A5070]">{label}</div>
+      <div className="text-xs text-[#8892B8]">{label}</div>
       <div className={cn("mt-0.5 truncate text-sm font-medium text-[#EEF0F8]", valueClass)}>
         {href ? (
           <a
@@ -580,7 +580,7 @@ export default async function ProductPage({
         <div className="mt-5 md:mt-0 md:flex md:items-start">
           <div className="space-y-3 w-full">
             <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-2">Why this grade?</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#8892B8] mb-2">Why this grade?</p>
               <p className="text-sm text-[#8892B8] leading-relaxed">{gradeSummary}</p>
               <Link
                 href="/methodology"

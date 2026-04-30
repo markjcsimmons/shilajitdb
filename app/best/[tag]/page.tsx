@@ -173,7 +173,7 @@ export default async function BestTagPage({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
-        <div className="flex items-center gap-2 text-xs text-[#4A5070] mb-3">
+        <div className="flex items-center gap-2 text-xs text-[#6E7A9A] mb-3">
           <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
           <span>/</span>
           <span>{meta.label}</span>
@@ -182,7 +182,7 @@ export default async function BestTagPage({
           ★ {meta.label} Shilajit
         </h1>
         <p className="mt-2 text-sm text-[#8892B8] max-w-2xl">{meta.description}</p>
-        <p className="mt-1 text-xs text-[#4A5070]">{products.length} product{products.length !== 1 ? "s" : ""} in this list</p>
+        <p className="mt-1 text-xs text-[#6E7A9A]">{products.length} product{products.length !== 1 ? "s" : ""} in this list</p>
       </div>
 
       {products.length === 0 ? (

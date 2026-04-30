@@ -156,7 +156,7 @@ export default async function HomePage({
           ].map((s) => (
             <div key={s.label} className="flex items-baseline gap-2 whitespace-nowrap shrink-0">
               <span className="font-mono text-base font-bold text-[#EEF0F8]">{s.value}</span>
-              <span className="text-xs text-[#4A5070]">{s.label}</span>
+              <span className="text-xs text-[#6E7A9A]">{s.label}</span>
             </div>
           ))}
         </div>
@@ -202,7 +202,7 @@ export default async function HomePage({
 
             {/* Right: Top Picks */}
             <div className="mt-10 lg:mt-0 lg:flex lg:flex-col">
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-3 shrink-0">Top Picks</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-3 shrink-0">Top Picks</p>
               <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 lg:flex-1 lg:grid-rows-3">
                 {BEST_FOR_CATEGORIES.map((cat) => (
                   <Link
@@ -212,7 +212,7 @@ export default async function HomePage({
                   >
                     <div className="text-xl mb-1.5">{cat.icon}</div>
                     <div className="text-xs font-semibold text-[#EEF0F8] mb-1 leading-snug">{cat.label}</div>
-                    <div className="hidden lg:block text-[11px] text-[#4A5070] leading-snug">{cat.description}</div>
+                    <div className="hidden lg:block text-[11px] text-[#6E7A9A] leading-snug">{cat.description}</div>
                   </Link>
                 ))}
               </div>
@@ -229,7 +229,7 @@ export default async function HomePage({
           {/* How we grade */}
           <div>
             <div className="mb-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#4A5070] mb-1.5">Methodology</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-1.5">Methodology</p>
               <h2 className="font-serif text-2xl font-semibold text-[#EEF0F8]">How we grade products</h2>
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -249,7 +249,7 @@ export default async function HomePage({
               ].map((item) => (
                 <div key={item.title} className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
                   <div className="text-sm font-semibold text-[#EEF0F8] mb-2">{item.title}</div>
-                  <div className="text-xs text-[#4A5070] leading-relaxed">{item.desc}</div>
+                  <div className="text-xs text-[#8892B8] leading-relaxed">{item.desc}</div>
                 </div>
               ))}
             </div>

@@ -19,23 +19,23 @@ export default async function AdminProtectedLayout({
           <Link href="/admin" className="text-slate-700 hover:text-slate-900">
             Dashboard
           </Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-slate-400">/</span>
           <Link href="/admin/populate" className="text-slate-700 hover:text-slate-900">
             Populate
           </Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-slate-400">/</span>
           <Link href="/admin/brands" className="text-slate-700 hover:text-slate-900">
             Brands
           </Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-slate-400">/</span>
           <Link href="/admin/products" className="text-slate-700 hover:text-slate-900">
             Products
           </Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-slate-400">/</span>
           <Link href="/admin/data" className="text-slate-700 hover:text-slate-900">
             Data
           </Link>
-          <span className="text-slate-300">/</span>
+          <span className="text-slate-400">/</span>
           <Link href="/admin/editors-picks" className="text-slate-700 hover:text-slate-900">
             Editor&apos;s Picks
           </Link>

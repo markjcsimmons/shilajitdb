@@ -69,11 +69,11 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className="text-[10px] font-medium uppercase tracking-[0.07em] text-[#4A5070]">
+              <span className="text-[10px] font-medium uppercase tracking-[0.07em] text-[#6E7A9A]">
                 {p.brand.name}
               </span>
               {p.dataCompleteness === "LOW" && (
-                <span className="text-[10px] text-[#4A5070] border border-[#252A40] rounded px-1.5 py-px">
+                <span className="text-[10px] text-[#6E7A9A] border border-[#313760] rounded px-1.5 py-px">
                   Unverified
                 </span>
               )}
@@ -134,7 +134,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
 
         {/* Bottom: price + meta */}
         <div className="mt-3 pt-3 border-t border-[#252A40] flex items-end justify-between gap-3">
-          <div className="text-xs text-[#4A5070] space-y-0.5">
+          <div className="text-xs text-[#8892B8] space-y-0.5">
             {p.pricePerGramCents != null && (
               <div>
                 <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerGramCents / 100).toFixed(2)}</span>

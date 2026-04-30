@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function MethodologyPage() {
   return (
-    <article className="prose prose-invert max-w-none">
+    <article className="prose prose-invert max-w-3xl">
       <h1>Scoring Methodology</h1>
       <p>
         This database grades shilajit products using objective, publicly verifiable signals.

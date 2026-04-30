@@ -84,7 +84,7 @@ export default async function EditorsPicksPage({
           <Button type="submit">Add to picks</Button>
         </form>
         {allProducts.length === 0 && (
-          <p className="mt-2 text-xs text-slate-400">All eligible products are already picks.</p>
+          <p className="mt-2 text-xs text-slate-500">All eligible products are already picks.</p>
         )}
       </div>
 
@@ -100,14 +100,14 @@ export default async function EditorsPicksPage({
         </div>
 
         {currentPicks.length === 0 ? (
-          <p className="px-5 py-6 text-sm text-slate-400">No picks yet.</p>
+          <p className="px-5 py-6 text-sm text-slate-500">No picks yet.</p>
         ) : (
           <ul className="divide-y divide-stone-100">
             {currentPicks.map((p) => (
               <li key={p.id} className="flex items-center justify-between px-5 py-3">
                 <div>
                   <span className="text-sm font-medium text-slate-800">{p.name}</span>
-                  <span className="ml-2 text-xs text-slate-400">{p.brand.name}</span>
+                  <span className="ml-2 text-xs text-slate-500">{p.brand.name}</span>
                 </div>
                 <form action={adminRemoveEditorsPick}>
                   <input type="hidden" name="productId" value={p.id} />

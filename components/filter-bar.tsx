@@ -85,7 +85,7 @@ function Chip({ active, activeClass, inactiveClass, onClick, children }: ChipPro
 
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#4A5070] w-16">
+    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] w-16">
       {children}
     </span>
   );
@@ -128,7 +128,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
 
         {/* Header */}
         <div className="flex items-center justify-between pb-1 border-b border-[#252A40]">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#4A5070]">Filter by</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6E7A9A]">Filter by</span>
         </div>
 
         {/* Quality row */}
@@ -215,10 +215,10 @@ export function FilterBar({ filters, total, active = false }: Props) {
       {/* Glossary strip */}
       <details className="group rounded-lg border border-[#252A40] bg-[#0F1320] text-xs text-[#8892B8]">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 px-4 py-2.5 hover:text-[#EEF0F8] select-none transition-colors">
-          <svg className="h-3.5 w-3.5 shrink-0 text-[#4A5070] transition-transform group-open:rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="h-3.5 w-3.5 shrink-0 text-[#6E7A9A] transition-transform group-open:rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 6l4 4 4-4" />
           </svg>
-          <span className="font-medium text-[#4A5070] group-hover:text-[#8892B8] transition-colors">What do these filters mean?</span>
+          <span className="font-medium text-[#6E7A9A] group-hover:text-[#EEF0F8] transition-colors">What do these filters mean?</span>
         </summary>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 border-t border-[#252A40] px-4 py-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
