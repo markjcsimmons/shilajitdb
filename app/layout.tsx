@@ -83,12 +83,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <span className="text-sm font-bold text-[#EEF0F8]">Shilajit</span>
                     <span className="text-sm font-bold text-[#3D7AFF]">DB</span>
                   </div>
-                  <p className="text-xs text-[#4A5070] leading-relaxed max-w-xs">
+                  <p className="text-xs text-[#8892B8] leading-relaxed max-w-xs">
                     A neutral, evidence-based database of shilajit products graded on testing, transparency, and safety.
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#4A5070] mb-3">Database</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#6E7A9A] mb-3">Database</p>
                   <ul className="space-y-2 text-sm text-[#8892B8]">
                     <li><Link href="/?coaStatus=PUBLIC" className="hover:text-[#EEF0F8] transition-colors">Public COA</Link></li>
                     <li><Link href="/?thirdPartyTested=true" className="hover:text-[#EEF0F8] transition-colors">Named lab tested</Link></li>
@@ -97,7 +97,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </ul>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#4A5070] mb-3">Learn</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#6E7A9A] mb-3">Learn</p>
                   <ul className="space-y-2 text-sm text-[#8892B8]">
                     <li><Link href="/learn/what-is-shilajit" className="hover:text-[#EEF0F8] transition-colors">What is shilajit?</Link></li>
                     <li><Link href="/learn/how-to-read-shilajit-coa" className="hover:text-[#EEF0F8] transition-colors">How to read a COA</Link></li>
@@ -106,7 +106,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </ul>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#4A5070] mb-3">About</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#6E7A9A] mb-3">About</p>
                   <ul className="space-y-2 text-sm text-[#8892B8]">
                     <li><Link href="/methodology" className="hover:text-[#EEF0F8] transition-colors">Methodology</Link></li>
                     <li><Link href="/about" className="hover:text-[#EEF0F8] transition-colors">About</Link></li>
@@ -115,10 +115,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
               </div>
               <div className="mt-8 border-t border-[#252A40] pt-6 flex items-center justify-between flex-wrap gap-3">
-                <span className="text-xs text-[#4A5070]">Independent and unaffiliated with any shilajit brand.</span>
+                <span className="text-xs text-[#6E7A9A]">Independent and unaffiliated with any shilajit brand.</span>
                 <div className="flex items-center gap-4">
-                  <Link href="/terms" className="text-xs text-[#4A5070] hover:text-[#8892B8] transition-colors">Terms of Use</Link>
-                  <span className="font-mono text-[10px] text-[#313760] tracking-widest">Unbiased · Comprehensive · Free</span>
+                  <Link href="/terms" className="text-xs text-[#6E7A9A] hover:text-[#8892B8] transition-colors">Terms of Use</Link>
+                  <span className="font-mono text-[10px] text-[#4A5070] tracking-widest">Unbiased · Comprehensive · Free</span>
                 </div>
               </div>
               {/* Honeypot — hidden from humans, visible to scrapers */}
