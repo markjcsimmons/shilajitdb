@@ -121,7 +121,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
               </div>
               <div className="mt-8 border-t border-[#252A40] pt-6 flex items-center justify-between flex-wrap gap-3">
-                <span className="text-xs text-[#6E7A9A]">Independent and unaffiliated with any shilajit brand.</span>
+                <span className="text-xs text-[#6E7A9A]">&copy; 2026 ShilajitDB. Independent and unaffiliated with any shilajit brand.</span>
                 <div className="flex items-center gap-4">
                   <Link href="/terms" className="text-xs text-[#6E7A9A] hover:text-[#8892B8] transition-colors">Terms of Use</Link>
                   <span className="font-mono text-[10px] text-[#4A5070] tracking-widest">Unbiased · Comprehensive · Free</span>
