@@ -122,6 +122,8 @@ model Product {
   manufacturingEvidenceUrl  String?
   coaStatus                 CoaStatus
   coaUrl                    String?
+  coaNotes                  String?           @db.Text
+  coaAnalysedAt             DateTime?
   thirdPartyTestingLab      String?           @db.Text
   hasPatentClaim            Boolean           @default(false)
   gmpCertified              Boolean           @default(false)

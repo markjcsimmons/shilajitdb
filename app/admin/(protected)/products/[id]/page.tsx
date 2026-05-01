@@ -288,6 +288,18 @@ export default async function AdminProductEditPage({
             <p className="mt-1 text-xs text-slate-500">Lab name or details when COA/testing is mentioned but no document link.</p>
           </div>
 
+          <div>
+            <label className="text-xs font-medium text-slate-700">COA document review notes</label>
+            <textarea
+              name="coaNotes"
+              defaultValue={product.coaNotes ?? ""}
+              rows={6}
+              placeholder="Notes from COA document review — lab accreditation, heavy metal values, fulvic acid %, test scope, etc."
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20"
+            />
+            <p className="mt-1 text-xs text-slate-500">Displayed publicly in the &quot;COA document review&quot; section on the product page.</p>
+          </div>
+
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs font-medium text-slate-700">Heavy metals tested</label>

@@ -605,6 +605,34 @@ export default async function ProductPage({
 
       {/* ── ACCORDION SECTIONS ────────────────────────────────────────────────── */}
 
+      {/* COA Review */}
+      {product.coaNotes && (
+        <Accordion title="COA document review" defaultOpen>
+          <div className="space-y-3">
+            <p className="text-sm text-[#8892B8] leading-relaxed">{product.coaNotes}</p>
+            {product.coaAnalysedAt && (
+              <p className="text-xs text-[#4A5070]">
+                Reviewed{" "}
+                {product.coaAnalysedAt.toLocaleDateString("en-GB", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+            )}
+            {product.coaUrl && (
+              <a
+                href={product.coaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] underline underline-offset-2 transition-colors"
+              >
+                View COA document →
+              </a>
+            )}
+          </div>
+        </Accordion>
+      )}
+
       {/* Grading Breakdown */}
       <Accordion title="Grading breakdown">
         <div className="grid gap-5 sm:grid-cols-2">
