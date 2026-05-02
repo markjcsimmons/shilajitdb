@@ -13,8 +13,21 @@ import {
   parseProductFilters,
   type SearchParams,
 } from "@/lib/search";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Best Shilajit Brands Ranked & Compared | ShilajitDB",
+  description:
+    "Compare 189+ shilajit products by COA quality, lab credibility, and heavy metal safety. Independently graded — find the best shilajit resin, capsules, and more.",
+  openGraph: {
+    title: "Best Shilajit Brands Ranked & Compared | ShilajitDB",
+    description:
+      "Compare shilajit brands on COA quality, third-party lab testing, and heavy metal safety. 189+ products independently graded.",
+  },
+  alternates: { canonical: getSiteUrl() },
+};
 
 const BEST_FOR_CATEGORIES = [
   {

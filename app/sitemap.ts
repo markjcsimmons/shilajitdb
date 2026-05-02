@@ -40,11 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"),             changeFrequency: "daily",   priority: 1.0 },
-    { url: absoluteUrl("/learn"),        changeFrequency: "weekly",  priority: 0.9 },
-    { url: absoluteUrl("/methodology"),  changeFrequency: "monthly", priority: 0.8 },
-    { url: absoluteUrl("/about"),        changeFrequency: "monthly", priority: 0.7 },
-    { url: absoluteUrl("/updates"),      changeFrequency: "weekly",  priority: 0.7 },
+    { url: absoluteUrl("/"),                      changeFrequency: "daily",   priority: 1.0 },
+    { url: absoluteUrl("/shilajit-comparison"),   changeFrequency: "weekly",  priority: 0.9 },
+    { url: absoluteUrl("/learn"),                 changeFrequency: "weekly",  priority: 0.9 },
+    { url: absoluteUrl("/methodology"),           changeFrequency: "monthly", priority: 0.8 },
+    { url: absoluteUrl("/about"),                 changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/updates"),               changeFrequency: "weekly",  priority: 0.7 },
   ];
 
   const learnPages: MetadataRoute.Sitemap = LEARN_SLUGS.map((slug) => ({
