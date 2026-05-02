@@ -69,7 +69,7 @@ function Chip({ active, activeClass, inactiveClass, onClick, children }: ChipPro
         active
           ? cn(activeClass, "shadow-sm")
           : cn(
-              inactiveClass ?? "border-[#313760] bg-transparent text-[#8892B8] hover:text-[#EEF0F8] hover:border-[#4A5070]",
+              inactiveClass ?? "border-[#313760] bg-transparent text-[#C8D0E8] hover:text-[#EEF0F8] hover:border-[#4A5070]",
             )
       )}
     >

@@ -176,7 +176,7 @@ export default async function HomePage({
                 Shilajit<br />
                 <span className="italic font-normal text-[#8892B8]">Transparency</span> Database
               </h1>
-              <p className="text-base leading-relaxed text-[#8892B8] max-w-lg mb-2">
+              <p className="text-base leading-relaxed text-[#C8D0E8] max-w-lg mb-2">
                 Every product graded on COA quality, lab credibility, heavy metal safety, and manufacturing transparency.
               </p>
               <Link href="/methodology" className="text-sm text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors mb-6 inline-block">

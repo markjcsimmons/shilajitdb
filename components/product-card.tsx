@@ -84,7 +84,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
             >
               {p.name}
             </Link>
-            <div className="mt-1 text-xs text-[#8892B8]">
+            <div className="mt-1 text-xs text-[#B0B8D0]">
               {formLabel(p.form)}
             </div>
           </div>
@@ -134,27 +134,27 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
 
         {/* Bottom: price + meta */}
         <div className="mt-3 pt-3 border-t border-[#252A40] flex items-end justify-between gap-3">
-          <div className="text-xs text-[#6E7A9A] space-y-0.5">
+          <div className="text-xs text-[#8892B8] space-y-0.5">
             {p.pricePerGramCents != null && (
               <div>
                 <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerGramCents / 100).toFixed(2)}</span>
-                <span className="ml-0.5 text-[#8892B8]">/gram</span>
+                <span className="ml-0.5">/gram</span>
               </div>
             )}
             {p.pricePerServingCents != null && (
               <div>
                 <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerServingCents / 100).toFixed(2)}</span>
-                <span className="ml-0.5 text-[#8892B8]">/serving</span>
+                <span className="ml-0.5">/serving</span>
               </div>
             )}
             {p.manufacturingCountryClaim && (
-              <div>Made in <span className="text-[#B8C0D4]">{p.manufacturingCountryClaim}</span></div>
+              <div>Made in <span className="text-[#C8D0E8]">{p.manufacturingCountryClaim}</span></div>
             )}
             {p.thirdPartyTestingLab && (
-              <div>Lab: <span className="text-[#B8C0D4]">{p.thirdPartyTestingLab}</span></div>
+              <div>Lab: <span className="text-[#C8D0E8]">{p.thirdPartyTestingLab}</span></div>
             )}
             {p.lastVerifiedAt && (
-              <div>Verified <span className="text-[#B8C0D4]">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div>
+              <div>Verified <span className="text-[#C8D0E8]">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div>
             )}
           </div>
 
