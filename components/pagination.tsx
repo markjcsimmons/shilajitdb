@@ -20,7 +20,7 @@ export function Pagination({
 
   return (
     <div className="mt-6 flex items-center justify-between gap-3">
-      <div className="text-sm text-[#4A5070]">
+      <div className="text-sm text-[#8892B8]">
         Page <span className="font-medium text-[#EEF0F8]">{page}</span> of{" "}
         <span className="font-medium text-[#EEF0F8]">{totalPages}</span>
       </div>

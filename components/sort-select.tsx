@@ -43,11 +43,11 @@ export function SortSelect({ current, filters }: Props) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="shrink-0 text-xs text-[#4A5070]">Sort</span>
+      <span className="shrink-0 text-xs text-[#8892B8]">Sort</span>
       <select
         value={current}
         onChange={handleChange}
-        className="rounded-lg border border-[#252A40] bg-[#0F1320] px-3 py-1.5 text-xs font-medium text-[#8892B8] focus:border-[#3D7AFF] focus:outline-none focus:ring-1 focus:ring-[#3D7AFF]/30"
+        className="rounded-lg border border-[#252A40] bg-[#0F1320] px-3 py-2 text-xs font-medium text-[#B8C0D4] focus:border-[#3D7AFF] focus:outline-none focus:ring-1 focus:ring-[#3D7AFF]/30"
       >
         {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
           <option key={key} value={key}>

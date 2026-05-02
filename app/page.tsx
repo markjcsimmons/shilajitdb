@@ -147,7 +147,7 @@ export default async function HomePage({
 
       {/* ── Stats strip ── */}
       <div className="-mx-4 border-b border-[#252A40] px-4 py-2.5">
-        <div className="max-w-6xl mx-auto flex items-center gap-8 overflow-x-auto">
+        <div className="max-w-6xl mx-auto flex items-center gap-4 sm:gap-8 overflow-x-auto">
           {[
             { value: String(productCount), label: "products graded" },
             { value: String(brandCount), label: "brands tracked" },
@@ -156,7 +156,7 @@ export default async function HomePage({
           ].map((s) => (
             <div key={s.label} className="flex items-baseline gap-2 whitespace-nowrap shrink-0">
               <span className="font-mono text-base font-bold text-[#EEF0F8]">{s.value}</span>
-              <span className="text-xs text-[#6E7A9A]">{s.label}</span>
+              <span className="text-xs text-[#8892B8]">{s.label}</span>
             </div>
           ))}
         </div>

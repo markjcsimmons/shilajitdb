@@ -69,11 +69,11 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className="text-[10px] font-medium uppercase tracking-[0.07em] text-[#6E7A9A]">
+              <span className="text-xs font-medium uppercase tracking-[0.07em] text-[#8892B8]">
                 {p.brand.name}
               </span>
               {p.dataCompleteness === "LOW" && (
-                <span className="text-[10px] text-[#6E7A9A] border border-[#313760] rounded px-1.5 py-px">
+                <span className="text-xs text-[#6E7A9A] border border-[#313760] rounded px-1.5 py-px">
                   Unverified
                 </span>
               )}
@@ -92,7 +92,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
           {/* Grade badge */}
           <div
             className={cn(
-              "shrink-0 h-12 w-12 rounded-lg flex items-center justify-center text-xl font-bold",
+              "shrink-0 h-14 w-14 rounded-lg flex items-center justify-center text-2xl font-bold",
               gradeBadgeClasses(p.overallGrade)
             )}
           >
@@ -134,27 +134,27 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
 
         {/* Bottom: price + meta */}
         <div className="mt-3 pt-3 border-t border-[#252A40] flex items-end justify-between gap-3">
-          <div className="text-xs text-[#8892B8] space-y-0.5">
+          <div className="text-xs text-[#6E7A9A] space-y-0.5">
             {p.pricePerGramCents != null && (
               <div>
                 <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerGramCents / 100).toFixed(2)}</span>
-                <span className="ml-0.5">/gram</span>
+                <span className="ml-0.5 text-[#8892B8]">/gram</span>
               </div>
             )}
             {p.pricePerServingCents != null && (
               <div>
                 <span className="font-mono font-medium text-[#EEF0F8]">${(p.pricePerServingCents / 100).toFixed(2)}</span>
-                <span className="ml-0.5">/serving</span>
+                <span className="ml-0.5 text-[#8892B8]">/serving</span>
               </div>
             )}
             {p.manufacturingCountryClaim && (
-              <div>Made in <span className="text-[#8892B8]">{p.manufacturingCountryClaim}</span></div>
+              <div>Made in <span className="text-[#B8C0D4]">{p.manufacturingCountryClaim}</span></div>
             )}
             {p.thirdPartyTestingLab && (
-              <div>Lab: <span className="text-[#8892B8]">{p.thirdPartyTestingLab}</span></div>
+              <div>Lab: <span className="text-[#B8C0D4]">{p.thirdPartyTestingLab}</span></div>
             )}
             {p.lastVerifiedAt && (
-              <div>Verified <span className="text-[#8892B8]">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div>
+              <div>Verified <span className="text-[#B8C0D4]">{new Date(p.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span></div>
             )}
           </div>
 
@@ -165,14 +165,14 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               target="_blank"
               rel="nofollow noopener noreferrer"
               className={cn(
-                "shrink-0 inline-flex items-center gap-1 rounded px-3 py-1.5 text-xs font-semibold transition-colors",
+                "shrink-0 inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-semibold transition-colors",
                 p.coaStatus === "PUBLIC"
                   ? "bg-[#3D7AFF] text-[#080B14] hover:bg-[#6E9FFF]"
                   : "border border-[#252A40] text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8]"
               )}
             >
               View COA
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5">
+              <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2 10L10 2M10 2H5M10 2v5"/>
               </svg>
             </a>

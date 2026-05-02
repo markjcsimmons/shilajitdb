@@ -59,7 +59,7 @@ export function SearchBox({ initialQ, filters, hero }: Props) {
   return (
     <div className="relative">
       <svg
-        className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${hero ? "h-5 w-5 text-[#3D7AFF]" : "h-5 w-5 text-[#4A5070]"}`}
+        className={`pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 ${hero ? "h-5 w-5 text-[#3D7AFF]" : "h-5 w-5 text-[#6E7A9A]"}`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

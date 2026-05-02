@@ -65,7 +65,7 @@ function Chip({ active, activeClass, inactiveClass, onClick, children }: ChipPro
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all duration-100",
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-100",
         active
           ? cn(activeClass, "shadow-sm")
           : cn(
@@ -85,7 +85,7 @@ function Chip({ active, activeClass, inactiveClass, onClick, children }: ChipPro
 
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] w-16">
+    <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.1em] text-[#8892B8] w-20">
       {children}
     </span>
   );
@@ -128,7 +128,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
 
         {/* Header */}
         <div className="flex items-center justify-between pb-1 border-b border-[#252A40]">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6E7A9A]">Filter by</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[#8892B8]">Filter by</span>
         </div>
 
         {/* Quality row */}
@@ -173,14 +173,14 @@ export function FilterBar({ filters, total, active = false }: Props) {
         <div className="flex flex-wrap items-center gap-2">
           <GroupLabel>Price</GroupLabel>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-[#4A5070]">$/g</span>
+            <span className="text-xs text-[#6E7A9A]">$/g</span>
             <input
               type="number" min="0" max="100" step="0.01" placeholder="Min"
               value={optimistic.minPriceGram ?? ""}
               onChange={(e) => { const v = e.target.value === "" ? undefined : parseFloat(e.target.value); update({ minPriceGram: v }); }}
               className="w-20 rounded border border-[#252A40] bg-[#1F2540] px-2.5 py-1 text-xs text-[#EEF0F8] placeholder-[#4A5070] focus:border-[#3D7AFF] focus:outline-none"
             />
-            <span className="text-xs text-[#4A5070]">—</span>
+            <span className="text-xs text-[#6E7A9A]">—</span>
             <input
               type="number" min="0" max="100" step="0.01" placeholder="Max"
               value={optimistic.maxPriceGram ?? ""}
@@ -193,7 +193,7 @@ export function FilterBar({ filters, total, active = false }: Props) {
         {/* Count + reset */}
         {active && (
           <div className="flex items-center justify-between border-t border-[#252A40] pt-2.5">
-            <span className="text-xs text-[#4A5070]">
+            <span className="text-xs text-[#8892B8]">
               <span className="font-semibold text-[#EEF0F8]">{total}</span> product{total !== 1 ? "s" : ""} matched
             </span>
             {hasFilters && (
@@ -215,10 +215,10 @@ export function FilterBar({ filters, total, active = false }: Props) {
       {/* Glossary strip */}
       <details className="group rounded-lg border border-[#252A40] bg-[#0F1320] text-xs text-[#8892B8]">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 px-4 py-2.5 hover:text-[#EEF0F8] select-none transition-colors">
-          <svg className="h-3.5 w-3.5 shrink-0 text-[#6E7A9A] transition-transform group-open:rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="h-3.5 w-3.5 shrink-0 text-[#8892B8] transition-transform group-open:rotate-180" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 6l4 4 4-4" />
           </svg>
-          <span className="font-medium text-[#6E7A9A] group-hover:text-[#EEF0F8] transition-colors">What do these filters mean?</span>
+          <span className="font-medium text-[#8892B8] group-hover:text-[#EEF0F8] transition-colors">What do these filters mean?</span>
         </summary>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 border-t border-[#252A40] px-4 py-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
