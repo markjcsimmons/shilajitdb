@@ -35,7 +35,18 @@ function isRateLimited(ip: string): boolean {
 }
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
+  const hostname = req.headers.get("host") ?? "";
+
+  // Canonical domain enforcement: www → non-www (301 permanent)
+  // Canonical tags and sitemap point to shilajitdb.com (non-www).
+  // Any request arriving on www.shilajitdb.com is redirected so Google
+  // sees only one version and link equity is not split.
+  if (hostname.startsWith("www.")) {
+    const nonWwwHost = hostname.slice(4); // strip "www."
+    const url = `https://${nonWwwHost}${pathname}${search}`;
+    return NextResponse.redirect(url, { status: 301 });
+  }
 
   // Honeypot trap — any request to /honeypot gets a 404 and we can log the IP
   if (pathname.startsWith("/honeypot")) {

@@ -86,6 +86,62 @@ const articles = [
       "Standard doses, how to take resin, what to expect week by week, and why product quality affects results.",
     tag: "Practical",
   },
+  {
+    slug: "fulvic-acid-percentage-explained",
+    title: "Fulvic Acid Percentage in Shilajit: How to Read and Compare COA Results",
+    description:
+      "What the fulvic acid number on a COA actually measures, what ranges are credible by form, and how to tell extract percentage from finished-product percentage.",
+    tag: "Science",
+  },
+  {
+    slug: "shilajit-extraction-methods",
+    title: "Shilajit Processing Methods: How Extraction Affects What's in the Jar",
+    description:
+      "How heat vs. low-temperature extraction, solvent use, and purification depth affect bioactive compounds — and what a COA can and cannot verify about processing claims.",
+    tag: "Sourcing",
+  },
+  {
+    slug: "shilajit-muscle-recovery",
+    title: "Shilajit for Muscle Recovery: What the Clinical Evidence Shows",
+    description:
+      "A research-graded review of the studies on shilajit and fatigue resistance — what was measured, what doses were used, and what remains speculative.",
+    tag: "Science",
+  },
+  {
+    slug: "shilajit-sleep",
+    title: "Shilajit for Sleep: Separating the Evidence from the Marketing",
+    description:
+      "An honest grading of what research supports for shilajit and sleep quality — and what is mechanistic extrapolation rather than clinical fact.",
+    tag: "Science",
+  },
+  {
+    slug: "shilajit-endurance-athletes",
+    title: "Shilajit for Endurance Athletes: What Performance Metrics to Track",
+    description:
+      "How to measure whether shilajit is working for endurance performance — the specific metrics, timelines, and product quality signals that matter for tested athletes.",
+    tag: "Practical",
+  },
+  {
+    slug: "shilajit-clinical-dosage",
+    title: "Shilajit Dosage: What Clinical Trials Actually Used",
+    description:
+      "The specific doses, durations, and populations in published shilajit trials — separating research-backed guidance from manufacturer extrapolation.",
+    tag: "Practical",
+  },
+  {
+    slug: "shilajit-buyers-checklist",
+    title: "The Shilajit Buyer's Checklist: 9 Things to Verify Before You Buy",
+    description:
+      "Nine verifiable criteria mapped to the ShilajitDB grading methodology — what good looks like and what to watch out for on each signal.",
+    tag: "Buying Guide",
+  },
+  {
+    slug: "shilajit-pre-workout",
+    title: "Shilajit as a Pre-Workout: What the Research Supports (And What It Doesn't)",
+    description:
+      "Why pre-workout timing recommendations for shilajit go beyond the evidence — and how to set realistic expectations for a chronic-use supplement.",
+    tag: "Practical",
+  },
 ];
 
 const tagColors: Record<string, string> = {

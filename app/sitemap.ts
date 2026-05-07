@@ -15,6 +15,14 @@ const LEARN_SLUGS = [
   "shilajit-sourcing-regions",
   "shilajit-men-vs-women",
   "shilajit-dosing-timeline",
+  "fulvic-acid-percentage-explained",
+  "shilajit-extraction-methods",
+  "shilajit-muscle-recovery",
+  "shilajit-sleep",
+  "shilajit-endurance-athletes",
+  "shilajit-clinical-dosage",
+  "shilajit-buyers-checklist",
+  "shilajit-pre-workout",
 ];
 
 const BEST_TAGS = [
