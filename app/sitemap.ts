@@ -35,6 +35,7 @@ const BEST_TAGS = [
   "best-for-men",
   "best-for-women",
   "best-third-party-tested",
+  "best-himalayan-shilajit",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

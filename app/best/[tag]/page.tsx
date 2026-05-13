@@ -96,6 +96,16 @@ const TAG_META: Record<string, {
       "Heavy metal safety is especially important for women, particularly those of reproductive age or who are pregnant. Lead, which shilajit can accumulate in poorly purified products, passes the placental barrier and has no safe level of exposure for developing foetuses. Every product on this list has confirmed numeric heavy metal results on a public COA — not just a 'tested' claim — and is manufactured under documented GMP conditions.",
     ],
   },
+  best_himalayan_shilajit: {
+    label: "Best Himalayan Shilajit",
+    h1: "Best Himalayan Shilajit (2026): Top Picks Ranked by Testing & Transparency",
+    metaTitle: "Best Himalayan Shilajit (2026) — Ranked by Testing & Transparency",
+    description: "The best Himalayan shilajit products ranked by COA quality, lab accreditation, and heavy metal safety. 'Himalayan origin' is a marketing claim without independent testing — these products back it up.",
+    editorial: [
+      "The Himalayas are the most commonly cited shilajit source region, and for good reason — the high-altitude geology produces resin with a recognised mineral and fulvic acid profile. But 'Himalayan shilajit' on a label is an unverifiable origin claim without a COA. Because shilajit is not a geographically protected ingredient, any brand can print 'Himalayan' regardless of where their raw material was actually sourced. Independent third-party testing does not confirm geographic origin, but it does confirm that the product contains what it claims and is free of unsafe heavy metal levels — which is the more actionable signal for buyers.",
+      "Of the 166 Himalayan-sourced products in the ShilajitDB database, 56 have a public Certificate of Analysis. The products below are the highest-graded among those — ranked on the same criteria we apply across the full database: COA availability, named laboratory, numeric heavy metal values, and manufacturing transparency.",
+    ],
+  },
   best_third_party_tested: {
     label: "Best Third-Party Tested",
     h1: "Best Third-Party Tested Shilajit (2026): Named Lab, Public COA, Heavy Metals Confirmed",
@@ -220,6 +230,17 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           bestForTags: { has: "editors_pick" },
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_himalayan_shilajit":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          sourceRegion: "Himalayas",
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
