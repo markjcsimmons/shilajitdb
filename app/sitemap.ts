@@ -32,16 +32,32 @@ const BEST_TAGS = [
   "best-value",
   "best-capsules",
   "best-gummies",
+  "best-for-men",
+  "best-for-women",
+  "best-third-party-tested",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, brands] = await Promise.all([
+  const [products, brands, compareProducts, brandsWithCoa] = await Promise.all([
     prisma.product.findMany({
       where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
       select: { slug: true, lastVerifiedAt: true },
       orderBy: { lastVerifiedAt: "desc" },
     }),
     prisma.brand.findMany({
+      select: { slug: true },
+      orderBy: { slug: "asc" },
+    }),
+    // Top 15 products for compare page pairs
+    prisma.product.findMany({
+      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
+      orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+      take: 15,
+      select: { slug: true },
+    }),
+    // Brands that have at least one product with a COA URL (for lab-tests pages)
+    prisma.brand.findMany({
+      where: { products: { some: { isCanonical: true, coaUrl: { not: null } } } },
       select: { slug: true },
       orderBy: { slug: "asc" },
     }),
@@ -81,11 +97,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const brandLabTestsPages: MetadataRoute.Sitemap = brandsWithCoa.map((b) => ({
+    url: absoluteUrl(`/brand/${b.slug}/lab-tests`),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
+  // Generate all compare page pairs from top 15 products
+  const comparePages: MetadataRoute.Sitemap = [];
+  for (let i = 0; i < compareProducts.length; i++) {
+    for (let j = i + 1; j < compareProducts.length; j++) {
+      const [a, b] = [compareProducts[i].slug, compareProducts[j].slug].sort();
+      comparePages.push({
+        url: absoluteUrl(`/compare/${a}-vs-${b}`),
+        changeFrequency: "monthly",
+        priority: 0.5,
+      });
+    }
+  }
+
   return [
     ...staticPages,
     ...learnPages,
     ...bestPages,
     ...productPages,
     ...brandPages,
+    ...brandLabTestsPages,
+    ...comparePages,
   ];
 }

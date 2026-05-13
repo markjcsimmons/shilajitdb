@@ -172,6 +172,9 @@ export default async function BrandPage({
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="muted">{products.length} products</Badge>
+            <Button href={`/brand/${brand.slug}/lab-tests`} variant="secondary">
+              Lab tests →
+            </Button>
             <Button href="/" variant="secondary">
               Back to search
             </Button>

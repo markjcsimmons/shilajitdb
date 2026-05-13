@@ -76,6 +76,36 @@ const TAG_META: Record<string, {
       "All picks carry at minimum a Premium quality tier. Each has a public Certificate of Analysis from a named independent laboratory, confirmed heavy metals testing, and a publicly stated manufacturing country. The grade shown reflects our full grading methodology.",
     ],
   },
+  best_for_men: {
+    label: "Best for Men",
+    h1: "Best Shilajit for Men (2026): Ranked by Testing Quality & Evidence",
+    metaTitle: "Best Shilajit for Men (2026) — Ranked by Testing Quality & Evidence",
+    description: "The best shilajit products for men, ranked by COA quality, lab credibility, and testing transparency. Includes context on the testosterone and energy evidence specific to male physiology.",
+    editorial: [
+      "The primary clinical evidence for shilajit in men relates to testosterone support and fatigue resistance. Pandit et al. (2016) found significant increases in total and free testosterone in healthy men aged 45–55 taking 250 mg twice daily for 90 days. Keller et al. (2019) found meaningful improvements in fatigue-induced strength decline over 8 weeks at 500 mg/day. Both studies used standardised, independently tested shilajit — not commodity powders.",
+      "For men using shilajit for performance or hormonal support, product quality is directly relevant to whether those results are reproducible. A product without independent testing has no verifiable connection to the preparations studied clinically. Every product on this list has a public Certificate of Analysis from a named laboratory, confirmed heavy metals testing, and a quality tier of Premium or above.",
+    ],
+  },
+  best_for_women: {
+    label: "Best for Women",
+    h1: "Best Shilajit for Women (2026): Ranked by Testing Quality & Safety",
+    metaTitle: "Best Shilajit for Women (2026) — Ranked by Testing Quality & Safety",
+    description: "The best shilajit products for women, ranked by COA quality, lab credibility, and heavy metal safety. Includes context on the iron bioavailability and energy evidence relevant to female physiology.",
+    editorial: [
+      "The most relevant clinical evidence for women relates to iron bioavailability and energy. Shilajit has been studied for its effect on iron absorption — fulvic acid forms soluble complexes with iron that may improve bioavailability compared to inorganic iron salts. For women who experience fatigue related to low iron, this is a mechanistically credible pathway. The testosterone evidence, primarily studied in men, is less directly applicable, though shilajit's broader adaptogenic and mitochondrial support effects are not sex-specific.",
+      "Heavy metal safety is especially important for women, particularly those of reproductive age or who are pregnant. Lead, which shilajit can accumulate in poorly purified products, passes the placental barrier and has no safe level of exposure for developing foetuses. Every product on this list has confirmed numeric heavy metal results on a public COA — not just a 'tested' claim — and is manufactured under documented GMP conditions.",
+    ],
+  },
+  best_third_party_tested: {
+    label: "Best Third-Party Tested",
+    h1: "Best Third-Party Tested Shilajit (2026): Named Lab, Public COA, Heavy Metals Confirmed",
+    metaTitle: "Best Third-Party Tested Shilajit (2026) — Named Lab, Public COA, Heavy Metals Confirmed",
+    description: "Shilajit products with a public COA from a named independent laboratory AND confirmed numeric heavy metal results. The strictest testing standard in the ShilajitDB database.",
+    editorial: [
+      "This list applies the strictest criteria in the database: a publicly accessible Certificate of Analysis from a named independent laboratory, with actual numeric values for lead, arsenic, mercury, and cadmium — not a pass/fail stamp, not a summary certificate, and not an in-house lab. Fewer than 15% of products reviewed meet all three criteria simultaneously.",
+      "The distinction between 'third-party tested' and genuinely third-party tested matters. Brands that do not name their laboratory cannot have their testing claim independently verified. Brands that show only pass/fail results rather than specific values cannot be evaluated against regulatory thresholds such as USP 232 or California Proposition 65. The products here show the actual numbers — you can verify them yourself.",
+    ],
+  },
 };
 
 // ── Shared select ─────────────────────────────────────────────────────────────
@@ -190,6 +220,33 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
           bestForTags: { has: "editors_pick" },
         },
         orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_for_men":
+    case "best_for_women":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          coaStatus: "PUBLIC",
+          thirdPartyTestingLab: { not: null },
+          qualityTier: { in: ["ULTRA_PREMIUM", "PREMIUM"] },
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
+        select: PRODUCT_SELECT,
+      });
+
+    case "best_third_party_tested":
+      return prisma.product.findMany({
+        where: {
+          ...BASE_WHERE,
+          coaStatus: "PUBLIC",
+          thirdPartyTestingLab: { not: null },
+          heavyMetalsTested: "CONFIRMED",
+        },
+        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+        take: 5,
         select: PRODUCT_SELECT,
       });
 
