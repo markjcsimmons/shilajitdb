@@ -866,6 +866,20 @@ export default async function ProductPage({
         )}
       </Accordion>
 
+      {/* Lab results link */}
+      <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold text-[#EEF0F8]">COA & Lab Test Results</p>
+          <p className="text-xs text-[#6E7A9A] mt-0.5">Full COA status, third-party lab, heavy metals data, and source documents</p>
+        </div>
+        <Link
+          href={`/product/${product.slug}/lab-results`}
+          className="shrink-0 rounded-lg border border-[#252A40] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#3D7AFF] hover:text-[#6E9FFF] transition-colors"
+        >
+          View lab results →
+        </Link>
+      </div>
+
       {/* Compare */}
       <Accordion title="Compare with another product">
         <p className="mb-4 text-sm text-[#8892B8]">

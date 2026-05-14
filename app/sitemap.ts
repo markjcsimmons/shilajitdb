@@ -39,7 +39,7 @@ const BEST_TAGS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, brands, compareProducts, brandsWithCoa] = await Promise.all([
+  const [products, brands, compareProducts, brandsWithCoa, productsWithLabData] = await Promise.all([
     prisma.product.findMany({
       where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
       select: { slug: true, lastVerifiedAt: true },
@@ -61,6 +61,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: { products: { some: { isCanonical: true, coaUrl: { not: null } } } },
       select: { slug: true },
       orderBy: { slug: "asc" },
+    }),
+    // Products with any lab data (for /product/[slug]/lab-results pages)
+    prisma.product.findMany({
+      where: {
+        isCanonical: true,
+        dataCompleteness: { not: "LOW" },
+        OR: [
+          { coaUrl: { not: null } },
+          { thirdPartyTestingLab: { not: null } },
+          { heavyMetalsTested: { not: null } },
+          { coaNotes: { not: null } },
+        ],
+      },
+      select: { slug: true, lastVerifiedAt: true },
+      orderBy: { lastVerifiedAt: "desc" },
     }),
   ]);
 
@@ -104,6 +119,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const productLabResultsPages: MetadataRoute.Sitemap = productsWithLabData.map((p) => ({
+    url: absoluteUrl(`/product/${p.slug}/lab-results`),
+    lastModified: p.lastVerifiedAt ?? undefined,
+    changeFrequency: "weekly",
+    priority: 0.65,
+  }));
+
   // Generate all compare page pairs from top 15 products
   const comparePages: MetadataRoute.Sitemap = [];
   for (let i = 0; i < compareProducts.length; i++) {
@@ -122,6 +144,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...learnPages,
     ...bestPages,
     ...productPages,
+    ...productLabResultsPages,
     ...brandPages,
     ...brandLabTestsPages,
     ...comparePages,
