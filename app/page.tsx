@@ -32,42 +32,16 @@ export const metadata: Metadata = {
 };
 
 const BEST_FOR_CATEGORIES = [
-  {
-    tag: "editors_pick",
-    label: "Editor's Picks",
-    description: "Hand-selected across quality, transparency, and value",
-    icon: "⭐",
-  },
-  {
-    tag: "best_tested",
-    label: "Best Tested",
-    description: "Public COA from a named independent lab, heavy metals confirmed",
-    icon: "🔬",
-  },
-  {
-    tag: "best_resin",
-    label: "Best Resin",
-    description: "Top-rated resin — the least processed, most traditional form",
-    icon: "🪨",
-  },
-  {
-    tag: "best_value",
-    label: "Best Budget",
-    description: "Strong testing credentials at a competitive price",
-    icon: "💰",
-  },
-  {
-    tag: "best_capsules",
-    label: "Best Capsules",
-    description: "Top capsule products by grade, testing, and transparency",
-    icon: "💊",
-  },
-  {
-    tag: "best_gummies",
-    label: "Best Gummies",
-    description: "Top gummy-form shilajit products by grade and transparency",
-    icon: "🍬",
-  },
+  { tag: "editors_pick",           label: "Editor's Picks",      icon: "⭐" },
+  { tag: "best_tested",            label: "Best Tested",         icon: "🔬" },
+  { tag: "best_resin",             label: "Best Resin",          icon: "🪨" },
+  { tag: "best_value",             label: "Best Budget",         icon: "💰" },
+  { tag: "best_capsules",          label: "Best Capsules",       icon: "💊" },
+  { tag: "best_gummies",           label: "Best Gummies",        icon: "🍬" },
+  { tag: "best_for_men",           label: "Best for Men",        icon: "💪" },
+  { tag: "best_for_women",         label: "Best for Women",      icon: "🌸" },
+  { tag: "best_third_party_tested",label: "3rd-Party Tested",    icon: "🧪" },
+  { tag: "best_himalayan_shilajit",label: "Best Himalayan",      icon: "🏔️" },
 ];
 
 export default async function HomePage({
@@ -218,16 +192,15 @@ export default async function HomePage({
             {/* Right: Top Picks */}
             <div className="mt-10 lg:mt-0 lg:flex lg:flex-col">
               <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-3 shrink-0">Top Picks</p>
-              <div className="grid grid-cols-3 lg:grid-cols-2 gap-2 lg:flex-1 lg:grid-rows-3">
+              <div className="grid grid-cols-2 gap-1.5 lg:flex-1">
                 {BEST_FOR_CATEGORIES.map((cat) => (
                   <Link
                     key={cat.tag}
                     href={`/best/${cat.tag.replace(/_/g, "-")}`}
-                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-3 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex flex-col"
+                    className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-2 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex items-center gap-2"
                   >
-                    <div className="text-xl mb-1.5">{cat.icon}</div>
-                    <div className="text-xs font-semibold text-[#EEF0F8] mb-1 leading-snug">{cat.label}</div>
-                    <div className="hidden lg:block text-[11px] text-[#6E7A9A] leading-snug">{cat.description}</div>
+                    <span className="text-base shrink-0">{cat.icon}</span>
+                    <span className="text-xs font-semibold text-[#EEF0F8] leading-snug">{cat.label}</span>
                   </Link>
                 ))}
               </div>
