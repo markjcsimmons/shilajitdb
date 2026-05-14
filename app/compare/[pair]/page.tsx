@@ -1,8 +1,9 @@
-import { Badge, Button } from "@/components/ui";
+import { Badge, Button, cn } from "@/components/ui";
 import { ProductCard, type ProductCardData } from "@/components/product-card";
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
+import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -296,24 +297,61 @@ export default async function ComparePage({
 
       {/* Header */}
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
-        <div className="flex items-center gap-2 text-xs text-[#4A5070] mb-3">
+        <div className="flex items-center gap-2 text-xs text-[#4A5070] mb-5">
           <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
           <span>/</span>
           <span>Compare</span>
         </div>
-        <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8]">
-          Compare Shilajit Products
-        </h1>
-        <p className="mt-2 text-sm text-[#8892B8]">
-          <Link href={`/product/${a.slug}`} className="text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">
-            {a.brand.name} — {a.name}
-          </Link>{" "}
-          <span className="text-[#4A5070]">vs</span>{" "}
-          <Link href={`/product/${b.slug}`} className="text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">
-            {b.brand.name} — {b.name}
-          </Link>
-        </p>
-        <p className="mt-2 text-xs text-[#4A5070]">
+
+        {/* Grade hero — the scores lead */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          {/* Product A */}
+          <div className="flex flex-1 items-center gap-4 min-w-0">
+            <div
+              className={cn(
+                "shrink-0 h-20 w-20 rounded-xl flex items-center justify-center text-3xl font-bold",
+                gradeBadgeClasses(a.overallGrade),
+              )}
+            >
+              {gradeLabel(a.overallGrade)}
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs text-[#6E7A9A] mb-0.5">{a.brand.name}</div>
+              <Link
+                href={`/product/${a.slug}`}
+                className="text-sm font-semibold text-[#EEF0F8] hover:text-[#6E9FFF] transition-colors leading-snug"
+              >
+                {a.name}
+              </Link>
+            </div>
+          </div>
+
+          {/* vs */}
+          <div className="shrink-0 text-center text-base font-semibold text-[#4A5070]">vs</div>
+
+          {/* Product B */}
+          <div className="flex flex-1 items-center gap-4 min-w-0 sm:flex-row-reverse">
+            <div
+              className={cn(
+                "shrink-0 h-20 w-20 rounded-xl flex items-center justify-center text-3xl font-bold",
+                gradeBadgeClasses(b.overallGrade),
+              )}
+            >
+              {gradeLabel(b.overallGrade)}
+            </div>
+            <div className="min-w-0 sm:text-right">
+              <div className="text-xs text-[#6E7A9A] mb-0.5">{b.brand.name}</div>
+              <Link
+                href={`/product/${b.slug}`}
+                className="text-sm font-semibold text-[#EEF0F8] hover:text-[#6E9FFF] transition-colors leading-snug"
+              >
+                {b.name}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-5 text-xs text-[#4A5070]">
           Independent comparison · COA status, lab accreditation, heavy metals, form, and price
         </p>
       </div>

@@ -4,6 +4,8 @@ import { FilterBar, type FilterState } from "@/components/filter-bar";
 import { SearchBox } from "@/components/search-box";
 import { SortSelect } from "@/components/sort-select";
 import { ProductCard } from "@/components/product-card";
+import { CompareProvider } from "@/components/compare-provider";
+import { CompareButton } from "@/components/compare-button";
 import { prisma } from "@/lib/db";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
 import {
@@ -277,10 +279,13 @@ export default async function HomePage({
           </div>
         </div>
       ) : (
-        <>
+        <CompareProvider>
           <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
             {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <div key={p.id}>
+                <ProductCard product={p} />
+                <CompareButton slug={p.slug} name={p.name} grade={p.overallGrade} />
+              </div>
             ))}
             {products.length === 0 && (
               <div className="col-span-2 rounded-lg border border-dashed border-[#252A40] bg-[#0F1320] p-10 text-center">
@@ -292,7 +297,7 @@ export default async function HomePage({
             )}
           </div>
           <Pagination total={total} filters={filters} pageSize={PAGE_SIZE} />
-        </>
+        </CompareProvider>
       )}
     </div>
   );
