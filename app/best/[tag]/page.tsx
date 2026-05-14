@@ -145,135 +145,22 @@ const BASE_WHERE = {
   isCanonical: true,
 };
 
-// ── Value score algorithm ─────────────────────────────────────────────────────
-// Quality points / price per gram — higher = more quality per dollar
-
 type ProductResult = Awaited<ReturnType<typeof prisma.product.findMany<{ select: typeof PRODUCT_SELECT }>>>[number];
-
-async function fetchValueProducts(): Promise<ProductResult[]> {
-  const candidates = await prisma.product.findMany({
-    where: {
-      isCanonical: true,
-      pricePerGramCents: { not: null, gt: 0 },
-      qualityTier: { not: "POOR" },
-    },
-    select: PRODUCT_SELECT,
-  });
-
-  function qualityPoints(p: ProductResult): number {
-    let pts = 0;
-    if (p.qualityTier === "ULTRA_PREMIUM") pts += 4;
-    else if (p.qualityTier === "PREMIUM") pts += 3;
-    else if (p.qualityTier === "AVERAGE") pts += 2;
-    if (p.coaStatus === "PUBLIC") pts += 2;
-    else if (p.coaStatus === "PUBLIC_EMBEDDED") pts += 1;
-    if (p.thirdPartyTestingLab) pts += 1;
-    if (p.heavyMetalsTested === "CONFIRMED") pts += 1;
-    return pts;
-  }
-
-  return candidates
-    .map((p) => ({ ...p, _score: qualityPoints(p) / p.pricePerGramCents! }))
-    .sort((a, b) => b._score - a._score)
-    .slice(0, 5)
-    .map(({ _score, ...p }) => p);
-}
 
 // ── Per-tag product fetchers ──────────────────────────────────────────────────
 
 async function fetchProducts(tag: string): Promise<ProductResult[]> {
-
-  switch (tag) {
-    case "best_tested":
-      return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          coaStatus: "PUBLIC",
-          thirdPartyTestingLab: { not: null },
-        },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_resin":
-      return prisma.product.findMany({
-        where: { ...BASE_WHERE, form: "RESIN" },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_capsules":
-      return prisma.product.findMany({
-        where: { ...BASE_WHERE, form: "CAPSULE" },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_gummies":
-      return prisma.product.findMany({
-        where: { ...BASE_WHERE, form: "GUMMY" },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_value":
-      return fetchValueProducts();
-
-    case "editors_pick":
-      return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          bestForTags: { has: "editors_pick" },
-        },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_himalayan_shilajit":
-      return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          sourceRegion: "Himalayas",
-        },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_for_men":
-    case "best_for_women":
-      return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          coaStatus: "PUBLIC",
-          thirdPartyTestingLab: { not: null },
-          qualityTier: { in: ["ULTRA_PREMIUM", "PREMIUM"] },
-        },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    case "best_third_party_tested":
-      return prisma.product.findMany({
-        where: {
-          ...BASE_WHERE,
-          coaStatus: "PUBLIC",
-          thirdPartyTestingLab: { not: null },
-          heavyMetalsTested: "CONFIRMED",
-        },
-        orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-        take: 5,
-        select: PRODUCT_SELECT,
-      });
-
-    default:
-      return [];
-  }
+  // All tags are driven by the bestForTags field, which is maintained by the
+  // tagging script (with 2-per-brand cap and 15-product limit per category).
+  // best_value uses a quality-per-dollar score but still reads from bestForTags.
+  return prisma.product.findMany({
+    where: {
+      ...BASE_WHERE,
+      bestForTags: { has: tag },
+    },
+    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    select: PRODUCT_SELECT,
+  });
 }
 
 // ── Route ─────────────────────────────────────────────────────────────────────
