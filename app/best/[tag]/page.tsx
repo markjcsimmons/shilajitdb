@@ -159,6 +159,7 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
       bestForTags: { has: tag },
     },
     orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    take: 5,
     select: PRODUCT_SELECT,
   });
 }
