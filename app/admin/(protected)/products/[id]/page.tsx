@@ -359,7 +359,7 @@ export default async function AdminProductEditPage({
             <label className="text-xs font-medium text-slate-700">
               Last verified date (optional)
             </label>
-            <Input name="lastVerifiedAt" defaultValue={lastVerifiedValue} placeholder="YYYY-MM-DD" />
+            <Input type="date" name="lastVerifiedAt" defaultValue={lastVerifiedValue} />
           </div>
 
           <MetaDescriptionField
