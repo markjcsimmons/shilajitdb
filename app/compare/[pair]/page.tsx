@@ -1,5 +1,6 @@
 import { Badge, Button, cn } from "@/components/ui";
 import { ProductCard, type ProductCardData } from "@/components/product-card";
+import { CompareSwapper } from "@/components/compare-swapper";
 import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
@@ -213,6 +214,13 @@ export default async function ComparePage({
   ]);
   if (!a || !b) notFound();
 
+  // All products for the swap pickers
+  const allProducts = await prisma.product.findMany({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
+    select: { slug: true, name: true, brand: { select: { name: true } } },
+    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+  });
+
   // Top alternatives — best-graded products that aren't either of these two
   const recommended = await prisma.product.findMany({
     where: {
@@ -354,6 +362,15 @@ export default async function ComparePage({
         <p className="mt-5 text-xs text-[#4A5070]">
           Independent comparison · COA status, lab accreditation, heavy metals, form, and price
         </p>
+
+        <CompareSwapper
+          slugA={aSlug}
+          slugB={bSlug}
+          options={allProducts.map((p) => ({
+            slug: p.slug,
+            label: `${p.brand.name} — ${p.name}`,
+          }))}
+        />
       </div>
 
       {/* Comparison table */}
