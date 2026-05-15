@@ -8,18 +8,22 @@ import { cn } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Best Shilajit Brands (2026): 189+ Products Ranked by COA & Lab Testing | ShilajitDB",
-  description:
-    "Compare 189+ shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings — find the best shilajit resin, capsules, and more.",
-  alternates: { canonical: absoluteUrl("/shilajit-comparison") },
-  openGraph: {
-    title: "Best Shilajit Brands (2026): 189+ Products Ranked by COA & Lab Testing",
-    description:
-      "Compare 189+ shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings.",
-    url: absoluteUrl("/shilajit-comparison"),
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const totalCount = await prisma.product.count({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
+  });
+  const count = `${Math.floor(totalCount / 10) * 10}+`;
+  return {
+    title: `Best Shilajit Brands (2026): ${count} Products Ranked by COA & Lab Testing | ShilajitDB`,
+    description: `Compare ${count} shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings — find the best shilajit resin, capsules, and more.`,
+    alternates: { canonical: absoluteUrl("/shilajit-comparison") },
+    openGraph: {
+      title: `Best Shilajit Brands (2026): ${count} Products Ranked by COA & Lab Testing`,
+      description: `Compare ${count} shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings.`,
+      url: absoluteUrl("/shilajit-comparison"),
+    },
+  };
+}
 
 const PRODUCT_SELECT = {
   id: true, slug: true, name: true, form: true,
