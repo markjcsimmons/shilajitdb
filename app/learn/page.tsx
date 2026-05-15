@@ -142,6 +142,55 @@ const articles = [
       "Why pre-workout timing recommendations for shilajit go beyond the evidence — and how to set realistic expectations for a chronic-use supplement.",
     tag: "Practical",
   },
+  {
+    slug: "shilajit-grading-explained",
+    title: "Shilajit Grades Explained: What A+, A, B, C, D Mean and Why They Differ",
+    description:
+      "What separates an A+ grade from an A or B — the specific COA, lab, and manufacturing criteria that move a product between grades.",
+    tag: "Buying Guide",
+  },
+  {
+    slug: "shilajit-coa-pass-fail-vs-numeric",
+    title: "Pass/Fail COA vs Numeric Results: Why the Difference Matters",
+    description:
+      "Why a COA that says 'Pass' for heavy metals tells you far less than one with actual ppm values — and how to tell the difference.",
+    tag: "Testing",
+  },
+  {
+    slug: "shilajit-testing-labs-compared",
+    title: "Shilajit Testing Labs Compared: Eurofins, Certified Laboratories, Anresco & Others",
+    description:
+      "What ISO 17025 accreditation means, how the major labs differ, and why the lab name on a COA matters as much as the results.",
+    tag: "Testing",
+  },
+  {
+    slug: "shilajit-extract-vs-resin",
+    title: "Shilajit Extract vs Raw Resin: Are You Getting What You Think?",
+    description:
+      "How standardised extract percentages are used deceptively on labels — and what to look for in a capsule COA.",
+    tag: "Buying Guide",
+  },
+  {
+    slug: "himalayan-shilajit-india-pakistan-nepal",
+    title: "Himalayan Shilajit: India vs Pakistan vs Nepal — Does the Sub-Region Matter?",
+    description:
+      "The geological differences between Himalayan sub-regions, whether they affect quality, and why 'Himalayan' remains an unverifiable claim without a COA.",
+    tag: "Sourcing",
+  },
+  {
+    slug: "shilajit-ashwagandha-combination",
+    title: "Shilajit with Ashwagandha: Synergy, Evidence, and What to Watch For",
+    description:
+      "What the clinical evidence says for each ingredient separately, whether there is evidence for the combination, and the dosing problem in most combination products.",
+    tag: "Science",
+  },
+  {
+    slug: "shilajit-fulvic-acid-how-much",
+    title: "How Much Fulvic Acid Is Enough? Comparing Shilajit Claims Against the Evidence",
+    description:
+      "Why the 70%+ and 80%+ fulvic acid marketing figures are not evidence-based thresholds — and what the research actually used.",
+    tag: "Science",
+  },
 ];
 
 const tagColors: Record<string, string> = {
@@ -151,6 +200,8 @@ const tagColors: Record<string, string> = {
   Safety: "bg-[#200505] text-[#EF4444] border border-[#EF4444]/30",
   Science: "bg-[#051428] text-[#3B82F6] border border-[#3B82F6]/30",
   Practical: "bg-[#1F2540] text-[#8892B8] border border-[#252A40]",
+  Testing: "bg-[#0A1628] text-[#6E9FFF] border border-[#3D7AFF]/30",
+  Ingredients: "bg-[#0F1628] text-[#F59E0B] border border-[#F59E0B]/30",
 };
 
 export default function LearnIndexPage() {

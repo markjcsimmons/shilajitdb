@@ -23,6 +23,13 @@ const LEARN_SLUGS = [
   "shilajit-clinical-dosage",
   "shilajit-buyers-checklist",
   "shilajit-pre-workout",
+  "shilajit-grading-explained",
+  "shilajit-coa-pass-fail-vs-numeric",
+  "shilajit-testing-labs-compared",
+  "shilajit-extract-vs-resin",
+  "himalayan-shilajit-india-pakistan-nepal",
+  "shilajit-ashwagandha-combination",
+  "shilajit-fulvic-acid-how-much",
 ];
 
 const BEST_TAGS = [
