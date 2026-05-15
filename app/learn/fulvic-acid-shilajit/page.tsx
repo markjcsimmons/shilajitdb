@@ -207,8 +207,8 @@ export default function FulvicAcidPage() {
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">
-          <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
-          <ol className="space-y-2 text-xs text-[#4A5070]">
+          <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
+          <ol className="space-y-2 text-xs text-[#8892B8]">
             <li>
               1. Carrasco-Gallardo C, et al. "Shilajit: A Natural Phytocomplex with Potential Procognitive Activity."{" "}
               <em>Int J Alzheimers Dis</em>. 2012;2012:674142.{" "}

@@ -248,8 +248,8 @@ export default function HimalayanShilajitSubRegionPage() {
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">
-            <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
-            <ol className="space-y-2 text-xs text-[#4A5070]">
+            <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
+            <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>
                 1. Schepetkin IA, et al. Biological activities of humic substances.{" "}
                 <em>Arch Pharm Res</em>. 2003;26(6):441–459.{" "}

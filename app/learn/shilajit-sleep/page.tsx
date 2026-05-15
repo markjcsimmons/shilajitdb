@@ -217,8 +217,8 @@ export default function ShilajitSleepPage() {
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">
-            <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
-            <ol className="space-y-2 text-xs text-[#4A5070]">
+            <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
+            <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>
                 1. Surapaneni DK et al. &quot;Shilajit attenuates behavioral symptoms of chronic fatigue syndrome by modulating the hypothalamic–pituitary–adrenal axis and mitochondrial bioenergetics in rats.&quot;{" "}
                 <em>J Ethnopharmacol</em>. 2012;143(1):91–99.{" "}

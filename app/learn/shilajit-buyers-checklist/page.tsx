@@ -316,8 +316,8 @@ export default function BuyersChecklistPage() {
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">
-            <h2 className="text-xs font-semibold text-[#4A5070] uppercase tracking-wider mb-3">References</h2>
-            <ol className="space-y-2 text-xs text-[#4A5070]">
+            <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
+            <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>
                 1. FDA. Dietary Supplement Labeling Guide. Chapter IV: Nutrition Labeling.{" "}
                 <a href="https://www.fda.gov/food/dietary-supplements-guidance-documents-regulatory-information/dietary-supplement-labeling-guide" target="_blank" rel="noopener noreferrer" className="underline">FDA.gov</a>
