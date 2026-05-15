@@ -43,11 +43,12 @@ export default function CoaPassFailVsNumericPage() {
               Pass/Fail COA vs Numeric Results: Why the Difference Matters for Shilajit Safety
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 8 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
             <p className="text-base">
-              When a shilajit brand says &quot;third-party tested for heavy metals,&quot; the follow-up
+              When a shilajit brand says &quot;third-party tested for <Link href="/learn/shilajit-heavy-metals" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">heavy metals</Link>,&quot; the follow-up
               question that matters is: what type of results did that testing produce? There is
               a meaningful difference between a Certificate of Analysis that reports &quot;PASS&quot; for
               lead and one that reports &quot;Lead: 0.121 mg/kg (limit: 10 mg/kg).&quot; Both might be

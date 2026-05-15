@@ -45,6 +45,7 @@ export default function SourcingRegionsPage() {
           <p className="mt-3 text-sm text-[#4A5070]">
             Last reviewed April 2026 · 7 min read
           </p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -160,7 +161,7 @@ export default function SourcingRegionsPage() {
             Whether this blending claim is supported by controlled bioavailability data is an open
             question. What it does underscore is that a single-origin claim — particularly one as
             broad and unverifiable as "Himalayan" — should not function as a proxy for quality.
-            A product sourced from the Altai range with a public COA from a named laboratory is,
+            A product sourced from the Altai range with a <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">public COA from a named laboratory</Link> is,
             by any verifiable metric, a better choice than a product claiming premium Himalayan
             origin with no testing documentation.
           </p>
@@ -213,6 +214,7 @@ export default function SourcingRegionsPage() {
           >
             Browse products with public COAs →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-himalayan-shilajit" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best Himalayan shilajit →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

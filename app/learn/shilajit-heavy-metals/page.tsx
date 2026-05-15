@@ -43,6 +43,7 @@ export default function HeavyMetalsPage() {
             Shilajit and Heavy Metals: Safety, Testing &amp; Acceptable Levels
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 8 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -58,7 +59,7 @@ export default function HeavyMetalsPage() {
             found to contain elevated heavy metal levels, and independent testing by consumer
             organisations has found non-trivial lead concentrations in products sold on major
             retail platforms. The solution is straightforward: buy from brands that publish
-            a third-party COA with a complete heavy metals panel.
+            a <Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">third-party COA</Link> with a complete heavy metals panel.
           </p>
 
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Why Shilajit Contains Heavy Metals</h2>
@@ -201,6 +202,12 @@ export default function HeavyMetalsPage() {
           >
             Browse heavy-metals-tested products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]">
+            See the products with confirmed numeric heavy metal values:{" "}
+            <Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best third-party tested →</Link>
+            {" · "}
+            <Link href="/best/best-for-women" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best for women →</Link>
+          </p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

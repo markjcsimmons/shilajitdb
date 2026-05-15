@@ -43,6 +43,7 @@ export default function FakeShilajitPage() {
             How to Spot Fake or Adulterated Shilajit
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -58,7 +59,7 @@ export default function FakeShilajitPage() {
             <p className="text-xs font-semibold text-[#EAB308] mb-1">Important caveat</p>
             <p className="text-xs text-[#EAB308]">
               Physical tests can help identify obvious fakes but cannot definitively verify authentic
-              shilajit or detect all forms of adulteration. A COA from a named, accredited laboratory
+              shilajit or detect all forms of adulteration. A <Link href="/learn/how-to-read-shilajit-coa" className="text-[#EAB308] underline underline-offset-2 hover:text-white transition-colors">COA from a named, accredited laboratory</Link>
               is the only reliable verification method. Use physical tests as a sanity check, not a
               substitute for documentation.
             </p>
@@ -196,6 +197,7 @@ export default function FakeShilajitPage() {
           >
             Browse named-lab, public-COA products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best third-party tested →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

@@ -43,6 +43,7 @@ export default function FulvicAcidPage() {
             What Is Fulvic Acid? The Primary Bioactive in Shilajit Explained
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -204,6 +205,7 @@ export default function FulvicAcidPage() {
           >
             Browse verified products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best tested shilajit →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

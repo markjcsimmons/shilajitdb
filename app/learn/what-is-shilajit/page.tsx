@@ -46,6 +46,7 @@ export default function WhatIsShilajitPage() {
           <p className="mt-3 text-sm text-[#4A5070]">
             Last reviewed April 2026 · 8 min read
           </p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="prose prose-sm prose-invert max-w-none space-y-4 text-[#8892B8] leading-relaxed">
@@ -187,13 +188,13 @@ export default function WhatIsShilajitPage() {
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Quality Depends on Purity and Source</h2>
           <p>
             Raw shilajit can contain heavy metals, mycotoxins, and microbial contamination.
-            Authentic, purified shilajit that passes third-party laboratory testing is a different
+            Authentic, purified shilajit that passes <Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">third-party laboratory testing</Link> is a different
             product from an untested resin sold on a marketplace. The composition of the final product
             is determined by three variables: the geology of the source deposit, the purification
             method, and whether that purification has been independently verified.
           </p>
           <p>
-            This is precisely why a public Certificate of Analysis from a named laboratory is the
+            This is precisely why a <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">public Certificate of Analysis</Link> from a named laboratory is the
             most important thing to look for when buying.
           </p>
         </section>
@@ -210,6 +211,7 @@ export default function WhatIsShilajitPage() {
           >
             Browse verified products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/editors-pick" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Editor's picks →</Link> · <Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best third-party tested →</Link></p>
         </div>
 
         {/* Sources */}

@@ -45,6 +45,7 @@ export default function HowToReadCOAPage() {
           <p className="mt-3 text-sm text-[#4A5070]">
             Last reviewed April 2026 · 9 min read
           </p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -59,7 +60,7 @@ export default function HowToReadCOAPage() {
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Step 1: Identify the Laboratory</h2>
           <p>
             The first thing to check is who ran the tests. A credible COA comes from an accredited
-            third-party laboratory — not from the brand's own facility or a laboratory the brand owns.
+            <Link href="/learn/shilajit-testing-labs-compared" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">third-party laboratory</Link> — not from the brand's own facility or a laboratory the brand owns.
             Look for:
           </p>
           <ul className="list-disc pl-5 space-y-2 mt-2">
@@ -253,6 +254,7 @@ export default function HowToReadCOAPage() {
           >
             Browse products with public COAs →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best third-party tested →</Link> · <Link href="/best/best-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best tested →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

@@ -43,6 +43,7 @@ export default function FormsComparedPage() {
             Resin vs. Capsules vs. Powder vs. Gummies: Which Shilajit Form Is Best?
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -65,7 +66,7 @@ export default function FormsComparedPage() {
             convincing fake resin requires significant effort; adding fillers changes the texture,
             solubility, and smell in ways that are physically apparent. This is why resin is
             generally considered the reference format — and why a COA for a resin product tells
-            you the most about the underlying material.
+            you the most about the underlying material. See the <Link href="/best/best-resin" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">best-tested resins →</Link>
           </p>
           <p>
             The main drawbacks: it requires measuring a small dose (typically a pea-sized portion,
@@ -233,6 +234,14 @@ export default function FormsComparedPage() {
             <Link href="/?form=POWDER" className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 transition-colors">Powder</Link>
             <Link href="/?form=GUMMY" className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 transition-colors">Gummies</Link>
           </div>
+          <p className="mt-3 text-xs text-[#4A5070]">
+            Ranked picks by form:{" "}
+            <Link href="/best/best-resin" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best resin →</Link>
+            {" · "}
+            <Link href="/best/best-capsules" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best capsules →</Link>
+            {" · "}
+            <Link href="/best/best-gummies" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best gummies →</Link>
+          </p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

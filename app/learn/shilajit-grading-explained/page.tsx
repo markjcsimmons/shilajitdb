@@ -43,6 +43,7 @@ export default function ShilajitGradingExplainedPage() {
               Shilajit Grades Explained: What A+, A, B, C, D Mean and Why They Differ
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 9 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -57,7 +58,7 @@ export default function ShilajitGradingExplainedPage() {
             <p>
               This article explains what each grade means in practice, the specific criteria
               that separate A+ from A, why price has no relationship to grade, and what a
-              brand would need to change to move from, say, a C to a B.
+              brand would need to change to move from, say, a C to a B. See the <Link href="/methodology" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">full methodology →</Link>
             </p>
 
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">How the Overall Grade Is Calculated</h2>

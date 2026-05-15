@@ -43,6 +43,7 @@ export default function MuscleRecoveryPage() {
               Shilajit for Muscle Recovery: What the Clinical Evidence Shows
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 8 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -188,8 +189,8 @@ export default function MuscleRecoveryPage() {
               getting results and not.
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li>A public COA with fulvic acid percentage measured on the finished product</li>
-              <li>A heavy metals panel confirming the product is safe for daily long-term use</li>
+              <li>A <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">public COA</Link> with fulvic acid percentage measured on the finished product</li>
+              <li>A <Link href="/learn/shilajit-heavy-metals" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">heavy metals panel</Link> confirming the product is safe for daily long-term use</li>
               <li>A named, independent laboratory — not in-house testing</li>
               <li>Sufficient dose: products delivering less than 250 mg per serving have no clinical basis for recovery claims</li>
             </ul>
@@ -207,6 +208,7 @@ export default function MuscleRecoveryPage() {
             >
               Browse Ultra Premium products →
             </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-for-men" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best for men →</Link> · <Link href="/best/best-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best tested →</Link></p>
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">

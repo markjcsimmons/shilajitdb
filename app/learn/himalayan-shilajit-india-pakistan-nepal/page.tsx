@@ -43,6 +43,7 @@ export default function HimalayanShilajitSubRegionPage() {
               Himalayan Shilajit: India vs Pakistan vs Nepal — Does the Sub-Region Matter?
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 10 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">

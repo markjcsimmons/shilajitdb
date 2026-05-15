@@ -58,6 +58,7 @@ export default function ShilajitBenefitsPage() {
             Shilajit Benefits: What the Evidence Actually Supports
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 10 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <div className="rounded-xl bg-[#171C2E] border border-[#252A40] p-4">
@@ -241,7 +242,7 @@ export default function ShilajitBenefitsPage() {
               Almost all clinical research on shilajit used purified, authenticated material —
               typically standardised to a known fulvic acid percentage and tested for heavy metals
               and microbial contamination. The results of these studies cannot be reliably
-              extrapolated to unverified products sold without a COA. If a product does not
+              extrapolated to unverified products sold without a <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">COA</Link>. If a product does not
               meet the same quality standard as the material studied, there is no reason to
               expect the same outcomes.
             </p>
@@ -259,6 +260,7 @@ export default function ShilajitBenefitsPage() {
           >
             Browse Ultra Premium products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/editors-pick" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Editor's picks →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

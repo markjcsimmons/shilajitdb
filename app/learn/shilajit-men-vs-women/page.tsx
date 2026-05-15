@@ -43,6 +43,7 @@ export default function MenVsWomenPage() {
             Shilajit for Men and Women: Are the Effects Different?
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 8 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -171,7 +172,7 @@ export default function MenVsWomenPage() {
           <h3 className="font-semibold text-[#EEF0F8] mt-4">Pregnancy and breastfeeding</h3>
           <p>
             No safety data exists for shilajit use during pregnancy or breastfeeding. Given the
-            heavy metal risks associated with unverified shilajit products, and the absence of
+            <Link href="/learn/shilajit-heavy-metals" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">heavy metal risks</Link> associated with unverified shilajit products, and the absence of
             safety studies in this population, shilajit is not recommended during pregnancy or
             breastfeeding. Even verified, high-quality products carry an uncertain risk profile
             in this context.
@@ -216,6 +217,7 @@ export default function MenVsWomenPage() {
           >
             Open the database →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-for-men" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best for men →</Link> · <Link href="/best/best-for-women" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best for women →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

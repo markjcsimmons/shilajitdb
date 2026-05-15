@@ -43,6 +43,7 @@ export default function FulvicAcidPercentagePage() {
               Fulvic Acid Percentage in Shilajit: How to Read and Compare COA Results
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 7 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -260,6 +261,7 @@ export default function FulvicAcidPercentagePage() {
             >
               Browse products with public COA →
             </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best tested shilajit →</Link></p>
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">

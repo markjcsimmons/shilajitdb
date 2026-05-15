@@ -43,6 +43,7 @@ export default function DosingTimelinePage() {
             How Long Does Shilajit Take to Work? Dosing, Timeline &amp; Expectations
           </h1>
           <p className="mt-3 text-sm text-[#4A5070]">Last reviewed April 2026 · 7 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
         </header>
 
         <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -202,7 +203,7 @@ export default function DosingTimelinePage() {
           </p>
           <p>
             The clinical trials used authenticated, purified shilajit standardised to known
-            concentrations. An unverified product sold without a COA is not the same product,
+            concentrations. An unverified product sold without a <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">COA</Link> is not the same product,
             regardless of what the label says.
           </p>
 
@@ -243,6 +244,7 @@ export default function DosingTimelinePage() {
           >
             Browse verified products →
           </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/editors-pick" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Editor's picks →</Link> · <Link href="/best/best-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best tested →</Link></p>
         </div>
 
         <footer className="border-t border-[#252A40] pt-6">

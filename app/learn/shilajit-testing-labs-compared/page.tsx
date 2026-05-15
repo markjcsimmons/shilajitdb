@@ -43,11 +43,12 @@ export default function ShilajitTestingLabsComparedPage() {
               Shilajit Testing Labs Compared: Eurofins, Certified Laboratories, Anresco, NSF and Others
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 10 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
             <p className="text-base">
-              When a shilajit brand names its testing laboratory on a COA, that disclosure
+              When a shilajit brand names its testing laboratory on a <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">COA</Link>, that disclosure
               is only meaningful if you know how to evaluate the lab. A name alone — &quot;tested
               by XYZ Laboratories&quot; — carries no inherent credibility. What matters is whether
               the lab holds ISO 17025 accreditation for dietary supplement testing, whether
@@ -267,6 +268,7 @@ export default function ShilajitTestingLabsComparedPage() {
             >
               View best-tested products →
             </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/best-third-party-tested" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Best third-party tested →</Link></p>
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">

@@ -43,6 +43,7 @@ export default function ShilajitAshwagandhaCombinationPage() {
               Shilajit with Ashwagandha: Synergy, Evidence, and What to Watch For
             </h1>
             <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 9 min read</p>
+          <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
           <section className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
@@ -235,6 +236,7 @@ export default function ShilajitAshwagandhaCombinationPage() {
             >
               View capsule products →
             </Link>
+          <p className="mt-3 text-xs text-[#4A5070]"><Link href="/best/editors-pick" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">Editor's picks →</Link></p>
           </div>
 
           <footer className="border-t border-[#252A40] pt-6">
