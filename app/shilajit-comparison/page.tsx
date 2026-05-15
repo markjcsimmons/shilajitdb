@@ -9,14 +9,14 @@ import { cn } from "@/components/ui";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Shilajit Brand Comparison (2026): 189+ Products Ranked | ShilajitDB",
+  title: "Best Shilajit Brands (2026): 189+ Products Ranked by COA & Lab Testing | ShilajitDB",
   description:
-    "Compare shilajit brands side by side on COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings of 189+ products.",
+    "Compare 189+ shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings — find the best shilajit resin, capsules, and more.",
   alternates: { canonical: absoluteUrl("/shilajit-comparison") },
   openGraph: {
-    title: "Shilajit Brand Comparison (2026): 189+ Products Ranked",
+    title: "Best Shilajit Brands (2026): 189+ Products Ranked by COA & Lab Testing",
     description:
-      "Compare shilajit brands on COA quality, lab accreditation, heavy metal safety, and price. Independent ratings of 189+ products.",
+      "Compare 189+ shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings.",
     url: absoluteUrl("/shilajit-comparison"),
   },
 };
@@ -33,8 +33,45 @@ const PRODUCT_SELECT = {
 
 const GRADE_ORDER = ["A_PLUS", "A", "B", "C", "D", "E", "F"] as const;
 
+const GRADE_EXPLAIN = [
+  { grade: "A_PLUS", label: "A+", desc: "Public COA, named accredited lab, numeric heavy metals, GMP manufacturing" },
+  { grade: "A",      label: "A",  desc: "Public COA, named lab, most transparency criteria met" },
+  { grade: "B",      label: "B",  desc: "Some COA evidence but gaps — unnamed lab, pass/fail only, or missing panels" },
+  { grade: "C",      label: "C",  desc: "Limited or embedded COA, partial transparency" },
+  { grade: "D",      label: "D",  desc: "No public COA, claims only" },
+  { grade: "E",      label: "E",  desc: "No evidence of any testing" },
+  { grade: "F",      label: "F",  desc: "Active safety or transparency concerns" },
+];
+
+const FAQS = [
+  {
+    q: "What is the best shilajit brand in 2026?",
+    a: "Based on COA quality, lab accreditation, and heavy metal testing, the highest-graded brands in our database are Pürblack, Life Cykel, and Healthforce — all carrying A+ or A grades with public COAs from named ISO 17025-accredited laboratories. The 'best' brand depends on your priorities: resin vs capsules, price range, and sourcing region all vary across top picks.",
+  },
+  {
+    q: "What does an A+ grade mean on ShilajitDB?",
+    a: "An A+ grade means the product has a publicly available Certificate of Analysis from a named, independent, ISO 17025-accredited laboratory, with actual numeric values for at least the four primary heavy metals (lead, mercury, arsenic, cadmium), documented GMP manufacturing, and a transparent sourcing claim. Fewer than 10% of products reviewed reach this standard.",
+  },
+  {
+    q: "Which shilajit has the most fulvic acid?",
+    a: "Fulvic acid percentage varies by brand and product form. Resin products in our database typically report 60–85% fulvic acid on the finished product. Some brands report fulvic acid only on the raw extract, which inflates the figure. We flag whether fulvic acid was measured on the finished product vs raw material in each product's COA notes.",
+  },
+  {
+    q: "Is Pürblack shilajit worth the price?",
+    a: "Pürblack carries A+ grades across its product line — the highest in the database — with public COAs from named accredited labs, confirmed numeric heavy metal values, and proprietary radioactivity screening not seen in other brands. Whether the premium price is justified depends on how much weight you place on testing depth versus cost per gram.",
+  },
+  {
+    q: "What is a Certificate of Analysis (COA) and why does it matter?",
+    a: "A COA is a document from a laboratory showing what was actually found in a tested sample. For shilajit, a meaningful COA shows: the lab's name and accreditation, numeric heavy metal concentrations (not just pass/fail), and fulvic acid content on the finished product. Without a public COA from a named lab, there is no independent verification that the product contains what it claims or that it is safe.",
+  },
+  {
+    q: "Which shilajit is safest for heavy metals?",
+    a: "Products with the lowest measured heavy metal concentrations in our database include Pürblack (Lead 0.121 mg/kg), Healing Shilajit (Lead 0.087 mg/kg), and Based (Lead 0.0005 mg/serving). All products with an A or A+ grade have confirmed numeric heavy metal values below established safety thresholds. Products without a public COA cannot be assessed for heavy metal safety.",
+  },
+];
+
 export default async function ShilajitComparisonPage() {
-  const [topProducts, gradeCounts, formCounts, coaCount, totalCount] = await Promise.all([
+  const [topProducts, gradeCounts, coaCount, totalCount, bestResin, bestTested, bestValue] = await Promise.all([
     // Top 6 highest-graded products with public COA
     prisma.product.findMany({
       where: { isCanonical: true, coaStatus: "PUBLIC", dataCompleteness: { not: "LOW" } },
@@ -48,17 +85,31 @@ export default async function ShilajitComparisonPage() {
       where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
       _count: true,
     }),
-    // Form distribution
-    prisma.product.groupBy({
-      by: ["form"],
-      where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
-      _count: true,
-      orderBy: { _count: { form: "desc" } },
-    }),
     // Public COA count
     prisma.product.count({ where: { isCanonical: true, coaStatus: "PUBLIC" } }),
     // Total graded
     prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
+    // Shortlist: best resin
+    prisma.product.findMany({
+      where: { isCanonical: true, bestForTags: { has: "best_resin" } },
+      orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+      take: 3,
+      select: PRODUCT_SELECT,
+    }),
+    // Shortlist: best tested
+    prisma.product.findMany({
+      where: { isCanonical: true, bestForTags: { has: "best_tested" } },
+      orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+      take: 3,
+      select: PRODUCT_SELECT,
+    }),
+    // Shortlist: best value
+    prisma.product.findMany({
+      where: { isCanonical: true, bestForTags: { has: "best_value" } },
+      orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+      take: 3,
+      select: PRODUCT_SELECT,
+    }),
   ]);
 
   const gradeMap = Object.fromEntries(
@@ -68,7 +119,7 @@ export default async function ShilajitComparisonPage() {
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Shilajit Brand Comparison",
+    name: "Best Shilajit Brands 2026",
     description: "Top-graded shilajit products ranked by COA quality, lab credibility, and heavy metal safety.",
     url: absoluteUrl("/shilajit-comparison"),
     numberOfItems: topProducts.length,
@@ -80,16 +131,24 @@ export default async function ShilajitComparisonPage() {
     })),
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <div className="space-y-8">
+      <div className="space-y-10">
 
-        {/* Hero */}
+        {/* ── Hero ── */}
         <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
           <div className="flex items-center gap-2 text-xs text-[#6E7A9A] mb-3">
             <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
@@ -97,19 +156,105 @@ export default async function ShilajitComparisonPage() {
             <span>Shilajit Comparison</span>
           </div>
           <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8] leading-snug">
-            Shilajit Brand Comparison (2026)
+            Best Shilajit Brands (2026): {totalCount}+ Products Ranked by COA Quality & Lab Testing
           </h1>
           <div className="mt-4 space-y-3 max-w-2xl">
             <p className="text-sm text-[#C8D0E8] leading-relaxed">
-              ShilajitDB has reviewed and graded {totalCount}+ shilajit products sold in the United States. Every product is assessed on the same objective criteria: whether a Certificate of Analysis exists and is publicly available, who issued it, whether that laboratory is independent and accredited, whether heavy metals were tested to actual numeric values, and what the manufacturing and sourcing claims are.
+              ShilajitDB has independently reviewed and graded {totalCount}+ shilajit products sold in the United States. Every product is assessed on the same objective criteria: whether a Certificate of Analysis exists and is publicly available, who issued it, whether that laboratory is independent and accredited, whether heavy metals were tested to actual numeric values, and what the manufacturing and sourcing claims are.
             </p>
             <p className="text-sm text-[#C8D0E8] leading-relaxed">
               The result is a comparable, apples-to-apples ranking across brands that vary widely in price, form, and marketing claims. Of {totalCount}+ products reviewed, only {coaCount} ({Math.round((coaCount / totalCount) * 100)}%) have a fully public COA from a named independent laboratory — a number that reflects how opaque the shilajit industry still is.
             </p>
+            <p className="text-sm text-[#C8D0E8] leading-relaxed">
+              We have no affiliation with any brand and earn no commission. Grades are assigned algorithmically from the evidence — not editorial opinion.
+            </p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href="/methodology" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">
+              How we grade products →
+            </Link>
+            <Link href="/" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">
+              Browse all {totalCount} products →
+            </Link>
           </div>
         </div>
 
-        {/* Grade distribution */}
+        {/* ── Grade key ── */}
+        <div>
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">How to read the grades</h2>
+          <p className="text-sm text-[#8892B8] mb-4">Each product receives an overall grade from A+ to F based on COA availability, lab credibility, heavy metals testing, and manufacturing transparency.</p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {GRADE_EXPLAIN.map((g) => (
+              <div key={g.grade} className="flex items-start gap-3 rounded-lg border border-[#252A40] bg-[#0F1320] p-3">
+                <div className={cn(
+                  "shrink-0 h-9 w-9 rounded-lg flex items-center justify-center text-sm font-bold",
+                  gradeBadgeClasses(g.grade as Parameters<typeof gradeBadgeClasses>[0])
+                )}>
+                  {gradeLabel(g.grade as Parameters<typeof gradeLabel>[0])}
+                </div>
+                <p className="text-xs text-[#8892B8] leading-relaxed pt-0.5">{g.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-[#6E7A9A]">
+            <Link href="/methodology" className="hover:text-[#8892B8] transition-colors underline underline-offset-2">Full grading methodology →</Link>
+          </p>
+        </div>
+
+        {/* ── Curated shortlists ── */}
+        <div className="space-y-8">
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8]">Top picks by category</h2>
+
+          {/* Best resin */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-0.5">Best Resin</p>
+                <p className="text-sm text-[#8892B8]">Least-processed form — highest fulvic acid transparency</p>
+              </div>
+              <Link href="/best/best-resin" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors shrink-0">
+                See all 5 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {bestResin.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </div>
+
+          {/* Best tested */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-0.5">Best Tested</p>
+                <p className="text-sm text-[#8892B8]">Public COA, named accredited lab, numeric heavy metal values</p>
+              </div>
+              <Link href="/best/best-tested" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors shrink-0">
+                See all 5 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {bestTested.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </div>
+
+          {/* Best value */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-0.5">Best Value</p>
+                <p className="text-sm text-[#8892B8]">Strong testing credentials at a competitive price per gram</p>
+              </div>
+              <Link href="/best/best-value" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors shrink-0">
+                See all 5 →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {bestValue.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Grade distribution ── */}
         <div>
           <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">How shilajit brands compare on grade</h2>
           <p className="text-sm text-[#8892B8] mb-4">Distribution of overall grades across {totalCount} reviewed products.</p>
@@ -133,7 +278,7 @@ export default async function ShilajitComparisonPage() {
           </div>
         </div>
 
-        {/* What we compare */}
+        {/* ── What we compare ── */}
         <div>
           <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">What we compare and why it matters</h2>
           <p className="text-sm text-[#8892B8] mb-4">The shilajit market has almost no regulatory oversight. These signals separate credible products from marketing-only brands.</p>
@@ -145,7 +290,7 @@ export default async function ShilajitComparisonPage() {
               },
               {
                 title: "Laboratory independence & accreditation",
-                body: "We distinguish between in-house testing, contracted testing from unnamed labs, and testing from named ISO 17025-accredited third-party laboratories such as Eurofins, A2LA members, or NSF. Only the last category earns full credit.",
+                body: "We distinguish between in-house testing, contracted testing from unnamed labs, and testing from named ISO 17025-accredited third-party laboratories such as Eurofins, Certified Laboratories, or Anresco. Only the last category earns full credit.",
               },
               {
                 title: "Heavy metals panel",
@@ -172,7 +317,7 @@ export default async function ShilajitComparisonPage() {
           </div>
         </div>
 
-        {/* Top products */}
+        {/* ── Top products ── */}
         <div>
           <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">Highest-graded shilajit with a public COA</h2>
           <p className="text-sm text-[#8892B8] mb-4">
@@ -186,18 +331,22 @@ export default async function ShilajitComparisonPage() {
           </div>
         </div>
 
-        {/* By form */}
+        {/* ── By form ── */}
         <div>
-          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">Compare shilajit by form</h2>
-          <p className="text-sm text-[#8892B8] mb-4">Each form has different processing implications and testing considerations.</p>
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">Compare shilajit by category</h2>
+          <p className="text-sm text-[#8892B8] mb-4">Each category ranks products on the same grading criteria, filtered to the most relevant signal for that use case.</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {[
-              { href: "/best/best-resin",    label: "Best Shilajit Resin",    desc: "Least processed, most transparent" },
-              { href: "/best/best-capsules", label: "Best Shilajit Capsules", desc: "Convenience with verified testing" },
-              { href: "/best/best-tested",   label: "Best Tested Overall",    desc: "Public COA, named lab, numeric HM values" },
-              { href: "/best/best-value",    label: "Best Value",             desc: "Quality per dollar ranked" },
-              { href: "/best/best-gummies",  label: "Best Gummies",           desc: "Most processed — COA especially important" },
-              { href: "/best/editors-pick",  label: "Editor's Picks",         desc: "Top picks across all criteria" },
+              { href: "/best/best-resin",               label: "Best Shilajit Resin",        desc: "Least processed, most transparent" },
+              { href: "/best/best-capsules",             label: "Best Shilajit Capsules",      desc: "Convenience with verified testing" },
+              { href: "/best/best-tested",               label: "Best Tested Overall",         desc: "Public COA, named lab, numeric HM values" },
+              { href: "/best/best-value",                label: "Best Value",                  desc: "Quality per dollar ranked" },
+              { href: "/best/best-gummies",              label: "Best Gummies",                desc: "Most processed — COA especially important" },
+              { href: "/best/best-third-party-tested",   label: "Best 3rd-Party Tested",       desc: "Confirmed numeric heavy metal values" },
+              { href: "/best/best-for-men",              label: "Best for Men",                desc: "Top resin picks with confirmed testing" },
+              { href: "/best/best-for-women",            label: "Best for Women",              desc: "Top capsule & gummy picks" },
+              { href: "/best/best-himalayan-shilajit",   label: "Best Himalayan Shilajit",     desc: "India & Pakistan sourced, highest graded" },
+              { href: "/best/editors-pick",              label: "Editor's Picks",              desc: "Top picks across all criteria" },
             ].map((item) => (
               <Link
                 key={item.href}
@@ -211,7 +360,20 @@ export default async function ShilajitComparisonPage() {
           </div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* ── FAQ ── */}
+        <div>
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {FAQS.map((faq) => (
+              <div key={faq.q} className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
+                <p className="text-sm font-semibold text-[#EEF0F8] mb-2">{faq.q}</p>
+                <p className="text-xs text-[#8892B8] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Bottom CTA ── */}
         <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 text-center">
           <p className="text-sm font-semibold text-[#EEF0F8] mb-1">Browse the full database</p>
           <p className="text-xs text-[#8892B8] mb-4">Filter by quality tier, COA status, form, price, and more. Every product graded on the same criteria.</p>
