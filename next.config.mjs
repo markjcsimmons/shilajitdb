@@ -25,6 +25,23 @@ const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
 
+  async redirects() {
+    return [
+      // Sunmed product slug changed after rename
+      {
+        source: "/product/sunmed-rachaels-story",
+        destination: "/product/sunmed-shilajit-gummies",
+        permanent: true,
+      },
+      // Underscore variant of best-resin (wrong URL format)
+      {
+        source: "/best/best_resin",
+        destination: "/best/best-resin",
+        permanent: true,
+      },
+    ];
+  },
+
   // Server components / route handlers — Prisma must never be bundled
   serverExternalPackages: PRISMA_PACKAGES,
 
