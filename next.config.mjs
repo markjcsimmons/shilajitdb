@@ -39,6 +39,12 @@ const nextConfig = {
         destination: "/best/best-resin",
         permanent: true,
       },
+      // best-us-made searched but no page exists — send to editors-pick
+      {
+        source: "/best/best-us-made",
+        destination: "/best/editors-pick",
+        permanent: false,
+      },
     ];
   },
 

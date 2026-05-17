@@ -59,9 +59,9 @@ function buildDescription(brandName: string, products: {
 }[]): string {
   const n = products.length;
   const forms = products.map(p => p.form);
-  const noun = productNoun(displayForms.length ? displayForms : forms, n);
   // Exclude OTHER from form detail — it adds noise
   const displayForms = forms.filter(f => f !== "OTHER");
+  const noun = productNoun(displayForms.length ? displayForms : forms, n);
   const uniqueDisplayForms = [...new Set(displayForms)];
   const multiForm = uniqueDisplayForms.length > 1;
   const formDetail = multiForm ? ` — ${joinForms(uniqueDisplayForms)}` : "";

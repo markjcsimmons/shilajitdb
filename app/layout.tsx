@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Shilajit Transparency Database",
     description:
-      "189 shilajit products graded on COA quality, lab credibility, heavy metal safety, and manufacturing transparency.",
+      "200+ shilajit products graded on COA quality, lab credibility, heavy metal safety, and manufacturing transparency.",
   },
   alternates: {
     canonical: siteUrl,
