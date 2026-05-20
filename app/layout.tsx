@@ -19,6 +19,9 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  verification: {
+    google: "cVpQJmYig61v16dA5AtEsJGAHMNmXRoxXz_b2y0fckk",
+  },
   title: {
     default: "Shilajit Transparency Database",
     template: "%s | Shilajit Transparency Database",
