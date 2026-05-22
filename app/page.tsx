@@ -250,10 +250,10 @@ export default async function HomePage({
                       <Link
                         key={cat.tag}
                         href={`/best/${cat.tag.replace(/_/g, "-")}`}
-                        className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-2 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex flex-col items-center justify-center gap-1 text-center"
+                        className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-3 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex flex-col items-center justify-center gap-2 text-center"
                       >
-                        <span className="text-xl">{cat.icon}</span>
-                        <span className="text-[10px] font-semibold text-[#EEF0F8] leading-snug">{cat.label}</span>
+                        <span className="text-2xl">{cat.icon}</span>
+                        <span className="text-xs font-semibold text-[#EEF0F8] leading-snug">{cat.label}</span>
                       </Link>
                     ))}
                   </div>
