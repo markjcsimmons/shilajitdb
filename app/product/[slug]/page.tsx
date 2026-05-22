@@ -119,6 +119,8 @@ export async function generateMetadata({
       metaDescription: true,
       dataCompleteness: true,
       isCanonical: true,
+      overallGrade: true,
+      coaStatus: true,
       evidence: { select: { id: true } },
       brand: { select: { name: true } },
     },
@@ -130,7 +132,26 @@ export async function generateMetadata({
     product.dataCompleteness === "LOW" ||
     product.evidence.length === 0;
 
-  const title = `${product.name} transparency & quality`;
+  const gradeLabel: Record<string, string> = {
+    A_PLUS: "A+",
+    A: "A",
+    B: "B",
+    C: "C",
+    D: "D",
+    E: "E",
+    F: "F",
+  };
+  const coaLabel: Record<string, string> = {
+    PUBLIC: "Public COA",
+    PUBLIC_EMBEDDED: "COA Available",
+    REQUEST_ONLY: "COA on Request",
+    NONE: "No COA",
+    UNKNOWN: "COA Unknown",
+  };
+  const grade = product.overallGrade ? gradeLabel[product.overallGrade] ?? null : null;
+  const coa = product.coaStatus ? coaLabel[product.coaStatus] ?? null : null;
+  const gradePart = grade && coa ? ` — Grade ${grade}, ${coa}` : grade ? ` — Grade ${grade}` : "";
+  const title = `${product.name}${gradePart} | ShilajitDB`;
   const description =
     product.metaDescription?.trim() &&
     product.metaDescription.length >= 140 &&
