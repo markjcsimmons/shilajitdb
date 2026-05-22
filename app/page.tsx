@@ -44,6 +44,8 @@ const BEST_FOR_CATEGORIES = [
   { tag: "best_himalayan_shilajit",label: "Best Himalayan",      icon: "🏔️" },
 ];
 
+const OTHER_CATEGORIES = BEST_FOR_CATEGORIES.filter((c) => c.tag !== "editors_pick");
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -67,7 +69,17 @@ export default async function HomePage({
   const orderBy = buildOrderBy(filters.sort);
   const skip = (filters.page - 1) * PAGE_SIZE;
 
-  const [total, products, productCount, brandCount, publicCoaCount, lastVerified] = await Promise.all([
+  const productSelect = {
+    id: true, slug: true, name: true, form: true,
+    dataCompleteness: true, manufacturingCountryClaim: true,
+    coaStatus: true, coaUrl: true, transparencyGrade: true,
+    qualityTier: true, overallGrade: true, thirdPartyTestingLab: true,
+    lastVerifiedAt: true, heavyMetalsTested: true, bestForTags: true,
+    pricePerServingCents: true, pricePerGramCents: true,
+    brand: { select: { name: true, slug: true } },
+  } as const;
+
+  const [total, products, productCount, brandCount, publicCoaCount, lastVerified, editorsPicks] = await Promise.all([
     hasActiveFilter ? prisma.product.count({ where }) : Promise.resolve(0),
     hasActiveFilter
       ? prisma.product.findMany({
@@ -75,15 +87,7 @@ export default async function HomePage({
           orderBy,
           skip,
           take: PAGE_SIZE,
-          select: {
-            id: true, slug: true, name: true, form: true,
-            dataCompleteness: true, manufacturingCountryClaim: true,
-            coaStatus: true, coaUrl: true, transparencyGrade: true,
-            qualityTier: true, overallGrade: true, thirdPartyTestingLab: true,
-            lastVerifiedAt: true, heavyMetalsTested: true, bestForTags: true,
-            pricePerServingCents: true, pricePerGramCents: true,
-            brand: { select: { name: true, slug: true } },
-          },
+          select: productSelect,
         })
       : Promise.resolve([]),
     prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
@@ -93,6 +97,12 @@ export default async function HomePage({
       where: { isCanonical: true, lastVerifiedAt: { not: null } },
       orderBy: { lastVerifiedAt: "desc" },
       select: { lastVerifiedAt: true },
+    }),
+    prisma.product.findMany({
+      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, bestForTags: { has: "editors_pick" } },
+      orderBy: buildOrderBy("recommended"),
+      take: 5,
+      select: productSelect,
     }),
   ]);
 
@@ -213,6 +223,44 @@ export default async function HomePage({
       {/* ── Product list / discovery ── */}
       {!hasActiveFilter ? (
         <div className="space-y-12 pt-8">
+
+          {/* Editor's Picks */}
+          {editorsPicks.length > 0 && (
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-1.5">Editor's Picks</p>
+                  <h2 className="font-serif text-2xl font-semibold text-[#EEF0F8]">Top rated by ShilajitDB</h2>
+                </div>
+                <Link href="/best/editors-pick" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors shrink-0">
+                  See all →
+                </Link>
+              </div>
+              <CompareProvider>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {editorsPicks.map((p) => (
+                    <div key={p.id}>
+                      <ProductCard product={p} />
+                      <CompareButton slug={p.slug} name={p.name} grade={p.overallGrade} />
+                    </div>
+                  ))}
+                  {/* 6th cell: 3×3 grid of other category links */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {OTHER_CATEGORIES.map((cat) => (
+                      <Link
+                        key={cat.tag}
+                        href={`/best/${cat.tag.replace(/_/g, "-")}`}
+                        className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-2 transition-colors hover:bg-[#171C2E] hover:border-[#313760] flex flex-col items-center justify-center gap-1 text-center"
+                      >
+                        <span className="text-xl">{cat.icon}</span>
+                        <span className="text-[10px] font-semibold text-[#EEF0F8] leading-snug">{cat.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </CompareProvider>
+            </div>
+          )}
 
           {/* How we grade */}
           <div>
