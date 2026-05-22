@@ -121,6 +121,7 @@ export async function generateMetadata({
       isCanonical: true,
       overallGrade: true,
       coaStatus: true,
+      heavyMetalsTested: true,
       evidence: { select: { id: true } },
       brand: { select: { name: true } },
     },
@@ -148,16 +149,41 @@ export async function generateMetadata({
     NONE: "No COA",
     UNKNOWN: "COA Unknown",
   };
+  const coaShort: Record<string, string> = {
+    PUBLIC: "public COA",
+    PUBLIC_EMBEDDED: "embedded COA",
+    REQUEST_ONLY: "COA on request",
+    NONE: "no public COA",
+    UNKNOWN: "",
+  };
+  const heavyLabel: Record<string, string> = {
+    CONFIRMED: "heavy metals confirmed",
+    CLAIMED: "heavy metals claimed",
+    NONE: "",
+  };
   const grade = product.overallGrade ? gradeLabel[product.overallGrade] ?? null : null;
   const coa = product.coaStatus ? coaLabel[product.coaStatus] ?? null : null;
   const gradePart = grade && coa ? ` — Grade ${grade}, ${coa}` : grade ? ` — Grade ${grade}` : "";
   const title = `${product.name}${gradePart} | ShilajitDB`;
+
+  const coaShortLabel = product.coaStatus ? (coaShort[product.coaStatus] ?? "") : "";
+  const heavy = product.heavyMetalsTested ? (heavyLabel[product.heavyMetalsTested] ?? "") : "";
+  const infoParts = [grade ? `Grade ${grade}` : null, coaShortLabel || null, heavy || null]
+    .filter(Boolean)
+    .join(" · ");
+  const fallbackDescription = (() => {
+    const lead = infoParts ? `${infoParts}. ` : "";
+    const full = `${lead}Transparency score for ${product.name} | ShilajitDB.`;
+    if (full.length <= 160) return full;
+    const prefix = `${lead}Transparency score for `;
+    const suffix = " | ShilajitDB.";
+    const maxName = 160 - prefix.length - suffix.length - 3;
+    return `${prefix}${product.name.slice(0, maxName)}...${suffix}`;
+  })();
   const description =
-    product.metaDescription?.trim() &&
-    product.metaDescription.length >= 140 &&
-    product.metaDescription.length <= 160
+    product.metaDescription?.trim() && product.metaDescription.trim().length >= 50
       ? product.metaDescription.trim()
-      : `View transparency grade, COA status, manufacturing claim clarity, ingredients disclosure, and evidence links for ${product.brand.name} — ${product.name}.`;
+      : fallbackDescription;
   const canonical = absoluteUrl(`/product/${product.slug}`);
 
   return {
