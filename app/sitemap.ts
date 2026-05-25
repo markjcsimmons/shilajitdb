@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
 import type { MetadataRoute } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600; // cache for 1 hour
 
 const LEARN_SLUGS = [
   "what-is-shilajit",
@@ -48,12 +48,12 @@ const BEST_TAGS = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, brands, compareProducts, brandsWithCoa, productsWithLabData] = await Promise.all([
     prisma.product.findMany({
-      where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
+      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, evidence: { some: {} } },
       select: { slug: true, lastVerifiedAt: true },
       orderBy: { lastVerifiedAt: "desc" },
     }),
     prisma.brand.findMany({
-      select: { slug: true },
+      select: { slug: true, updatedAt: true },
       orderBy: { slug: "asc" },
     }),
     // Top 15 products for compare page pairs
@@ -66,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Brands that have at least one product with a COA URL (for lab-tests pages)
     prisma.brand.findMany({
       where: { products: { some: { isCanonical: true, coaUrl: { not: null } } } },
-      select: { slug: true },
+      select: { slug: true, updatedAt: true },
       orderBy: { slug: "asc" },
     }),
     // Products with any lab data (for /product/[slug]/lab-results pages)
@@ -74,6 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       where: {
         isCanonical: true,
         dataCompleteness: { not: "LOW" },
+        evidence: { some: {} },
         OR: [
           { coaUrl: { not: null } },
           { thirdPartyTestingLab: { not: null } },
@@ -116,12 +117,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const brandPages: MetadataRoute.Sitemap = brands.map((b) => ({
     url: absoluteUrl(`/brand/${b.slug}`),
+    lastModified: b.updatedAt,
     changeFrequency: "weekly",
     priority: 0.6,
   }));
 
   const brandLabTestsPages: MetadataRoute.Sitemap = brandsWithCoa.map((b) => ({
     url: absoluteUrl(`/brand/${b.slug}/lab-tests`),
+    lastModified: b.updatedAt,
     changeFrequency: "weekly",
     priority: 0.6,
   }));
