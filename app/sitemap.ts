@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, brands, compareProducts, brandsWithCoa, productsWithLabData] = await Promise.all([
     prisma.product.findMany({
       where: { isCanonical: true, dataCompleteness: { not: "LOW" }, evidence: { some: {} } },
-      select: { slug: true, lastVerifiedAt: true },
+      select: { slug: true, lastVerifiedAt: true, _count: { select: { evidence: true } } },
       orderBy: { lastVerifiedAt: "desc" },
     }),
     prisma.brand.findMany({
@@ -82,7 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           { coaNotes: { not: null } },
         ],
       },
-      select: { slug: true, lastVerifiedAt: true },
+      select: { slug: true, lastVerifiedAt: true, _count: { select: { evidence: true } } },
       orderBy: { lastVerifiedAt: "desc" },
     }),
   ]);
@@ -108,12 +108,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
-    url: absoluteUrl(`/product/${p.slug}`),
-    lastModified: p.lastVerifiedAt ?? undefined,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  const productPages: MetadataRoute.Sitemap = products
+    .filter((p) => p._count.evidence >= 2)
+    .map((p) => ({
+      url: absoluteUrl(`/product/${p.slug}`),
+      lastModified: p.lastVerifiedAt ?? undefined,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
 
   const brandPages: MetadataRoute.Sitemap = brands.map((b) => ({
     url: absoluteUrl(`/brand/${b.slug}`),
@@ -129,12 +131,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const productLabResultsPages: MetadataRoute.Sitemap = productsWithLabData.map((p) => ({
-    url: absoluteUrl(`/product/${p.slug}/lab-results`),
-    lastModified: p.lastVerifiedAt ?? undefined,
-    changeFrequency: "weekly",
-    priority: 0.65,
-  }));
+  const productLabResultsPages: MetadataRoute.Sitemap = productsWithLabData
+    .filter((p) => p._count.evidence >= 2)
+    .map((p) => ({
+      url: absoluteUrl(`/product/${p.slug}/lab-results`),
+      lastModified: p.lastVerifiedAt ?? undefined,
+      changeFrequency: "weekly",
+      priority: 0.65,
+    }));
 
   // Generate all compare page pairs from top 15 products
   const comparePages: MetadataRoute.Sitemap = [];

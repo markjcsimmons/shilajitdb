@@ -131,7 +131,7 @@ export async function generateMetadata({
   const noIndex =
     !product.isCanonical ||
     product.dataCompleteness === "LOW" ||
-    product.evidence.length === 0;
+    product.evidence.length < 2;
 
   const gradeLabel: Record<string, string> = {
     A_PLUS: "A+",
