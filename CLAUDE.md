@@ -40,7 +40,9 @@ Local scripts can't reach Supabase directly (IP blocked). Use one-shot admin API
 - Internal linking added to all 25 learn articles
 - All 5 GitHub Actions workflows disabled (job runner code lives in `claude/quirky-hamilton`, not merged)
 - 301 redirects: `sunmed-rachaels-story` → `sunmed-shilajit-gummies`, `best_resin` → `best-resin`, `best-us-made` → `editors-pick`
-- Sitemap SEO fixes (May 2026): switched from `force-dynamic` to `revalidate=3600`; filtered out evidence-less products (they get noindex on the page); added `lastModified` to brand pages
+- Sitemap SEO fixes (May 2026): switched from `force-dynamic` to `revalidate=3600`; filtered out products with <2 evidence sources (they get noindex on the page); added `lastModified` to brand pages
+- Product noindex threshold raised to `evidence.length < 2` (was `=== 0`) — products with only 1 source are too thin to index; sitemap filter kept in sync via `_count.evidence >= 2`
+- Fixed `best-us-made` redirect: was `permanent: false` (307), now `permanent: true` (301)
 
 ## Do not re-litigate
 - Why no affiliate links (editorial independence is the value prop)
