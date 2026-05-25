@@ -5,7 +5,7 @@ import Script from "next/script";
 import { prisma } from "@/lib/db";
 import "./globals.css";
 
-const GA_ID = "G-WMM7QDGCE7";
+const GA_ID = "G-RTE2LYJXYD";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display: "swap", axes: ["opsz"] });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
