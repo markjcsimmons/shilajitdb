@@ -43,7 +43,7 @@ const nextConfig = {
       {
         source: "/best/best-us-made",
         destination: "/best/editors-pick",
-        permanent: false,
+        permanent: true,
       },
     ];
   },
