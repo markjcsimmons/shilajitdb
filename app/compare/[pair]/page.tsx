@@ -10,7 +10,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const top15 = await prisma.product.findMany({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
+    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    take: 15,
+    select: { slug: true },
+  });
+
+  const pairs: { pair: string }[] = [];
+  for (let i = 0; i < top15.length; i++) {
+    for (let j = i + 1; j < top15.length; j++) {
+      const [a, b] = [top15[i].slug, top15[j].slug].sort();
+      pairs.push({ pair: `${a}-vs-${b}` });
+    }
+  }
+  return pairs;
+}
 
 function parsePair(pair: string) {
   const parts = pair.split("-vs-");
