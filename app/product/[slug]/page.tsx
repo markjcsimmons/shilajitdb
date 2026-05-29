@@ -22,7 +22,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" } },
+    select: { slug: true },
+  });
+  return products.map((p) => ({ slug: p.slug }));
+}
 
 // ---------------------------------------------------------------------------
 // Helpers

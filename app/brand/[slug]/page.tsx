@@ -7,7 +7,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const brands = await prisma.brand.findMany({ select: { slug: true } });
+  return brands.map((b) => ({ slug: b.slug }));
+}
 
 function countBy<T extends string>(items: T[]) {
   const m = new Map<T, number>();

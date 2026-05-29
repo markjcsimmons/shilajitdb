@@ -27,6 +27,13 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // Canonicalise www → non-www
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.shilajitdb.com" }],
+        destination: "https://shilajitdb.com/:path*",
+        permanent: true,
+      },
       // Sunmed product slug changed after rename
       {
         source: "/product/sunmed-rachaels-story",

@@ -7,7 +7,15 @@ import { ArticleSchema } from "@/components/article-schema";
 import { notFound } from "next/navigation";
 import { cn } from "@/components/ui";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const brands = await prisma.brand.findMany({
+    where: { products: { some: { isCanonical: true, coaUrl: { not: null } } } },
+    select: { slug: true },
+  });
+  return brands.map((b) => ({ slug: b.slug }));
+}
 
 export async function generateMetadata({
   params,

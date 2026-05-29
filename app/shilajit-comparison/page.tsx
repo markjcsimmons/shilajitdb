@@ -6,7 +6,7 @@ import { absoluteUrl } from "@/lib/site";
 import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
 import { cn } from "@/components/ui";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const totalCount = await prisma.product.count({

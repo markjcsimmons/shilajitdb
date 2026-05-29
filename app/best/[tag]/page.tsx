@@ -5,7 +5,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return [
+    "editors-pick", "best-tested", "best-resin", "best-value",
+    "best-capsules", "best-gummies", "best-for-men", "best-for-women",
+    "best-third-party-tested", "best-himalayan-shilajit",
+  ].map((tag) => ({ tag }));
+}
 
 // ── Tag metadata ──────────────────────────────────────────────────────────────
 

@@ -8,7 +8,24 @@ import { ArticleSchema } from "@/components/article-schema";
 import { cn } from "@/components/ui";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    where: {
+      isCanonical: true,
+      dataCompleteness: { not: "LOW" },
+      OR: [
+        { coaUrl: { not: null } },
+        { thirdPartyTestingLab: { not: null } },
+        { heavyMetalsTested: { not: null } },
+        { coaNotes: { not: null } },
+      ],
+    },
+    select: { slug: true },
+  });
+  return products.map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({
   params,
