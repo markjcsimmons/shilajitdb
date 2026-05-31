@@ -364,6 +364,7 @@ export default async function ProductPage({
     "@type": "Product",
     name: product.name,
     description: product.metaDescription ?? undefined,
+    image: absoluteUrl(`/product/${product.slug}/opengraph-image`),
     brand: { "@type": "Brand", name: product.brand.name },
     url: absoluteUrl(`/product/${product.slug}`),
     ...(product.listings.length
