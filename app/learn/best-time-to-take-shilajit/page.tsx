@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
 import { ArticleSchema } from "@/components/article-schema";
@@ -194,6 +195,19 @@ export default function BestTimeToTakeShilajitPage() {
               to food matters even less than with resin. Take capsules with water and a small amount of
               food if gastric sensitivity is a concern.
             </p>
+
+            <figure className="mt-6 rounded-xl overflow-hidden border border-[#252A40]">
+              <Image
+                src="/shilajit-resin-how-to-take-infographic.jpg"
+                alt="How to take shilajit resin: measure 250–500 mg, take on empty stomach in the morning, cycle and stay consistent"
+                width={1024}
+                height={1024}
+                className="w-full"
+              />
+              <figcaption className="bg-[#171C2E] px-4 py-2 text-xs text-[#4A5070]">
+                Resin preparation at a glance. Note: warm water is recommended — avoid boiling water, which may degrade heat-sensitive compounds.
+              </figcaption>
+            </figure>
 
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Should You Split the Dose?</h2>
             <p>
