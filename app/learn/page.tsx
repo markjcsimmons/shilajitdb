@@ -122,6 +122,13 @@ const articles = [
     tag: "Practical",
   },
   {
+    slug: "best-time-to-take-shilajit",
+    title: "Best Time to Take Shilajit: Morning, With Food, or Pre-Workout?",
+    description:
+      "No clinical trial has directly tested morning vs. evening dosing — so here's what the research actually supports, broken down by goal and form.",
+    tag: "Usage",
+  },
+  {
     slug: "shilajit-clinical-dosage",
     title: "Shilajit Dosage: What Clinical Trials Actually Used",
     description:
