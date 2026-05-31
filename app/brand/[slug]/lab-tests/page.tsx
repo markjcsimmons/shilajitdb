@@ -117,6 +117,7 @@ export default async function BrandLabTestsPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ArticleSchema
         slug={`brand-lab-tests-${brand.slug}`}
+        path={`/brand/${brand.slug}/lab-tests`}
         title={`${brand.name} COA & Lab Test Results`}
         description={`Certificates of Analysis, third-party lab test results, and heavy metal testing documentation for ${brand.name} shilajit products.`}
         datePublished="2026-05-07"

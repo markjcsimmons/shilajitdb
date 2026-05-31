@@ -125,6 +125,7 @@ export default async function ProductLabResultsPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ArticleSchema
         slug={`product-lab-results-${product.slug}`}
+        path={`/product/${product.slug}/lab-results`}
         title={`${product.brand.name} ${product.name}: Lab Test Results & COA`}
         description={`Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}.`}
         datePublished="2026-05-14"

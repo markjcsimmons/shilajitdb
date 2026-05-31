@@ -131,7 +131,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
               </div>
               {/* Honeypot — hidden from humans, visible to scrapers */}
-              <a href="/honeypot" aria-hidden="true" tabIndex={-1} style={{ display: "none" }}>
+              <a href="/honeypot" aria-hidden="true" tabIndex={-1} rel="nofollow" style={{ display: "none" }}>
                 Data export
               </a>
             </div>

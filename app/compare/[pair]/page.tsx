@@ -178,7 +178,7 @@ export async function generateMetadata({
 
   const title =
     a && b
-      ? `${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name}: Side-by-Side Comparison`
+      ? `${a.brand.name} vs ${b.brand.name} Shilajit Comparison | ShilajitDB`
       : "Compare products";
   const description =
     a && b
