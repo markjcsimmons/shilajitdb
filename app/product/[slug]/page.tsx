@@ -372,7 +372,7 @@ export default async function ProductPage({
           offers: product.listings.map((l) => {
             const offer: Record<string, unknown> = {
               "@type": "Offer",
-              url: l.url,
+              url: l.url?.startsWith("http") ? l.url : undefined,
               priceCurrency: l.currency ?? undefined,
               price:
                 typeof l.priceCents === "number" && Number.isFinite(l.priceCents)

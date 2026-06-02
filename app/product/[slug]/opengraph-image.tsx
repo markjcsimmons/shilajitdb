@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/db";
-import { notFound } from "next/navigation";
 import { gradeLabel } from "@/lib/grade-colors";
 import { labelQualityTier } from "@/lib/labels";
 import type { OverallGrade, QualityTier } from "@prisma/client";
@@ -66,7 +65,27 @@ export default async function ProductOgImage({
     },
   });
 
-  if (!product) notFound();
+  if (!product) {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: 1200,
+            height: 630,
+            background: "#080B14",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "sans-serif",
+          }}
+        >
+          <span style={{ fontSize: 28, fontWeight: 700, color: "#EEF0F8" }}>Shilajit</span>
+          <span style={{ fontSize: 28, fontWeight: 700, color: "#3D7AFF" }}>DB</span>
+        </div>
+      ),
+      { ...size }
+    );
+  }
 
   const grade = product.overallGrade;
   const color = gradeColor(grade);
