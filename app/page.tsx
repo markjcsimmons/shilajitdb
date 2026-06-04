@@ -116,11 +116,6 @@ export default async function HomePage({
     "@type": "WebSite",
     url: getSiteUrl(),
     name: "Shilajit Transparency Database",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${absoluteUrl("/")}?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   const filterState: FilterState = {
