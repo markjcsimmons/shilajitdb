@@ -79,7 +79,7 @@ export default async function HomePage({
     brand: { select: { name: true, slug: true } },
   } as const;
 
-  const [total, products, productCount, brandCount, publicCoaCount, lastVerified, editorsPicks] = await Promise.all([
+  const [total, products, productCount, brandCount, publicCoaCount, editorsPicks] = await Promise.all([
     hasActiveFilter ? prisma.product.count({ where }) : Promise.resolve(0),
     hasActiveFilter
       ? prisma.product.findMany({
@@ -93,11 +93,6 @@ export default async function HomePage({
     prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
     prisma.brand.count(),
     prisma.product.count({ where: { isCanonical: true, coaStatus: "PUBLIC" } }),
-    prisma.product.findFirst({
-      where: { isCanonical: true, lastVerifiedAt: { not: null } },
-      orderBy: { lastVerifiedAt: "desc" },
-      select: { lastVerifiedAt: true },
-    }),
     prisma.product.findMany({
       where: { isCanonical: true, dataCompleteness: { not: "LOW" }, bestForTags: { has: "editors_pick" } },
       orderBy: buildOrderBy("recommended"),
@@ -107,9 +102,7 @@ export default async function HomePage({
   ]);
 
   const coaPercent = productCount > 0 ? Math.round((publicCoaCount / productCount) * 100) : 0;
-  const lastVerifiedLabel = lastVerified?.lastVerifiedAt
-    ? new Date(lastVerified.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-    : null;
+  const lastUpdatedLabel = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
@@ -146,7 +139,7 @@ export default async function HomePage({
             { value: String(productCount), label: "products graded" },
             { value: String(brandCount), label: "brands tracked" },
             { value: `${coaPercent}%`, label: "with public COA" },
-            { value: lastVerifiedLabel ?? "—", label: "last updated" },
+            { value: lastUpdatedLabel, label: "last updated" },
           ].map((s) => (
             <div key={s.label} className="flex items-baseline gap-2 whitespace-nowrap shrink-0">
               <span className="font-mono text-base font-bold text-[#EEF0F8]">{s.value}</span>
