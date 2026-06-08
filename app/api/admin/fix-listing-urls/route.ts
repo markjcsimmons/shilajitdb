@@ -23,7 +23,7 @@ export async function GET() {
   return NextResponse.json({ count: bad.length, listings: bad });
 }
 
-// POST: null-out all listing URLs that aren't absolute http(s) URLs
+// POST: delete all listings whose URLs aren't absolute http(s) URLs
 export async function POST() {
   if (!(await isAdminAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -35,17 +35,16 @@ export async function POST() {
   });
 
   if (bad.length === 0) {
-    return NextResponse.json({ ok: true, fixed: 0, listings: [] });
+    return NextResponse.json({ ok: true, deleted: 0, listings: [] });
   }
 
-  await prisma.listing.updateMany({
+  await prisma.listing.deleteMany({
     where: { id: { in: bad.map((l) => l.id) } },
-    data: { url: null },
   });
 
   return NextResponse.json({
     ok: true,
-    fixed: bad.length,
+    deleted: bad.length,
     listings: bad,
   });
 }
