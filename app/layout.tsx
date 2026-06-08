@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   title: {
     default: "Shilajit Transparency Database",
-    template: "%s | Shilajit Transparency Database",
+    template: "%s | ShilajitDB",
   },
   description:
     "A neutral, evidence-based database of shilajit products sold in the United States. Search, filter, and compare objective transparency and quality signals.",

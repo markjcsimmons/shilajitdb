@@ -172,7 +172,7 @@ export async function generateMetadata({
   const grade = product.overallGrade ? gradeLabel[product.overallGrade] ?? null : null;
   const coa = product.coaStatus ? coaLabel[product.coaStatus] ?? null : null;
   const gradePart = grade && coa ? ` — Grade ${grade}, ${coa}` : grade ? ` — Grade ${grade}` : "";
-  const title = `${product.name}${gradePart} | ShilajitDB`;
+  const title = `${product.brand.name} ${product.name}${gradePart}`;
 
   const coaShortLabel = product.coaStatus ? (coaShort[product.coaStatus] ?? "") : "";
   const heavy = product.heavyMetalsTested ? (heavyLabel[product.heavyMetalsTested] ?? "") : "";

@@ -48,7 +48,7 @@ const TAG_META: Record<string, {
   best_tested: {
     label: "Best Tested",
     h1: "Best Tested Shilajit Products: Public COA, Named Lab, Heavy Metals Confirmed",
-    metaTitle: "Best Tested Shilajit (2026) — Public COA, Named Lab, Heavy Metals Confirmed",
+    metaTitle: "Best Tested Shilajit (2026) — COA, Named Lab, Heavy Metals",
     description: "Shilajit products with a public Certificate of Analysis from a named independent laboratory, showing actual heavy metal concentrations. The most transparently tested products in the database.",
     editorial: [
       "'Third-party tested' is one of the most abused claims in the supplement industry. Many brands use the phrase to refer to in-house testing, summary COAs that cover multiple products, or documents that show only pass/fail results rather than actual values.",
@@ -58,7 +58,7 @@ const TAG_META: Record<string, {
   best_value: {
     label: "Best Budget",
     h1: "Best Value Shilajit (2026): Quality Testing at a Competitive Price",
-    metaTitle: "Best Value Shilajit (2026) — Quality Testing at a Competitive Price",
+    metaTitle: "Best Value Shilajit (2026) — Quality at a Competitive Price",
     description: "The best shilajit for the money — ranked by testing quality per dollar. These products combine meaningful transparency credentials with a competitive price per gram.",
     editorial: [
       "Value is not just the lowest price — it is quality per dollar. We score each product on COA quality, lab credibility, and safety signals, then normalise by price per gram. A cheap product with no testing credentials scores poorly; a moderately priced product with a public COA from a named lab scores well.",
@@ -88,7 +88,7 @@ const TAG_META: Record<string, {
   best_for_men: {
     label: "Best for Men",
     h1: "Best Shilajit for Men (2026): Ranked by Testing Quality & Evidence",
-    metaTitle: "Best Shilajit for Men (2026) — Ranked by Testing Quality & Evidence",
+    metaTitle: "Best Shilajit for Men (2026) — Ranked by Testing Quality",
     description: "The best shilajit products for men, ranked by COA quality, lab credibility, and testing transparency. Includes context on the testosterone and energy evidence specific to male physiology.",
     editorial: [
       "The primary clinical evidence for shilajit in men relates to testosterone support and fatigue resistance. Pandit et al. (2016) found significant increases in total and free testosterone in healthy men aged 45–55 taking 250 mg twice daily for 90 days. Keller et al. (2019) found meaningful improvements in fatigue-induced strength decline over 8 weeks at 500 mg/day. Both studies used standardised, independently tested shilajit — not commodity powders.",
@@ -98,7 +98,7 @@ const TAG_META: Record<string, {
   best_for_women: {
     label: "Best for Women",
     h1: "Best Shilajit for Women (2026): Ranked by Testing Quality & Safety",
-    metaTitle: "Best Shilajit for Women (2026) — Ranked by Testing Quality & Safety",
+    metaTitle: "Best Shilajit for Women (2026) — Ranked by Testing & Safety",
     description: "The best shilajit products for women, ranked by COA quality, lab credibility, and heavy metal safety. Includes context on the iron bioavailability and energy evidence relevant to female physiology.",
     editorial: [
       "The most relevant clinical evidence for women relates to iron bioavailability and energy. Shilajit has been studied for its effect on iron absorption — fulvic acid forms soluble complexes with iron that may improve bioavailability compared to inorganic iron salts. For women who experience fatigue related to low iron, this is a mechanistically credible pathway. The testosterone evidence, primarily studied in men, is less directly applicable, though shilajit's broader adaptogenic and mitochondrial support effects are not sex-specific.",
@@ -108,7 +108,7 @@ const TAG_META: Record<string, {
   best_himalayan_shilajit: {
     label: "Best Himalayan Shilajit",
     h1: "Best Himalayan Shilajit (2026): Top Picks Ranked by Testing & Transparency",
-    metaTitle: "Best Himalayan Shilajit (2026) — Ranked by Testing & Transparency",
+    metaTitle: "Best Himalayan Shilajit (2026) — Testing & Transparency",
     description: "The best Himalayan shilajit products ranked by COA quality, lab accreditation, and heavy metal safety. 'Himalayan origin' is a marketing claim without independent testing — these products back it up.",
     editorial: [
       "The Himalayas are the most commonly cited shilajit source region, and for good reason — the high-altitude geology produces resin with a recognised mineral and fulvic acid profile. But 'Himalayan shilajit' on a label is an unverifiable origin claim without a COA. Because shilajit is not a geographically protected ingredient, any brand can print 'Himalayan' regardless of where their raw material was actually sourced. Independent third-party testing does not confirm geographic origin, but it does confirm that the product contains what it claims and is free of unsafe heavy metal levels — which is the more actionable signal for buyers.",
@@ -118,7 +118,7 @@ const TAG_META: Record<string, {
   best_third_party_tested: {
     label: "Best Third-Party Tested",
     h1: "Best Third-Party Tested Shilajit (2026): Named Lab, Public COA, Heavy Metals Confirmed",
-    metaTitle: "Best Third-Party Tested Shilajit (2026) — Named Lab, Public COA, Heavy Metals Confirmed",
+    metaTitle: "Best Third-Party Tested Shilajit (2026) — Named Lab & COA",
     description: "Shilajit products with a public COA from a named independent laboratory AND confirmed numeric heavy metal results. The strictest testing standard in the ShilajitDB database.",
     editorial: [
       "This list applies the strictest criteria in the database: a publicly accessible Certificate of Analysis from a named independent laboratory, with actual numeric values for lead, arsenic, mercury, and cadmium — not a pass/fail stamp, not a summary certificate, and not an in-house lab. Fewer than 15% of products reviewed meet all three criteria simultaneously.",
@@ -185,7 +185,7 @@ export async function generateMetadata({
   const meta = TAG_META[dbTag];
   if (!meta) return { title: "Not found" };
   return {
-    title: meta.metaTitle,
+    title: { absolute: meta.metaTitle },
     description: meta.description,
     alternates: { canonical: absoluteUrl(`/best/${tag}`) },
     openGraph: { title: meta.metaTitle, description: meta.description, url: absoluteUrl(`/best/${tag}`) },
