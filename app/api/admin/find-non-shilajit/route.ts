@@ -13,12 +13,9 @@ export async function GET() {
   const candidates = await prisma.product.findMany({
     where: {
       OR: [
-        { name: { contains: "shiitake", mode: "insensitive" } },
-        { name: { contains: "mushroom", mode: "insensitive" } },
         { slug: { contains: "shiitake" } },
-        { slug: { contains: "swanson" } },
-        { brand: { slug: { contains: "swanson" } } },
-        { brand: { name: { contains: "swanson", mode: "insensitive" } } },
+        { slug: { contains: "full-spectrum-shiitake" } },
+        { name: { contains: "shiitake", mode: "insensitive" } },
       ],
     },
     select: {
@@ -43,12 +40,9 @@ export async function POST() {
   const candidates = await prisma.product.findMany({
     where: {
       OR: [
-        { name: { contains: "shiitake", mode: "insensitive" } },
-        { name: { contains: "mushroom", mode: "insensitive" } },
         { slug: { contains: "shiitake" } },
-        { slug: { contains: "swanson" } },
-        { brand: { slug: { contains: "swanson" } } },
-        { brand: { name: { contains: "swanson", mode: "insensitive" } } },
+        { slug: { contains: "full-spectrum-shiitake" } },
+        { name: { contains: "shiitake", mode: "insensitive" } },
       ],
     },
     select: { id: true, slug: true, name: true },
