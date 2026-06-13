@@ -52,6 +52,18 @@ const nextConfig = {
         destination: "/best/editors-pick",
         permanent: true,
       },
+      // ArticleSchema previously emitted /learn/${slug} for lab-results/lab-tests pages
+      // before the `path` prop was added. Google indexed those URLs; redirect to the real pages.
+      {
+        source: "/learn/product-lab-results-:slug",
+        destination: "/product/:slug/lab-results",
+        permanent: true,
+      },
+      {
+        source: "/learn/brand-lab-tests-:slug",
+        destination: "/brand/:slug/lab-tests",
+        permanent: true,
+      },
     ];
   },
 

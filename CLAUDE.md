@@ -49,7 +49,6 @@ Local scripts can't reach Supabase directly (IP blocked). Use one-shot admin API
 - `/learn/shilajit-men-vs-women` ranking at avg position 7.8 with 10 impressions (0 clicks) — first organic signal
 - Organic traffic: 21 sessions in 4 weeks (Apr 30–May 27), highest quality channel (132s avg engagement)
 - Next GSC check: ~2 weeks from 5/28/26 — look for "discovered not indexed" count dropping
-- TODO: noindex or remove Swanson shiitake mushroom product (not shilajit, appearing in GA4 landing pages)
 
 ## Last worked on
 - Brand descriptions generated for all 118 brands via admin route (May 2026)
@@ -61,6 +60,10 @@ Local scripts can't reach Supabase directly (IP blocked). Use one-shot admin API
 - Product noindex threshold raised to `evidence.length < 2` (was `=== 0`) — products with only 1 source are too thin to index; sitemap filter kept in sync via `_count.evidence >= 2`
 - Fixed `best-us-made` redirect: was `permanent: false` (307), now `permanent: true` (301)
 - ISR conversion (May 2026): converted all public pages from `force-dynamic` to `revalidate=3600` + `generateStaticParams`; added www → non-www redirect
+- SEO noindex fixes (Jun 2026): filtered homepage URLs get `noindex, follow`; compare pages where either product has <2 evidence sources get `noindex, follow`; OG image paths added to robots.txt disallow
+- OG image 5xx fix (Jun 2026): added `maxDuration = 30` and wrapped full render in try/catch on `app/product/[slug]/opengraph-image.tsx` — Satori crashes and DB timeouts now return fallback image instead of 5xx
+- Redirects added for `/learn/product-lab-results-:slug` → `/product/:slug/lab-results` and `/learn/brand-lab-tests-:slug` → `/brand/:slug/lab-tests` (old ArticleSchema URLs Google had indexed)
+- Homepage "last updated" label now reflects actual most-recent product verification date or article publish date, not current date
 
 ## Do not re-litigate
 - Why no affiliate links (editorial independence is the value prop)

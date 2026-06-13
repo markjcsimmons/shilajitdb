@@ -172,8 +172,8 @@ export async function generateMetadata({
   const canonical = absoluteUrl(`/compare/${aSlug}-vs-${bSlug}`);
 
   const [a, b] = await Promise.all([
-    prisma.product.findUnique({ where: { slug: aSlug }, select: { name: true, brand: { select: { name: true } } } }),
-    prisma.product.findUnique({ where: { slug: bSlug }, select: { name: true, brand: { select: { name: true } } } }),
+    prisma.product.findUnique({ where: { slug: aSlug }, select: { name: true, brand: { select: { name: true } }, _count: { select: { evidence: true } } } }),
+    prisma.product.findUnique({ where: { slug: bSlug }, select: { name: true, brand: { select: { name: true } }, _count: { select: { evidence: true } } } }),
   ]);
 
   const title =
@@ -185,11 +185,14 @@ export async function generateMetadata({
       ? `Compare ${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name} on COA availability, lab accreditation, heavy metal testing, form, and price. Independent, unaffiliated analysis.`
       : "Compare two shilajit products side-by-side.";
 
+  const thinData = !a || !b || a._count.evidence < 2 || b._count.evidence < 2;
+
   return {
     title,
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
+    ...(thinData ? { robots: "noindex, follow" } : {}),
   };
 }
 

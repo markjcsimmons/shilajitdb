@@ -5,6 +5,7 @@ import { labelQualityTier } from "@/lib/labels";
 import type { OverallGrade, QualityTier } from "@prisma/client";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -44,6 +45,23 @@ function tierColor(tier: QualityTier): string {
   }
 }
 
+const fallbackImage = (
+  <div
+    style={{
+      width: 1200,
+      height: 630,
+      background: "#080B14",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "sans-serif",
+    }}
+  >
+    <span style={{ fontSize: 28, fontWeight: 700, color: "#EEF0F8" }}>Shilajit</span>
+    <span style={{ fontSize: 28, fontWeight: 700, color: "#3D7AFF" }}>DB</span>
+  </div>
+);
+
 export default async function ProductOgImage({
   params,
 }: {
@@ -51,6 +69,7 @@ export default async function ProductOgImage({
 }) {
   const { slug } = await params;
 
+  try {
   const product = await prisma.product.findFirst({
     where: { slug, isCanonical: true },
     select: {
@@ -66,25 +85,7 @@ export default async function ProductOgImage({
   });
 
   if (!product) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: 1200,
-            height: 630,
-            background: "#080B14",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: "sans-serif",
-          }}
-        >
-          <span style={{ fontSize: 28, fontWeight: 700, color: "#EEF0F8" }}>Shilajit</span>
-          <span style={{ fontSize: 28, fontWeight: 700, color: "#3D7AFF" }}>DB</span>
-        </div>
-      ),
-      { ...size }
-    );
+    return new ImageResponse(fallbackImage, { ...size });
   }
 
   const grade = product.overallGrade;
@@ -271,4 +272,7 @@ export default async function ProductOgImage({
     ),
     { ...size }
   );
+  } catch {
+    return new ImageResponse(fallbackImage, { ...size });
+  }
 }

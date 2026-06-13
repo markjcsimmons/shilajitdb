@@ -8,6 +8,7 @@ import { CompareProvider } from "@/components/compare-provider";
 import { CompareButton } from "@/components/compare-button";
 import { prisma } from "@/lib/db";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
+import { latestArticleDate } from "@/lib/article-dates";
 import {
   buildOrderBy,
   buildProductWhere,
@@ -19,7 +20,7 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+const BASE_METADATA = {
   title: "Best Shilajit Brands Ranked & Compared | ShilajitDB",
   description:
     "Compare 189+ shilajit products by COA quality, lab credibility, and heavy metal safety. Independently graded — find the best shilajit resin, capsules, and more.",
@@ -29,7 +30,20 @@ export const metadata: Metadata = {
       "Compare shilajit brands on COA quality, third-party lab testing, and heavy metal safety. 189+ products independently graded.",
   },
   alternates: { canonical: getSiteUrl() },
-};
+} satisfies Metadata;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  if (Object.keys(params).length === 0) return BASE_METADATA;
+  return {
+    ...BASE_METADATA,
+    robots: "noindex, follow",
+  };
+}
 
 const BEST_FOR_CATEGORIES = [
   { tag: "editors_pick",           label: "Editor's Picks",      icon: "⭐" },
@@ -79,7 +93,7 @@ export default async function HomePage({
     brand: { select: { name: true, slug: true } },
   } as const;
 
-  const [total, products, productCount, brandCount, publicCoaCount, editorsPicks] = await Promise.all([
+  const [total, products, productCount, brandCount, publicCoaCount, lastVerified, editorsPicks] = await Promise.all([
     hasActiveFilter ? prisma.product.count({ where }) : Promise.resolve(0),
     hasActiveFilter
       ? prisma.product.findMany({
@@ -93,6 +107,11 @@ export default async function HomePage({
     prisma.product.count({ where: { isCanonical: true, dataCompleteness: { not: "LOW" } } }),
     prisma.brand.count(),
     prisma.product.count({ where: { isCanonical: true, coaStatus: "PUBLIC" } }),
+    prisma.product.findFirst({
+      where: { isCanonical: true, lastVerifiedAt: { not: null } },
+      orderBy: { lastVerifiedAt: "desc" },
+      select: { lastVerifiedAt: true },
+    }),
     prisma.product.findMany({
       where: { isCanonical: true, dataCompleteness: { not: "LOW" }, bestForTags: { has: "editors_pick" } },
       orderBy: buildOrderBy("recommended"),
@@ -102,7 +121,11 @@ export default async function HomePage({
   ]);
 
   const coaPercent = productCount > 0 ? Math.round((publicCoaCount / productCount) * 100) : 0;
-  const lastUpdatedLabel = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+  // "last updated" = most recent of: any product re-verification OR any article publish date
+  const dbDate = lastVerified?.lastVerifiedAt ?? new Date(0);
+  const mostRecent = dbDate > latestArticleDate() ? dbDate : latestArticleDate();
+  const lastUpdatedLabel = mostRecent.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
   const websiteJsonLd = {
     "@context": "https://schema.org",

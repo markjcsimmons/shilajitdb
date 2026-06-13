@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/honeypot"],
+        disallow: ["/admin/", "/honeypot", "/opengraph-image", "/*/opengraph-image"],
       },
       // Block AI training crawlers
       {
