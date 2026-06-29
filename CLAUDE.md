@@ -64,6 +64,9 @@ Local scripts can't reach Supabase directly (IP blocked). Use one-shot admin API
 - OG image 5xx fix (Jun 2026): added `maxDuration = 30` and wrapped full render in try/catch on `app/product/[slug]/opengraph-image.tsx` — Satori crashes and DB timeouts now return fallback image instead of 5xx
 - Redirects added for `/learn/product-lab-results-:slug` → `/product/:slug/lab-results` and `/learn/brand-lab-tests-:slug` → `/brand/:slug/lab-tests` (old ArticleSchema URLs Google had indexed)
 - Homepage "last updated" label now reflects actual most-recent product verification date or article publish date, not current date
+- SEO improvements (Jun 2026): rewrote titles/descriptions for `/shilajit-comparison`, `/learn/how-to-read-shilajit-coa`, and brand lab-tests template; fixed product page title template (deduplicate brand name prefix, buyer-focused description); added `review`+`reviewRating` schema to all graded product pages; expanded `/learn/shilajit-forms-compared` with bioavailability content, resin vs capsules table, and FAQ; added FAQ + FAQPage schema to `/best/best-gummies`; added internal links to under-linked learn articles
+- Admin route `/api/admin-tmp-evidence-audit` exists (not yet run) — counts canonical products below 2-evidence threshold, broken down by COA status. Delete after use.
+- GSC status (Jun 2026): 19 5xx errors (all OG image URLs, fix deployed — needs Validate Fix in GSC); 6 404s (old learn/ redirects live — needs Validate Fix in GSC); 52 noindex pages (expected: thin products + filtered homepage URLs); 259 discovered-not-indexed (validation started); impressions accelerating fast (50/day → 390/day in one month)
 
 ## Do not re-litigate
 - Why no affiliate links (editorial independence is the value prop)
