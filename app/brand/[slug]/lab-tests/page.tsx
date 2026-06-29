@@ -29,8 +29,8 @@ export async function generateMetadata({
   });
   if (!brand) return { title: "Brand not found" };
 
-  const title = `${brand.name} COA & Lab Test Results | ShilajitDB`;
-  const description = `Certificates of Analysis, third-party lab test results, and heavy metal testing documentation for ${brand.name} shilajit products. Independent review.`;
+  const title = `${brand.name} Shilajit COA & Heavy Metals Lab Results | ShilajitDB`;
+  const description = `${brand.name} shilajit COA documents, heavy metals panel results (lead, arsenic, cadmium, mercury), and third-party lab accreditation. Independent review.`;
   const canonical = absoluteUrl(`/brand/${brand.slug}/lab-tests`);
 
   return {

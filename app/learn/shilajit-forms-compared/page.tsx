@@ -6,7 +6,7 @@ import { ArticleSchema } from "@/components/article-schema";
 export const metadata: Metadata = {
   title: "Shilajit Resin vs. Capsules vs. Powder vs. Gummies: Which Form Is Best?",
   description:
-    "Processing tradeoffs, bioavailability differences, and adulteration risk across shilajit product formats — with guidance on how to evaluate each.",
+    "Shilajit resin vs capsules vs powder vs gummies: which form actually delivers more? Side-by-side comparison of bioavailability, adulteration risk, dose, and cost per serving.",
   alternates: { canonical: absoluteUrl("/learn/shilajit-forms-compared") },
   openGraph: {
     title: "Shilajit Resin vs. Capsules vs. Powder vs. Gummies: Which Form Is Best?",
@@ -69,6 +69,13 @@ export default function FormsComparedPage() {
             you the most about the underlying material. See the <Link href="/best/best-resin" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">best-tested resins →</Link>
           </p>
           <p>
+            On bioavailability, resin has a practical advantage: dissolved in warm water, the
+            fulvic acid and mineral compounds are immediately in solution and absorb quickly.
+            There is no capsule shell to dissolve first and no binder matrix to break down.
+            Clinical studies on shilajit have predominantly used resin or resin-equivalent
+            extracts, so the evidence base applies most directly to this form.
+          </p>
+          <p>
             The main drawbacks: it requires measuring a small dose (typically a pea-sized portion,
             around 300–500 mg), has a strong and distinctive earthy taste, and is less convenient
             for travel than capsules.
@@ -99,6 +106,13 @@ export default function FormsComparedPage() {
             Capsules made from genuine, high-quality resin that has been dried and encapsulated
             can be as effective as loose resin. The form itself is not the problem — it is the
             lack of transparency around the capsule contents that creates risk.
+          </p>
+          <p>
+            On bioavailability, a well-made capsule from standardised extract performs comparably
+            to resin once dissolved. The difference is dissolution time: a capsule shell typically
+            takes 20–30 minutes to break down in the stomach, versus near-immediate absorption
+            when resin is dissolved in warm water. This gap is unlikely to matter for daily
+            supplementation but is worth knowing if you are comparing the two forms directly.
           </p>
 
           <div className="rounded-lg bg-[#041828] border border-[#38BDF8]/30 p-4 mt-2">
@@ -210,6 +224,61 @@ export default function FormsComparedPage() {
             serving. Liquid forms are also susceptible to degradation if not properly stabilised.
           </p>
 
+          <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Resin vs. Capsules: Head-to-Head</h2>
+          <p>
+            This is the comparison most buyers care about. Both forms can deliver effective doses
+            of shilajit — but they differ on four practical dimensions:
+          </p>
+          <div className="rounded-xl border border-[#252A40] overflow-hidden mt-3">
+            <table className="w-full text-xs">
+              <thead className="bg-[#171C2E] border-b border-[#252A40]">
+                <tr>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]"></th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Resin</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[#8892B8]">Capsules</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#252A40]">
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Typical dose</td>
+                  <td className="px-4 py-3 text-[#8892B8]">300–500 mg (pea-sized, measured)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">300–600 mg (fixed per capsule)</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Dissolution</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Immediate in warm water</td>
+                  <td className="px-4 py-3 text-[#8892B8]">20–30 min (capsule shell)</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Adulteration risk</td>
+                  <td className="px-4 py-3 text-emerald-700 font-medium">Low — visible, testable</td>
+                  <td className="px-4 py-3 text-amber-700 font-medium">Medium — contents hidden</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Cost per dose</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Lower (price per gram)</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Higher (processing premium)</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">Convenience</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Measuring required, strong taste</td>
+                  <td className="px-4 py-3 text-[#8892B8]">No measuring, travel-friendly</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-[#EEF0F8]">COA verifiability</td>
+                  <td className="px-4 py-3 text-emerald-700 font-medium">Easiest to verify</td>
+                  <td className="px-4 py-3 text-[#8892B8]">Requires COA on final product</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3">
+            <strong className="text-[#EEF0F8]">Verdict:</strong> Resin wins on authenticity,
+            cost, and verifiability. Capsules win on convenience. If a capsule product publishes
+            a COA covering the final encapsulated product — not just the raw extract — the
+            effective difference between the two is small for most users.
+          </p>
+
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">The Bottom Line</h2>
           <p>
             Form matters less than quality verification. A well-documented capsule product with a
@@ -244,6 +313,32 @@ export default function FormsComparedPage() {
           </p>
         </div>
 
+        <section className="space-y-4 border-t border-[#252A40] pt-6">
+          <h2 className="text-sm font-semibold text-[#EEF0F8] uppercase tracking-wider">Frequently Asked Questions</h2>
+          <div className="space-y-4 text-sm text-[#8892B8] leading-relaxed">
+            <div>
+              <p className="font-semibold text-[#EEF0F8]">Is shilajit resin better than capsules?</p>
+              <p className="mt-1">Resin is better for authenticity and cost-per-dose; capsules are better for convenience. The effective difference is small if the capsule product has a COA on the final encapsulated product. Without that COA, resin is the safer choice because it is harder to adulterate.</p>
+            </div>
+            <div>
+              <p className="font-semibold text-[#EEF0F8]">Is shilajit powder as good as resin?</p>
+              <p className="mt-1">Powder carries a higher adulteration risk than resin because fillers are easy to add and difficult to detect without lab testing. A powder product with a public COA showing fulvic acid percentage and heavy metals from a named laboratory can be legitimate — but the burden of proof is higher than for resin.</p>
+            </div>
+            <div>
+              <p className="font-semibold text-[#EEF0F8]">Are shilajit gummies effective?</p>
+              <p className="mt-1">Gummies typically contain 50–200 mg of shilajit extract per serving — significantly less than the 300–500 mg used in clinical research. They can be a low-commitment entry point, but they are unlikely to deliver the same mineral matrix and fulvic acid concentrations as resin or well-made capsules at equivalent label quantities.</p>
+            </div>
+            <div>
+              <p className="font-semibold text-[#EEF0F8]">Which shilajit form has the best bioavailability?</p>
+              <p className="mt-1">Resin dissolved in warm water absorbs fastest because the compounds are immediately in solution. Capsules have a 20–30 minute delay for the shell to dissolve. In practice, for daily supplementation, this difference is minor — what matters more is the quality and concentration of the underlying extract.</p>
+            </div>
+            <div>
+              <p className="font-semibold text-[#EEF0F8]">What shilajit form is best for beginners?</p>
+              <p className="mt-1">Capsules or gummies for taste and convenience — but look for a product with a public COA. Resin is the better long-term choice once you are comfortable with the measuring and taste, because you get more shilajit per dollar and it is easier to verify quality.</p>
+            </div>
+          </div>
+        </section>
+
         <footer className="border-t border-[#252A40] pt-6">
           <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
           <ol className="space-y-2 text-xs text-[#8892B8]">
@@ -271,9 +366,9 @@ export default function FormsComparedPage() {
           <p className="text-xs text-[#4A5070] mb-1">Up next</p>
           <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">What Is Fulvic Acid? →</p>
         </Link>
-        <Link href="/learn/fake-shilajit-how-to-spot" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+        <Link href="/learn/shilajit-extract-vs-resin" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
           <p className="text-xs text-[#4A5070] mb-1">Related</p>
-          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How to Spot Fake or Adulterated Shilajit →</p>
+          <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Shilajit Extract vs Raw Resin: Are You Getting What You Think? →</p>
         </Link>
       </div>
     </article>

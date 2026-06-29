@@ -4,14 +4,14 @@ import { absoluteUrl } from "@/lib/site";
 import { ArticleSchema } from "@/components/article-schema";
 
 export const metadata: Metadata = {
-  title: "How to Read a Shilajit COA (Certificate of Analysis)",
+  title: "How to Read a Shilajit COA: Heavy Metals, Fulvic Acid & Red Flags",
   description:
-    "A practical buyer's guide to interpreting a shilajit Certificate of Analysis: what panels matter, what to verify, and red flags that reveal a fake or insufficient COA.",
+    "What to look for on a shilajit Certificate of Analysis: heavy metals panel (lead, arsenic, cadmium), fulvic acid %, lab accreditation, and red flags that reveal a fake or insufficient COA.",
   alternates: { canonical: absoluteUrl("/learn/how-to-read-shilajit-coa") },
   openGraph: {
-    title: "How to Read a Shilajit COA (Certificate of Analysis)",
+    title: "How to Read a Shilajit COA: Heavy Metals, Fulvic Acid & Red Flags",
     description:
-      "What panels matter on a COA, how to verify it's real, and what red flags to look for — from the team behind the Shilajit Transparency Database.",
+      "What to look for on a shilajit Certificate of Analysis: heavy metals panel (lead, arsenic, cadmium), fulvic acid %, lab accreditation, and red flags that reveal a fake or insufficient COA.",
     url: absoluteUrl("/learn/how-to-read-shilajit-coa"),
   },
 };

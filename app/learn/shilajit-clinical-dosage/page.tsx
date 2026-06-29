@@ -253,9 +253,9 @@ export default function ClinicalDosagePage() {
             <p className="text-xs text-[#4A5070] mb-1">Related</p>
             <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">How Long Does Shilajit Take to Work? Dosing, Timeline & Expectations →</p>
           </Link>
-          <Link href="/learn/shilajit-pre-workout" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
+          <Link href="/learn/shilajit-muscle-recovery" className="group rounded-lg border border-[#252A40] bg-[#0F1320] p-5 hover:border-[#313760] hover:bg-[#171C2E] transition-all">
             <p className="text-xs text-[#4A5070] mb-1">Related</p>
-            <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Shilajit as a Pre-Workout: What the Research Supports →</p>
+            <p className="text-sm font-semibold text-[#EEF0F8] group-hover:text-[#8892B8]">Shilajit for Muscle Recovery: What the Clinical Evidence Shows →</p>
           </Link>
         </div>
       </article>

@@ -24,6 +24,7 @@ const TAG_META: Record<string, {
   metaTitle: string;
   description: string;
   editorial: string[];
+  faq?: { q: string; a: string }[];
 }> = {
   best_resin: {
     label: "Best Resin",
@@ -73,6 +74,26 @@ const TAG_META: Record<string, {
     editorial: [
       "Gummy-form shilajit is the most processed format in the database. Sugar, gelatin, flavourings, and colourants are added to the shilajit extract, which makes testing credentials especially important — not as a formality but because the processing introduces additional contamination risk and dilutes the active compounds.",
       "We only list gummies with a public COA that covers the finished product (not just the raw shilajit extract). The products below are the best-performing gummies in the database on our grading criteria.",
+      "What to look for in a shilajit gummy: a stated shilajit content per gummy (in mg), a fulvic acid percentage on the label or COA, and a third-party lab test on the finished gummy — not just the raw extract. Many brands test the incoming shilajit extract but not the final gummy, which means the heavy metals and fulvic acid data does not reflect what you are actually consuming.",
+      "Typical shilajit gummies contain 100–250 mg of extract per gummy. Better products standardise this to a fulvic acid percentage (usually 20–60%). Products that only state a total \"shilajit blend\" weight without a fulvic acid percentage are unverifiable — avoid them regardless of price.",
+    ],
+    faq: [
+      {
+        q: "Are shilajit gummies effective?",
+        a: "Shilajit gummies can deliver real doses of fulvic acid and trace minerals, but the effective dose per gummy is typically lower than resin or capsules — usually 100–250 mg versus 300–500 mg. Whether a gummy works depends on the shilajit content per serving and the fulvic acid concentration. Look for products with a COA covering the finished gummy and a stated fulvic acid percentage.",
+      },
+      {
+        q: "Shilajit gummies vs resin: which is better?",
+        a: "Resin delivers a higher dose of full-spectrum shilajit with less processing and lower adulteration risk. Gummies are more convenient and taste better, but contain significantly less shilajit per serving and cost more per mg of active content. For maximum potency, resin is the better choice. For ease of use and palatability, gummies are a reasonable trade-off — provided the brand publishes a COA on the finished product.",
+      },
+      {
+        q: "What should I look for in a shilajit gummy?",
+        a: "Three things: (1) a stated shilajit content per gummy in mg, not just a total blend weight; (2) a fulvic acid percentage — ideally standardised to at least 20%; and (3) a COA from a named independent laboratory that covers the finished gummy, not just the raw extract. Brands that only test the incoming extract cannot confirm what the final product contains after blending with sugars and other ingredients.",
+      },
+      {
+        q: "How much shilajit is in a gummy?",
+        a: "Most shilajit gummies contain 100–300 mg of shilajit extract per gummy. Higher-quality products standardise this to a fulvic acid percentage. Compare this against the 300–500 mg typically used in clinical research on shilajit — you may need multiple gummies per day to reach an equivalent dose.",
+      },
     ],
   },
   editors_pick: {
@@ -220,12 +241,28 @@ export default async function BestTagPage({
     })),
   };
 
+  const faqSchema = meta.faq ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: meta.faq.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  } : null;
+
   return (
     <>
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
     />
+    {faqSchema && (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+    )}
     <div className="space-y-4">
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex items-center gap-2 text-xs text-[#6E7A9A] mb-3">
@@ -253,6 +290,20 @@ export default async function BestTagPage({
           {products.map(p => (
             <ProductCard key={p.id} product={p} />
           ))}
+        </div>
+      )}
+
+      {meta.faq && (
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 space-y-4">
+          <h2 className="text-sm font-semibold text-[#EEF0F8] uppercase tracking-wider">Frequently Asked Questions</h2>
+          <div className="space-y-4">
+            {meta.faq.map(({ q, a }) => (
+              <div key={q}>
+                <p className="text-sm font-semibold text-[#EEF0F8]">{q}</p>
+                <p className="mt-1 text-sm text-[#8892B8] leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -14,12 +14,12 @@ export async function generateMetadata(): Promise<Metadata> {
   });
   const count = `${Math.floor(totalCount / 10) * 10}+`;
   return {
-    title: `Best Shilajit Brands (2026): ${count} Products Ranked by COA & Lab Testing | ShilajitDB`,
-    description: `Compare ${count} shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings — find the best shilajit resin, capsules, and more.`,
+    title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026) | ShilajitDB`,
+    description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
     alternates: { canonical: absoluteUrl("/shilajit-comparison") },
     openGraph: {
-      title: `Best Shilajit Brands (2026): ${count} Products Ranked by COA & Lab Testing`,
-      description: `Compare ${count} shilajit brands ranked by COA quality, lab accreditation, heavy metal safety, and price. Independent, unaffiliated ratings.`,
+      title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026)`,
+      description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
       url: absoluteUrl("/shilajit-comparison"),
     },
   };

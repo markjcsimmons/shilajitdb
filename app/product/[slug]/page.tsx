@@ -172,7 +172,12 @@ export async function generateMetadata({
   const grade = product.overallGrade ? gradeLabel[product.overallGrade] ?? null : null;
   const coa = product.coaStatus ? coaLabel[product.coaStatus] ?? null : null;
   const gradePart = grade && coa ? ` — Grade ${grade}, ${coa}` : grade ? ` — Grade ${grade}` : "";
-  const title = `${product.brand.name} ${product.name}${gradePart}`;
+  const brandPrefix = product.brand.name.toLowerCase();
+  const productNameDeduped = product.name.toLowerCase().startsWith(brandPrefix)
+    ? product.name.slice(product.brand.name.length).trimStart()
+    : product.name;
+  const displayName = productNameDeduped || product.name;
+  const title = `${product.brand.name} ${displayName}${gradePart}`;
 
   const coaShortLabel = product.coaStatus ? (coaShort[product.coaStatus] ?? "") : "";
   const heavy = product.heavyMetalsTested ? (heavyLabel[product.heavyMetalsTested] ?? "") : "";
@@ -181,10 +186,10 @@ export async function generateMetadata({
     .join(" · ");
   const fallbackDescription = (() => {
     const lead = infoParts ? `${infoParts}. ` : "";
-    const full = `${lead}Transparency score for ${product.name} | ShilajitDB.`;
+    const full = `${lead}Independent shilajit review: lab analysis, COA documents, and transparency rating for ${product.name}.`;
     if (full.length <= 160) return full;
-    const prefix = `${lead}Transparency score for `;
-    const suffix = " | ShilajitDB.";
+    const prefix = `${lead}Independent shilajit review for `;
+    const suffix = ": lab analysis, COA, and transparency rating.";
     const maxName = 160 - prefix.length - suffix.length - 3;
     return `${prefix}${product.name.slice(0, maxName)}...${suffix}`;
   })();
@@ -359,6 +364,11 @@ export default async function ProductPage({
     ],
   };
 
+  const gradeToRating: Record<string, number> = {
+    A_PLUS: 5.0, A: 4.5, B: 4.0, C: 3.0, D: 2.0, E: 1.5, F: 1.0,
+  };
+  const ratingValue = product.overallGrade ? (gradeToRating[product.overallGrade] ?? null) : null;
+
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -367,6 +377,18 @@ export default async function ProductPage({
     image: absoluteUrl(`/product/${product.slug}/opengraph-image`),
     brand: { "@type": "Brand", name: product.brand.name },
     url: absoluteUrl(`/product/${product.slug}`),
+    ...(ratingValue !== null ? {
+      review: {
+        "@type": "Review",
+        author: { "@type": "Organization", name: "ShilajitDB" },
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      },
+    } : {}),
     ...(product.listings.length
       ? {
           offers: product.listings.map((l) => {
