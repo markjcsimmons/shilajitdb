@@ -178,7 +178,7 @@ export async function generateMetadata({
 
   const title =
     a && b
-      ? `${a.brand.name} vs ${b.brand.name} Shilajit Comparison | ShilajitDB`
+      ? `${a.brand.name} vs ${b.brand.name} Shilajit Comparison`
       : "Compare products";
   const description =
     a && b
@@ -191,7 +191,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    openGraph: { title: `${title} | ShilajitDB`, description, url: canonical },
     ...(thinData ? { robots: "noindex, follow" } : {}),
   };
 }

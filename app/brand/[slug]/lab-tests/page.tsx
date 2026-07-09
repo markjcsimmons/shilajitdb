@@ -29,7 +29,7 @@ export async function generateMetadata({
   });
   if (!brand) return { title: "Brand not found" };
 
-  const title = `${brand.name} Shilajit COA & Heavy Metals Lab Results | ShilajitDB`;
+  const title = `${brand.name} Shilajit COA & Heavy Metals Lab Results`;
   const description = `${brand.name} shilajit COA documents, heavy metals panel results (lead, arsenic, cadmium, mercury), and third-party lab accreditation. Independent review.`;
   const canonical = absoluteUrl(`/brand/${brand.slug}/lab-tests`);
 
@@ -37,7 +37,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    openGraph: { title: `${title} | ShilajitDB`, description, url: canonical },
   };
 }
 

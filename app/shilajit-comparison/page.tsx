@@ -14,11 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
   });
   const count = `${Math.floor(totalCount / 10) * 10}+`;
   return {
-    title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026) | ShilajitDB`,
+    title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026)`,
     description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
     alternates: { canonical: absoluteUrl("/shilajit-comparison") },
     openGraph: {
-      title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026)`,
+      title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026) | ShilajitDB`,
       description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
       url: absoluteUrl("/shilajit-comparison"),
     },

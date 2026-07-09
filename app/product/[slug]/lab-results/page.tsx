@@ -39,7 +39,7 @@ export async function generateMetadata({
   });
   if (!product) return { title: "Product not found" };
 
-  const title = `${product.brand.name} ${product.name} Lab Test Results & COA | ShilajitDB`;
+  const title = `${product.brand.name} ${product.name} Lab Test Results & COA`;
   const description = `Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}. Independent, unaffiliated review.`;
   const canonical = absoluteUrl(`/product/${slug}/lab-results`);
 
@@ -47,7 +47,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical },
+    openGraph: { title: `${title} | ShilajitDB`, description, url: canonical },
   };
 }
 
