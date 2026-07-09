@@ -38,6 +38,10 @@ export const ARTICLE_DATES: string[] = [
   // June 2026
   "2026-06-08", // shilajit-honey-sticks
   "2026-06-08", // shilajit-sea-moss
+
+  // July 2026
+  "2026-07-09", // shilajit-benefits-for-men
+  "2026-07-09", // shilajit-benefits-for-women
 ];
 
 /** Returns the most recent article publish date as a Date object. */
