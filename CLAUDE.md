@@ -8,7 +8,7 @@ Next.js 15 App Router · TypeScript · Prisma 6 + PostgreSQL (Supabase) · Tailw
 
 ## Architecture
 - `app/` — all routes (no Pages Router)
-- `app/learn/[slug]/` — 25 static editorial articles
+- `app/learn/[slug]/` — 27 static editorial articles
 - `app/best/[tag]/` — 10 ranking pages, driven by `bestForTags` field
 - `app/product/[slug]/` + `/lab-results` — per-product pages
 - `app/brand/[slug]/` + `/lab-tests` — per-brand pages
@@ -51,6 +51,7 @@ Local scripts can't reach Supabase directly (IP blocked). Use one-shot admin API
 - Next GSC check: ~2 weeks from 5/28/26 — look for "discovered not indexed" count dropping
 
 ## Last worked on
+- New learn articles (Jul 2026): added `/learn/shilajit-benefits-for-men` and `/learn/shilajit-benefits-for-women` from SEO keyword briefs (27.1k/mo and 14.8k/mo volume respectively). Skipped the briefs for "what is shilajit," "shilajit benefits," and "how to take shilajit" since those are already covered by existing articles (`what-is-shilajit`, `shilajit-benefits`, and the `best-time-to-take-shilajit`/`shilajit-dosing-timeline`/`shilajit-clinical-dosage` cluster) — check `app/learn/` before writing new briefs to avoid duplicating an existing slug/topic.
 - Title dedup fix (Jul 2026): `/shilajit-comparison`, `/brand/[slug]/lab-tests`, `/product/[slug]/lab-results`, `/compare/[pair]` hardcoded `| ShilajitDB` in their title string on top of the root layout's `title.template: "%s | ShilajitDB"`, producing `"... | ShilajitDB | ShilajitDB"` in search results (visible in GA4 page-title report). Fixed by dropping the suffix from `title` (template adds it) and moving it to `openGraph.title` only (OG tags don't use the template).
 - robots.txt (Jul 2026): allowed `ChatGPT-User` (OpenAI's live-browsing agent) through; kept `GPTBot` + other bulk training crawlers (`CCBot`, `anthropic-ai`, `Claude-Web`, `Bytespider`, `Diffbot`, `ImagesiftBot`, `YouBot`) disallowed. Rationale: chatgpt.com/ai-assistant is ~64% of site traffic (GA4, Jun 11–Jul 8 2026) — allow the user-triggered fetch bot, keep the training crawler blocked.
 - GA4 landing-page analysis (Jul 2026): pulled landing page × session source/medium filtered to `*ai-assistant*` medium (chatgpt.com, claude.ai, gemini.google.com), Jun 11–Jul 8. Finding: `/best/best-third-party-tested` is the dominant AI-citation page — 93 of its ~97 total active users this period came via AI-assistant referral (nearly all its traffic), vs. only ~19% for the homepage. `/shilajit-comparison` is a distant second (36 sessions).

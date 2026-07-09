@@ -80,6 +80,20 @@ const articles = [
     tag: "Science",
   },
   {
+    slug: "shilajit-benefits-for-men",
+    title: "Shilajit Benefits for Men: Energy, Recovery & What to Look For",
+    description:
+      "Why men use shilajit, what the testosterone and recovery research supports, and how to choose a verified product.",
+    tag: "Practical",
+  },
+  {
+    slug: "shilajit-benefits-for-women",
+    title: "Benefits of Shilajit for Women: Iron, Energy & What to Look For",
+    description:
+      "Why women use shilajit, the iron bioavailability research behind it, and what to check before buying.",
+    tag: "Practical",
+  },
+  {
     slug: "shilajit-dosing-timeline",
     title: "How Long Does Shilajit Take to Work? Dosing, Timeline & Expectations",
     description:
