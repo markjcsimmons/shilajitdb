@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/honeypot", "/opengraph-image", "/*/opengraph-image"],
+        disallow: ["/admin/", "/honeypot", "/opengraph-image", "/*/opengraph-image", "/cdn-cgi/"],
       },
       // Block AI training crawlers (ChatGPT-User is allowed — it's the live
       // browsing agent for user-triggered lookups, not a training crawler)
