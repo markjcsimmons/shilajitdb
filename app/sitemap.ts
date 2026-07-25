@@ -30,6 +30,11 @@ const LEARN_SLUGS = [
   "himalayan-shilajit-india-pakistan-nepal",
   "shilajit-ashwagandha-combination",
   "shilajit-fulvic-acid-how-much",
+  "shilajit-gummies",
+  "shilajit-honey-sticks",
+  "shilajit-sea-moss",
+  "shilajit-benefits-for-men",
+  "shilajit-benefits-for-women",
 ];
 
 const BEST_TAGS = [

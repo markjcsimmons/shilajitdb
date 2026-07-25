@@ -212,6 +212,13 @@ const articles = [
       "Why the 70%+ and 80%+ fulvic acid marketing figures are not evidence-based thresholds — and what the research actually used.",
     tag: "Science",
   },
+  {
+    slug: "shilajit-gummies",
+    title: "Shilajit Gummies: The Processing and Filler Problem, Explained",
+    description:
+      "How shilajit gummies are actually manufactured, why the format is the most processed and diluted way to take shilajit, and what to check before buying one.",
+    tag: "Buying Guide",
+  },
 ];
 
 const tagColors: Record<string, string> = {

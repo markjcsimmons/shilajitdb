@@ -158,7 +158,12 @@ export default function FormsComparedPage() {
             The appeal is taste and approachability, particularly for buyers new to shilajit who
             find the taste of resin off-putting. But gummies are the form least likely to deliver
             the mineral matrix and fulvic acid concentrations present in clinical research on shilajit.
-            They are also the form most likely to contain artificial additives.
+            They are also the form most likely to contain artificial additives. For how a gummy is
+            actually manufactured and why that matters, see{" "}
+            <Link href="/learn/shilajit-gummies" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
+              Shilajit Gummies: The Processing and Filler Problem, Explained
+            </Link>
+            .
           </p>
 
           <div className="rounded-lg bg-[#200505] border border-[#EF4444]/30 p-4 mt-2">
