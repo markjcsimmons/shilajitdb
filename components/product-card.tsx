@@ -33,7 +33,7 @@ function qualityTierLabel(tier: QualityTier): string {
   return tier.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
 }
 
-function coaLabel(status: CoaStatus): string {
+export function coaLabel(status: CoaStatus): string {
   switch (status) {
     case "PUBLIC":          return "Public COA";
     case "PUBLIC_EMBEDDED": return "COA embedded";
@@ -43,7 +43,7 @@ function coaLabel(status: CoaStatus): string {
   }
 }
 
-function formLabel(form: ProductForm): string {
+export function formLabel(form: ProductForm): string {
   return form.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase());
 }
 

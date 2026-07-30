@@ -1,9 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
-import { ProductCard } from "@/components/product-card";
+import { ProductCard, coaLabel, formLabel } from "@/components/product-card";
 import { absoluteUrl } from "@/lib/site";
-import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
+import { gradeBadgeClasses, gradeLabel, coaStatusClasses } from "@/lib/grade-colors";
 import { cn } from "@/components/ui";
 
 export const revalidate = 3600;
@@ -80,7 +80,7 @@ export default async function ShilajitComparisonPage() {
     prisma.product.findMany({
       where: { isCanonical: true, coaStatus: "PUBLIC", dataCompleteness: { not: "LOW" } },
       orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-      take: 6,
+      take: 10,
       select: PRODUCT_SELECT,
     }),
     // Grade distribution
@@ -181,6 +181,73 @@ export default async function ShilajitComparisonPage() {
               Browse all {totalCount} products →
             </Link>
           </div>
+        </div>
+
+        {/* ── Side-by-side comparison table ── */}
+        <div>
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">Top-graded shilajit, ranked side-by-side</h2>
+          <p className="text-sm text-[#8892B8] mb-4">
+            The {topProducts.length} highest-graded products with a public Certificate of Analysis, compared on the criteria that matter.
+          </p>
+          <div className="overflow-x-auto rounded-lg border border-[#252A40]">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[#252A40] bg-[#171C2E] text-left text-xs uppercase tracking-wider text-[#6E7A9A]">
+                  <th className="px-4 py-3 font-semibold">Product</th>
+                  <th className="px-4 py-3 font-semibold">Grade</th>
+                  <th className="px-4 py-3 font-semibold">Form</th>
+                  <th className="px-4 py-3 font-semibold">COA</th>
+                  <th className="px-4 py-3 font-semibold">Heavy metals</th>
+                  <th className="px-4 py-3 font-semibold text-right">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topProducts.map((p) => (
+                  <tr key={p.id} className="border-b border-[#252A40] last:border-0 hover:bg-[#171C2E] transition-colors">
+                    <td className="px-4 py-3">
+                      <Link href={`/product/${p.slug}`} className="block">
+                        <span className="block text-xs font-medium uppercase tracking-[0.07em] text-[#8892B8]">{p.brand.name}</span>
+                        <span className="block text-sm font-semibold text-[#EEF0F8] hover:text-[#6E9FFF] transition-colors">{p.name}</span>
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={cn(
+                        "inline-flex h-8 w-8 items-center justify-center rounded text-sm font-bold",
+                        gradeBadgeClasses(p.overallGrade)
+                      )}>
+                        {gradeLabel(p.overallGrade)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-[#B0B8D0]">{formLabel(p.form)}</td>
+                    <td className="px-4 py-3">
+                      <span className={cn("inline-flex items-center rounded px-1.5 py-px text-xs whitespace-nowrap", coaStatusClasses(p.coaStatus))}>
+                        {coaLabel(p.coaStatus)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {p.heavyMetalsTested === "CONFIRMED" ? (
+                        <span className="text-xs text-[#22C55E]">Confirmed</span>
+                      ) : p.heavyMetalsTested === "CLAIMED" ? (
+                        <span className="text-xs text-[#EAB308]">Claimed</span>
+                      ) : (
+                        <span className="text-xs text-[#4A5070]">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right font-mono text-[#EEF0F8]">
+                      {p.pricePerGramCents != null
+                        ? `$${(p.pricePerGramCents / 100).toFixed(2)}/g`
+                        : p.pricePerServingCents != null
+                        ? `$${(p.pricePerServingCents / 100).toFixed(2)}/serving`
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-[#6E7A9A]">
+            <Link href="/" className="hover:text-[#8892B8] transition-colors underline underline-offset-2">See all {totalCount} products →</Link>
+          </p>
         </div>
 
         {/* ── Grade key ── */}
@@ -317,20 +384,6 @@ export default async function ShilajitComparisonPage() {
                 <div className="text-sm font-semibold text-[#EEF0F8] mb-2">{item.title}</div>
                 <div className="text-xs text-[#8892B8] leading-relaxed">{item.body}</div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Top products ── */}
-        <div>
-          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">Highest-graded shilajit with a public COA</h2>
-          <p className="text-sm text-[#8892B8] mb-4">
-            Products below have a publicly available Certificate of Analysis from a named third-party laboratory.{" "}
-            <Link href="/" className="text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors">See all {totalCount} products →</Link>
-          </p>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {topProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </div>
