@@ -219,6 +219,13 @@ const articles = [
       "How shilajit gummies are actually manufactured, why the format is the most processed and diluted way to take shilajit, and what to check before buying one.",
     tag: "Buying Guide",
   },
+  {
+    slug: "top-rated-shilajit-brands",
+    title: "Top Rated Shilajit Brands: Ranked by Lab Data, Not Reviews",
+    description:
+      "Most \"top 10 shilajit brands\" lists are recycled affiliate content. Here's what a top-rated brand actually needs to prove, and how the highest-graded brands stack up.",
+    tag: "Buying Guide",
+  },
 ];
 
 const tagColors: Record<string, string> = {

@@ -35,6 +35,7 @@ const LEARN_SLUGS = [
   "shilajit-sea-moss",
   "shilajit-benefits-for-men",
   "shilajit-benefits-for-women",
+  "top-rated-shilajit-brands",
 ];
 
 const BEST_TAGS = [
