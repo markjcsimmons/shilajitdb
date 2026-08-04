@@ -166,10 +166,10 @@ export default async function ShilajitComparisonPage() {
             <p className="text-sm text-[#C8D0E8] leading-relaxed">
               ShilajitDB has independently reviewed and graded {totalCount}+ shilajit products sold in the United States. Every product is assessed on the same objective criteria: whether a Certificate of Analysis exists and is publicly available, who issued it, whether that laboratory is independent and accredited, whether heavy metals were tested to actual numeric values, and what the manufacturing and sourcing claims are.
             </p>
-            <p className="text-sm text-[#C8D0E8] leading-relaxed">
+            <p className="hidden sm:block text-sm text-[#C8D0E8] leading-relaxed">
               The result is a comparable, apples-to-apples ranking across brands that vary widely in price, form, and marketing claims. Of {totalCount}+ products reviewed, only {coaCount} ({Math.round((coaCount / totalCount) * 100)}%) have a fully public COA from a named independent laboratory — a number that reflects how opaque the shilajit industry still is.
             </p>
-            <p className="text-sm text-[#C8D0E8] leading-relaxed">
+            <p className="hidden sm:block text-sm text-[#C8D0E8] leading-relaxed">
               We have no affiliation with any brand and earn no commission. Grades are assigned algorithmically from the evidence — not editorial opinion.
             </p>
           </div>
