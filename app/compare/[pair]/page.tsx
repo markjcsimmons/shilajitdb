@@ -242,6 +242,27 @@ export default async function ComparePage({
     orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
   });
 
+  // Top 15 (same set used by generateStaticParams) for related-comparison links
+  const top15 = await prisma.product.findMany({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
+    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    take: 15,
+    select: { slug: true, name: true, brand: { select: { name: true } } },
+  });
+  const others = top15.filter((p) => p.slug !== aSlug && p.slug !== bSlug);
+  const relatedPairs = [
+    ...others.slice(0, 3).map((other) => ({
+      anchor: a,
+      other,
+      pair: [aSlug, other.slug].sort().join("-vs-"),
+    })),
+    ...others.slice(3, 6).map((other) => ({
+      anchor: b,
+      other,
+      pair: [bSlug, other.slug].sort().join("-vs-"),
+    })),
+  ];
+
   // Top alternatives — best-graded products that aren't either of these two
   const recommended = await prisma.product.findMany({
     where: {
@@ -526,6 +547,24 @@ export default async function ComparePage({
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             {recommended.map((p) => (
               <ProductCard key={p.id} product={p as ProductCardData} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Related comparisons */}
+      {relatedPairs.length > 0 && (
+        <div>
+          <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-3">Related comparisons</h2>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {relatedPairs.map(({ anchor, other, pair: p }) => (
+              <Link
+                key={p}
+                href={`/compare/${p}`}
+                className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 text-sm text-[#8892B8] hover:border-[#3D7AFF] hover:text-[#EEF0F8] transition-colors"
+              >
+                {anchor.brand.name} — {anchor.name} <span className="text-[#4A5070]">vs</span> {other.brand.name} — {other.name}
+              </Link>
             ))}
           </div>
         </div>

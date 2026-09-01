@@ -431,6 +431,23 @@ export default async function ProductPage({
     take: 200,
   });
 
+  // Top 15 (same set /compare/[pair] pre-renders) — used for crawlable quick-compare links
+  const top15 = await prisma.product.findMany({
+    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
+    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    take: 15,
+    select: { slug: true, name: true, brand: { select: { name: true } } },
+  });
+  const quickCompareLinks = top15.some((p) => p.slug === product.slug)
+    ? top15
+        .filter((p) => p.slug !== product.slug)
+        .slice(0, 3)
+        .map((other) => ({
+          other,
+          pair: [product.slug, other.slug].sort().join("-vs-"),
+        }))
+    : [];
+
   // Best buy link — prefer official, then Amazon
   const officialListing = product.listings.find((l) => l.source === "OFFICIAL" && l.status !== "INACTIVE");
   const amazonListing = product.listings.find((l) => l.source === "AMAZON" && l.status !== "INACTIVE");
@@ -957,6 +974,24 @@ export default async function ProductPage({
           View lab results →
         </Link>
       </div>
+
+      {/* Quick compare — real links to pre-rendered /compare pages */}
+      {quickCompareLinks.length > 0 && (
+        <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4">
+          <p className="mb-3 text-sm font-semibold text-[#EEF0F8]">Compare with a top-rated product</p>
+          <div className="flex flex-wrap gap-2">
+            {quickCompareLinks.map(({ other, pair: p }) => (
+              <Link
+                key={p}
+                href={`/compare/${p}`}
+                className="rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#3D7AFF] hover:text-[#6E9FFF] transition-colors"
+              >
+                vs {other.brand.name} — {other.name} →
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Compare */}
       <Accordion title="Compare with another product">
