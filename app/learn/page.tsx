@@ -17,6 +17,13 @@ export const metadata: Metadata = {
 
 const articles = [
   {
+    slug: "shilajit-spelling-pronunciation",
+    title: "How to Spell and Pronounce Shilajit",
+    description:
+      "Shilijit, shiljat, shelajit — the correct spelling, how to say it, where the word comes from, and what shilajit actually is.",
+    tag: "Foundation",
+  },
+  {
     slug: "what-is-shilajit",
     title: "What Is Shilajit?",
     description:

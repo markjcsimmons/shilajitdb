@@ -36,6 +36,7 @@ const LEARN_SLUGS = [
   "shilajit-benefits-for-men",
   "shilajit-benefits-for-women",
   "top-rated-shilajit-brands",
+  "shilajit-spelling-pronunciation",
 ];
 
 const BEST_TAGS = [
