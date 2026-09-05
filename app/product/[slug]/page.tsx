@@ -206,7 +206,7 @@ export async function generateMetadata({
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
-    ...(noIndex ? { robots: "noindex, nofollow" } : {}),
+    ...(noIndex ? { robots: "noindex, follow" } : {}),
   };
 }
 
