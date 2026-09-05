@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
+import { isAffiliateTrackingUrl } from "@/lib/affiliate";
 import {
   computeTransparencyGrade,
   computeQualityTier,
@@ -18,6 +19,7 @@ export type ImportManualCsvResult = {
   productsSkipped: number;
   listingsCreated: number;
   listingsUpdated: number;
+  affiliateLinksFlagged: number;
   errors: string[];
 };
 
@@ -81,6 +83,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     productsSkipped: 0,
     listingsCreated: 0,
     listingsUpdated: 0,
+    affiliateLinksFlagged: 0,
     errors: [],
   };
 
@@ -181,6 +184,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     }
 
     // Classify official_url
+    const officialUrlIsAffiliate = looksLikeUrl(officialUrlRaw) && isAffiliateTrackingUrl(officialUrlRaw);
     const officialUrlSource = looksLikeUrl(officialUrlRaw) ? classifyUrl(officialUrlRaw) : null;
     let officialCanonicalUrl: string | null = null;
     let officialDomain: string | null = null;
@@ -340,11 +344,11 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     }
 
     // Collect listings to create (deduplicate by URL)
-    const listingsToCreate: Array<{ source: ListingSource; url: string; observedSku?: string }> = [];
+    const listingsToCreate: Array<{ source: ListingSource; url: string; observedSku?: string; isAffiliate?: boolean }> = [];
 
     if (looksLikeUrl(officialUrlRaw)) {
       if (officialUrlSource === "OFFICIAL" && officialCanonicalUrl) {
-        listingsToCreate.push({ source: "OFFICIAL", url: officialCanonicalUrl });
+        listingsToCreate.push({ source: "OFFICIAL", url: officialCanonicalUrl, isAffiliate: officialUrlIsAffiliate });
       } else if (officialUrlSource === "AMAZON") {
         const asinFromUrl = extractAsin(officialUrlRaw);
         const url = asinFromUrl ? canonicalAmazonUrl(asinFromUrl) : canonicalizeUrl(officialUrlRaw);
@@ -387,12 +391,14 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
               source: listing.source,
               url: listing.url,
               observedSku: listing.observedSku,
+              isAffiliate: listing.isAffiliate ?? false,
               priceCents,
               currency: priceCents ? "USD" : null,
               status: "ACTIVE",
             },
           });
           result.listingsCreated++;
+          if (listing.isAffiliate) result.affiliateLinksFlagged++;
         }
       } catch (err) {
         result.errors.push(`Row ${rowNum}: listing upsert failed (${listing.url}) — ${err instanceof Error ? err.message : String(err)}`);

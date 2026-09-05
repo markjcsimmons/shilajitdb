@@ -180,7 +180,7 @@ export default async function HomePage({
             {/* Left: headline + search + filters */}
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#3D7AFF] mb-4">
-                Independent · Unaffiliated · Free
+                Independent Grading · Transparent · Free
               </p>
               <h1 className="font-serif text-4xl md:text-6xl font-bold leading-tight tracking-tight text-[#EEF0F8] mb-4">
                 Shilajit<br />

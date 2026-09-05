@@ -42,6 +42,7 @@ export async function POST(request: Request) {
       result.productsSkipped && `${result.productsSkipped} skipped`,
       result.listingsCreated && `${result.listingsCreated} listings created`,
       result.listingsUpdated && `${result.listingsUpdated} listings updated`,
+      result.affiliateLinksFlagged && `${result.affiliateLinksFlagged} affiliate link(s) flagged — verify disclosure is needed`,
     ]
       .filter(Boolean)
       .join(", ");

@@ -16,6 +16,8 @@ import {
 } from "@/lib/grade-colors";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
+import { isAffiliateTrackingUrl } from "@/lib/affiliate";
+import { AffiliateTag, AffiliateNote } from "@/components/affiliate-tag";
 import { cn } from "@/components/ui";
 import type { EvidenceType, ListingSource, OverallGrade, QualityTier } from "@prisma/client";
 import type { Metadata } from "next";
@@ -452,6 +454,10 @@ export default async function ProductPage({
   const officialListing = product.listings.find((l) => l.source === "OFFICIAL" && l.status !== "INACTIVE");
   const amazonListing = product.listings.find((l) => l.source === "AMAZON" && l.status !== "INACTIVE");
   const buyLink = officialListing?.url ?? amazonListing?.url ?? null;
+  const buyLinkIsAffiliate = officialListing?.url === buyLink ? officialListing.isAffiliate : false;
+  const officialUrlIsAffiliate = isAffiliateTrackingUrl(product.officialCanonicalUrl);
+  const hasAffiliateListing =
+    product.listings.some((l) => l.isAffiliate) || officialUrlIsAffiliate;
 
   return (
     <div className="space-y-3">
@@ -578,6 +584,7 @@ export default async function ProductPage({
                   Shop →
                 </a>
               )}
+              {buyLinkIsAffiliate && <AffiliateTag />}
               {product.sourceDsldUrl && (
                 <a
                   href={product.sourceDsldUrl}
@@ -595,6 +602,7 @@ export default async function ProductPage({
                 Report update
               </a>
             </div>
+            {hasAffiliateListing && <div className="mt-2"><AffiliateNote /></div>}
           </div>
         </div>
 
@@ -844,6 +852,11 @@ export default async function ProductPage({
                 >
                   Visit brand site →
                 </a>
+                {officialUrlIsAffiliate && (
+                  <div className="mt-1">
+                    <AffiliateTag />
+                  </div>
+                )}
               </dd>
             </div>
           )}
@@ -895,7 +908,13 @@ export default async function ProductPage({
       {/* Where to Buy */}
       <Accordion
         title={`Where to buy${product.listings.length ? ` (${product.listings.length} listing${product.listings.length !== 1 ? "s" : ""})` : ""}`}
+        defaultOpen={hasAffiliateListing}
       >
+        {hasAffiliateListing && (
+          <div className="mb-4">
+            <AffiliateNote />
+          </div>
+        )}
         {product.listings.length ? (
           <div className="space-y-4">
             {(
@@ -926,7 +945,7 @@ export default async function ProductPage({
                         className="flex flex-col gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] p-3 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
-                          <div className="truncate text-sm text-[#8892B8]">
+                          <div className="flex flex-wrap items-center gap-2 truncate text-sm text-[#8892B8]">
                             <a
                               href={l.url}
                               className="hover:text-[#EEF0F8] transition-colors"
@@ -935,6 +954,7 @@ export default async function ProductPage({
                             >
                               {l.title ?? l.url}
                             </a>
+                            {l.isAffiliate && <AffiliateTag />}
                           </div>
                           {l.lastSeenAt && (
                             <div className="mt-0.5 text-xs text-[#4A5070]">

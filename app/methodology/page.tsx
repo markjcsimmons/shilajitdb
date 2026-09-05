@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/site";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Scoring Methodology",
@@ -57,10 +58,10 @@ const faqSchema = {
     },
     {
       "@type": "Question",
-      name: "Does ShilajitDB accept payment from brands?",
+      name: "Does ShilajitDB accept payment from brands, or use affiliate links?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. ShilajitDB is fully independent and unaffiliated with any shilajit brand. No brand is hard-coded into the scoring algorithm — all signals are applied identically to every product.",
+        text: "ShilajitDB does not accept payment for reviews, ranking placement, or grade changes, and no brand is hard-coded into the scoring algorithm — every product is scored by the same formula based on COA status, named-lab credibility, heavy metal test results, and manufacturing transparency. Separately, some outbound purchase links on the site are affiliate links, and ShilajitDB may earn a commission on qualifying purchases at no additional cost to the buyer. Affiliate relationships play no role in how a product is scored. See our affiliate disclosure page for details of which links this applies to.",
       },
     },
   ],
@@ -87,6 +88,13 @@ export default function MethodologyPage() {
         (A–F), a <strong>Quality Tier</strong> (Poor → Ultra-Premium), and an{" "}
         <strong>Overall Grade</strong> (F → A+). These scores are computed deterministically
         from structured data; no brand receives preferential treatment.
+      </p>
+      <p>
+        Separately, some outbound purchase links on this site are affiliate links, and
+        ShilajitDB may earn a commission on qualifying purchases at no additional cost to
+        you. Affiliate relationships play no role in how a product is scored — see our{" "}
+        <Link href="/disclosure">affiliate disclosure</Link> for details of which links this
+        applies to.
       </p>
 
       <hr />
