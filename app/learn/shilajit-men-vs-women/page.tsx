@@ -78,8 +78,8 @@ export default function MenVsWomenPage() {
               <strong>Biswas et al. (2010)</strong> — 60 infertile men received processed shilajit
               for 90 days. Significant improvements were observed in total sperm count (+61.4%),
               sperm motility (+12.4–17.4%), and testosterone levels.{" "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
-                PubMed 25575901
+              <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
+                PubMed 20078516
               </a>
               .
             </li>
@@ -111,8 +111,8 @@ export default function MenVsWomenPage() {
             of shilajit for 8 weeks attenuated the decline in maximum strength during a fatiguing
             exercise protocol and increased serum hydroxyproline levels, suggesting a role in
             connective tissue recovery.{" "}
-            <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
-              PubMed 30870558
+            <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
+              PubMed 30728074
             </a>
             . Whether this effect is specific to men is unknown — women were not enrolled.
           </p>
@@ -224,8 +224,8 @@ export default function MenVsWomenPage() {
           <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
           <ol className="space-y-2 text-xs text-[#8892B8]">
             <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
-            <li>2. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 25575901</a></li>
-            <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
+            <li>2. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 20078516</a></li>
+            <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
             <li>4. Trivedi NA, et al. "Effect of shilajit on blood glucose and lipid profile in alloxan-induced diabetic rats." <em>J Ethnopharmacol</em>. 2011. <a href="https://pubmed.ncbi.nlm.nih.gov/21116018/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 21116018</a></li>
             <li>5. Surapaneni DK, et al. "Shilajit attenuates behavioral symptoms of chronic fatigue syndrome." <em>J Ethnopharmacol</em>. 2012;143(1):91–99. <a href="https://pubmed.ncbi.nlm.nih.gov/22771318/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 22771318</a></li>
           </ol>

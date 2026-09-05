@@ -84,7 +84,7 @@ export default function BestTimeToTakeShilajitPage() {
                 <strong>Keller et al. (2019)</strong> — 500 mg once daily for 8 weeks in healthy active
                 adults. Attenuated strength decline during fatiguing exercise and raised serum
                 hydroxyproline, a marker of connective tissue synthesis.{" "}
-                <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30870558</a>.
+                <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30728074</a>.
               </li>
             </ul>
             <p>
@@ -372,7 +372,7 @@ export default function BestTimeToTakeShilajitPage() {
             <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels in healthy volunteers." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
               <li>2. Surapaneni DK, et al. "Shilajit attenuates behavioral symptoms of chronic fatigue syndrome by modulating the hypothalamic–pituitary–adrenal axis and mitochondrial bioenergetics in rats." <em>J Ethnopharmacol</em>. 2012;143(1):91–99. <a href="https://pubmed.ncbi.nlm.nih.gov/22771318/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 22771318</a></li>
-              <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
+              <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
               <li>4. Clow A, et al. "The cortisol awakening response: more than a measure of HPA axis function." <em>Neurosci Biobehav Rev</em>. 2010;35(1):97–103. <a href="https://pubmed.ncbi.nlm.nih.gov/20026355/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 20026355</a></li>
               <li>5. Stohs SJ, et al. "A review of the effectiveness and safety of fulvic acid as a dietary supplement." <em>Phytother Res</em>. 2017;31(1):3–9. <a href="https://pubmed.ncbi.nlm.nih.gov/27739186/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 27739186</a></li>
             </ol>

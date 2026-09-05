@@ -17,6 +17,20 @@ export const metadata: Metadata = {
 
 const articles = [
   {
+    slug: "shilajit-kidney-safety",
+    title: "Is Shilajit Safe for Your Kidneys?",
+    description:
+      "The real kidney risk isn't shilajit itself — it's heavy metal contamination in unpurified product. What the research shows and who should be cautious.",
+    tag: "Safety",
+  },
+  {
+    slug: "shilajit-erectile-dysfunction",
+    title: "Shilajit and Erectile Dysfunction: What the Research Actually Shows",
+    description:
+      "No trial has tested shilajit alone against erectile dysfunction. What's actually been studied is testosterone and sperm count — a different question.",
+    tag: "Science",
+  },
+  {
     slug: "shilajit-spelling-pronunciation",
     title: "How to Spell and Pronounce Shilajit",
     description:

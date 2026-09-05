@@ -85,7 +85,7 @@ export default function ShilajitBenefitsPage() {
               double-blind, placebo-controlled trial published in <em>Andrologia</em> (2016)
               enrolled 96 infertile men and found significant improvements in total sperm count,
               motility, and testosterone after 90 days of shilajit supplementation (200 mg twice daily).{" "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
+              <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
                 Biswas TK et al., Andrologia 2010
               </a>
               .
@@ -126,7 +126,7 @@ export default function ShilajitBenefitsPage() {
               A separate study examined shilajit's effect on skeletal muscle. Subjects taking
               500 mg/day for 8 weeks showed less post-exercise decline in maximum strength (measured
               by bench press) compared to placebo, suggesting a role in muscle recovery.{" "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
+              <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
                 Keller JL et al., J Int Soc Sports Nutr 2019
               </a>
               .
@@ -267,9 +267,9 @@ export default function ShilajitBenefitsPage() {
           <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
           <ol className="space-y-2 text-xs text-[#8892B8]">
             <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
-            <li>2. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 25575901</a></li>
+            <li>2. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 20078516</a></li>
             <li>3. Surapaneni DK, et al. "Shilajit attenuates behavioral symptoms of chronic fatigue syndrome." <em>J Ethnopharmacol</em>. 2012;143(1):91–99. <a href="https://pubmed.ncbi.nlm.nih.gov/22771318/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 22771318</a></li>
-            <li>4. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
+            <li>4. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
             <li>5. Carrasco-Gallardo C, et al. "Shilajit: A Natural Phytocomplex with Potential Procognitive Activity." <em>Int J Alzheimers Dis</em>. 2012. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3296184/" target="_blank" rel="noopener noreferrer" className="underline">PMC3296184</a></li>
             <li>6. Trivedi NA, et al. "Effect of shilajit on blood glucose and lipid profile in alloxan-induced diabetic rats." <em>J Ethnopharmacol</em>. 2011. <a href="https://pubmed.ncbi.nlm.nih.gov/21116018/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 21116018</a></li>
             <li>7. Meena H, et al. "Shilajit: A panacea for high-altitude problems." <em>Int J Ayurveda Res</em>. 2010;1(1):37–40. <a href="https://pubmed.ncbi.nlm.nih.gov/21364527/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 21364527</a></li>

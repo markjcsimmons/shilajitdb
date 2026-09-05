@@ -167,7 +167,7 @@ export default function ShilajitSeaMossPage() {
                 <strong className="text-[#C8D0E8]">Keller et al. (2019)</strong> — healthy active
                 men taking 500 mg/day for 8 weeks showed attenuation of fatigue-induced strength
                 decline and elevated serum hydroxyproline, suggesting connective tissue support.{" "}
-                <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30870558</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30728074</a>
               </li>
             </ul>
             <p>
@@ -417,7 +417,7 @@ export default function ShilajitSeaMossPage() {
             <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
             <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels in healthy volunteers." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
-              <li>2. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
+              <li>2. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
               <li>3. Terpend K, et al. "Effects of PolyGlycopleX in healthy volunteers: a double-blind, randomised, placebo-controlled study." <em>Nutr J</em>. 2012. (sea moss prebiotic evidence context)</li>
               <li>4. Moroney NC, et al. "Carrageenan — an overview of its chemical properties and their relation to its use in food systems." <em>J Appl Phycol</em>. 2021. <a href="https://pubmed.ncbi.nlm.nih.gov/34672587/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 34672587</a></li>
               <li>5. Conlon MA & Bird AR. "The impact of diet and lifestyle on gut microbiota and human health." <em>Nutrients</em>. 2015;7(1):17–44.</li>

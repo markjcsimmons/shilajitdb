@@ -230,6 +230,13 @@ export default function DosingTimelinePage() {
               If you have an autoimmune condition or take immunosuppressants, consult a physician.
             </li>
           </ul>
+          <p>
+            For a deeper look at one of the most common contraindication questions —{" "}
+            <Link href="/learn/shilajit-kidney-safety" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
+              is shilajit safe for your kidneys
+            </Link>
+            {" "}— see the dedicated breakdown.
+          </p>
         </section>
 
         <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-5">
@@ -252,8 +259,8 @@ export default function DosingTimelinePage() {
           <ol className="space-y-2 text-xs text-[#8892B8]">
             <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
             <li>2. Surapaneni DK, et al. "Shilajit attenuates behavioral symptoms of chronic fatigue syndrome." <em>J Ethnopharmacol</em>. 2012;143(1):91–99. <a href="https://pubmed.ncbi.nlm.nih.gov/22771318/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 22771318</a></li>
-            <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
-            <li>4. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 25575901</a></li>
+            <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
+            <li>4. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 20078516</a></li>
             <li>5. Stohs SJ. "Safety and efficacy of shilajit (mumie, moomiyo)." <em>Phytother Res</em>. 2014;28(4):475–479. <a href="https://pubmed.ncbi.nlm.nih.gov/23876888/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 23876888</a></li>
           </ol>
         </footer>

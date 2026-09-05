@@ -107,8 +107,8 @@ export default function ShilajitGummiesPage() {
                 PubMed 26395129
               </a>
               {" · "}
-              <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
-                PubMed 30870558
+              <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">
+                PubMed 30728074
               </a>
               . Matching that dose from a 100 mg-per-gummy product means eating five gummies a day —
               and even then, you're getting five gummies' worth of a standardized extract, not the
@@ -209,7 +209,7 @@ export default function ShilajitGummiesPage() {
             <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>1. Stohs SJ. "Safety and efficacy of shilajit (mumie, moomiyo)." <em>Phytother Res</em>. 2014;28(4):475–479. <a href="https://pubmed.ncbi.nlm.nih.gov/23876888/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 23876888</a></li>
               <li>2. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
-              <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
+              <li>3. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
             </ol>
           </footer>
         </div>

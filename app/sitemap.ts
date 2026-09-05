@@ -37,6 +37,8 @@ const LEARN_SLUGS = [
   "shilajit-benefits-for-women",
   "top-rated-shilajit-brands",
   "shilajit-spelling-pronunciation",
+  "shilajit-kidney-safety",
+  "shilajit-erectile-dysfunction",
 ];
 
 const BEST_TAGS = [

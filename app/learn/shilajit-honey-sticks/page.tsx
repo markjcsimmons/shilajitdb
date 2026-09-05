@@ -125,7 +125,7 @@ export default function ShilajitHoneySticksPage() {
                 <strong className="text-[#C8D0E8]">500 mg/day</strong> — Keller et al. (2019), which found
                 attenuation of fatigue-induced strength decline and elevated serum hydroxyproline
                 over 8 weeks in healthy active men.{" "}
-                <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30870558</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-[#EEF0F8]">PubMed 30728074</a>
               </li>
             </ul>
             <p>
@@ -429,8 +429,8 @@ export default function ShilajitHoneySticksPage() {
             <h2 className="text-xs font-semibold text-[#6E7A9A] uppercase tracking-wider mb-3">References</h2>
             <ol className="space-y-2 text-xs text-[#8892B8]">
               <li>1. Pandit S, et al. "Clinical evaluation of purified Shilajit on testosterone levels in healthy volunteers." <em>Andrologia</em>. 2016;48(5):570–575. <a href="https://pubmed.ncbi.nlm.nih.gov/26395129/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 26395129</a></li>
-              <li>2. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30870558/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30870558</a></li>
-              <li>3. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit in oligospermia." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/25575901/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 25575901</a></li>
+              <li>2. Keller JL, et al. "The effects of shilajit supplementation on fatigue-induced decreases in muscular strength and serum hydroxyproline levels." <em>J Int Soc Sports Nutr</em>. 2019;16(1):3. <a href="https://pubmed.ncbi.nlm.nih.gov/30728074/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 30728074</a></li>
+              <li>3. Biswas TK, et al. "Clinical evaluation of spermatogenic activity of processed Shilajit in oligospermia." <em>Andrologia</em>. 2010;42(1):48–56. <a href="https://pubmed.ncbi.nlm.nih.gov/20078516/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 20078516</a></li>
               <li>4. US Pharmacopeia. <em>USP &lt;232&gt; Elemental Impurities — Limits; USP &lt;233&gt; Elemental Impurities — Procedures</em>. USP-NF. Accessed 2026.</li>
               <li>5. Schepetkin IA, et al. "Therapeutic potential of fulvic acid in chronic inflammatory diseases and diabetes." <em>J Diabetes Res</em>. 2016. <a href="https://pubmed.ncbi.nlm.nih.gov/27034942/" target="_blank" rel="noopener noreferrer" className="underline">PubMed 27034942</a></li>
             </ol>
