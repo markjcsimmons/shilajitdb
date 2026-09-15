@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// AI search/retrieval agents (OAI-SearchBot, ChatGPT-User, Claude-SearchBot,
+// Claude-User, PerplexityBot, Perplexity-User) and model crawlers (GPTBot,
+// ClaudeBot) are intentionally NOT listed — keep in sync with app/robots.ts.
 const BLOCKED_USER_AGENTS = [
-  "GPTBot",
-  "ChatGPT-User",
   "CCBot",
-  "anthropic-ai",
-  "Claude-Web",
   "Bytespider",
   "Diffbot",
   "ImagesiftBot",
