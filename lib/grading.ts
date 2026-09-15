@@ -1,8 +1,11 @@
 import type {
+  CoaIssuer,
   CoaStatus,
+  HeavyMetalsResult,
   OverallGrade,
   ProductForm,
   QualityTier,
+  TestScope,
   TransparencyGrade,
 } from "@prisma/client";
 
@@ -37,6 +40,17 @@ export type ProductForGrading = {
   gmpCertified?: boolean;
   /** Whether the brand holds a patent on their manufacturing process. Display only — not scored. */
   hasPatentClaim?: boolean;
+  // ── COA review fields (drive the overall grade) ──
+  /** True once a real lab document for this product has been reviewed. */
+  coaVerified?: boolean;
+  coaIssuer?: CoaIssuer | null;
+  /** Date printed on the COA itself. */
+  coaReportDate?: Date | string | null;
+  labNamedOnCoa?: boolean;
+  coaBatchIdentified?: boolean;
+  heavyMetalsResult?: HeavyMetalsResult | null;
+  heavyMetalsScope?: TestScope | null;
+  microbialPanel?: boolean;
   /** Brand slug — used only to evaluate ULTRA_PREMIUM tier eligibility. */
   brandSlug?: string | null;
 };
@@ -141,34 +155,34 @@ export function computeTransparencyGrade(
 
 /**
  * Criteria for ULTRA_PREMIUM: ALL of
- *   form=RESIN + coaStatus=PUBLIC + named 3rd-party lab + mfg country stated + GMP certified + patent claim
+ *   verified COA from an independent lab + that lab named on the COA +
+ *   numeric heavy metals on the finished product + microbial panel + batch/lot on the COA
  *
- * This is the highest verifiable bar. All 6 criteria must be met simultaneously.
- * Pürblack (and Life Cykel Pure Resin, which white-labels Pürblack) currently qualify.
+ * The highest verifiable testing bar. Product form and patent claims are not
+ * part of it: neither is evidence of what is actually in the product.
  */
 function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
   return (
-    product.form === "RESIN" &&
-    product.coaStatus === "PUBLIC" &&
-    !!product.thirdPartyTestingLab?.trim() &&
-    hasManufacturingCountry(product.manufacturingCountryClaim) &&
-    !!product.gmpCertified &&
-    !!product.hasPatentClaim
+    !!product.coaVerified &&
+    product.coaIssuer === "INDEPENDENT_LAB" &&
+    !!product.labNamedOnCoa &&
+    product.heavyMetalsResult === "NUMERIC" &&
+    product.heavyMetalsScope !== "INGREDIENT" &&
+    !!product.microbialPanel &&
+    !!product.coaBatchIdentified
   );
 }
 
 /**
- * Criteria for PREMIUM: ALL of
- *   coaStatus=PUBLIC + named 3rd-party lab
- *
- * Form and manufacturing country are NOT required — a well-documented product
- * of any form earns PREMIUM if it has a public COA from a named independent lab.
- * The distinction from ULTRA_PREMIUM is resin form + stated country + GMP.
+ * Criteria for PREMIUM: a verified COA from an independent lab that reports
+ * actual heavy metal concentrations. Form is irrelevant; what matters is that
+ * someone independent measured the product and published the numbers.
  */
 function meetsPremiumCriteria(product: ProductForGrading): boolean {
   return (
-    product.coaStatus === "PUBLIC" &&
-    !!product.thirdPartyTestingLab?.trim()
+    !!product.coaVerified &&
+    product.coaIssuer === "INDEPENDENT_LAB" &&
+    product.heavyMetalsResult === "NUMERIC"
   );
 }
 
@@ -178,15 +192,16 @@ export function computeQualityTier(
   const reasons: string[] = [];
 
   if (meetsUltraPremiumCriteria(product)) {
-    reasons.push("ULTRA_PREMIUM: resin form + public COA + named 3rd-party lab + stated manufacturing country + GMP certified");
+    reasons.push("ULTRA_PREMIUM: verified independent COA naming the lab + numeric heavy metals on the finished product + microbial panel + batch/lot code");
     return { tier: "ULTRA_PREMIUM", reasons };
   }
 
   if (meetsPremiumCriteria(product)) {
-    reasons.push("PREMIUM: public COA + named 3rd-party lab (any form qualifies)");
-    if (product.form !== "RESIN") reasons.push("Not resin form — resin required for ULTRA_PREMIUM");
-    if (!hasManufacturingCountry(product.manufacturingCountryClaim)) reasons.push("Manufacturing country not stated — required for ULTRA_PREMIUM");
-    if (!product.gmpCertified) reasons.push("GMP certification not confirmed — required for ULTRA_PREMIUM");
+    reasons.push("PREMIUM: verified independent COA with numeric heavy metal results (any form qualifies)");
+    if (!product.labNamedOnCoa) reasons.push("Testing lab not named on the COA — required for ULTRA_PREMIUM");
+    if (product.heavyMetalsScope === "INGREDIENT") reasons.push("Heavy metals tested on the incoming ingredient, not the finished product — finished-product testing required for ULTRA_PREMIUM");
+    if (!product.microbialPanel) reasons.push("No microbial panel on the COA — required for ULTRA_PREMIUM");
+    if (!product.coaBatchIdentified) reasons.push("No batch or lot code on the COA — required for ULTRA_PREMIUM");
     return { tier: "PREMIUM", reasons };
   }
 
@@ -198,11 +213,11 @@ export function computeQualityTier(
 
   if (hasCoa || hasNamedLab) {
     reasons.push("AVERAGE: has some testing transparency (COA or named lab) but does not meet all PREMIUM criteria");
-    if (product.form !== "RESIN") reasons.push("Not resin form — resin required for PREMIUM or higher");
-    if (product.coaStatus === "PUBLIC_EMBEDDED") reasons.push("COA is page-embedded only — a standalone document is required for PREMIUM");
+    if (!product.coaVerified) reasons.push("No COA document has been verified for this product");
+    else if (product.coaIssuer !== "INDEPENDENT_LAB") reasons.push("COA was issued by the brand or its manufacturer, not an independent lab");
+    else if (product.heavyMetalsResult !== "NUMERIC") reasons.push("COA does not report actual heavy metal concentrations");
     if (!hasCoa) reasons.push("No COA on file");
     if (!hasNamedLab) reasons.push("No named independent testing lab");
-    if (!hasManufacturingCountry(product.manufacturingCountryClaim)) reasons.push("Manufacturing country not stated");
     return { tier: "AVERAGE", reasons };
   }
 
@@ -212,64 +227,166 @@ export function computeQualityTier(
 
 // ---------------------------------------------------------------------------
 // Overall Grade (A+ through F)
-// Weighted score out of 14 based on physical quality + documentation signals.
+// Weighted score out of 14, built from what a product's COA actually documents.
 //
 // Scoring:
-//   Form = RESIN:         +4  (least processed; preserves fulvic-humic matrix — Piccolo 2002)
-//   Manufacturing USA:    +3  (FDA 21 CFR Part 111 oversight + proven location)
-//   Patent/IP claim:      +2  (proprietary process = confidence in differentiation)
-//   COA PUBLIC:           +2  (FDA/FTC transparency standard; only 33% of products)
-//   Named 3rd-party lab:  +2  (names the tester — checkable & accountable; only 31%)
-//   COA PUBLIC_EMBEDDED:  +1  (visible on page but not independently auditable)
-//   COA REQUEST_ONLY:     +1  (tested but not openly disclosed)
-//   Mfg country other:    +1  (at least traceable)
-//   GMP certified:        +1  (documented standard; 80% of products claim it — weak signal)
+//   Verified COA from an independent lab:        +3
+//   Manufacturer- or brand-issued COA:           +1
+//   COA claimed but not verified:                +1
+//   Numeric heavy metals, finished product:      +4  (halved for a manufacturer-issued COA)
+//   Numeric heavy metals, ingredient only:       +2  (halved for a manufacturer-issued COA)
+//   Heavy metals pass/fail only:                 +1
+//   Independent lab named on the COA:            +2
+//   Microbial panel on the COA:                  +1
+//   Batch/lot code on the COA:                   +1
+//   COA dated within the last 24 months:         +1
+//   Country of manufacture stated:               +1
+//   GMP certified:                               +1
 //
-// Grade thresholds (max 14):
-//   A+: ≥13  (e.g., resin + USA + patent + COA public + named lab + GMP = 4+3+2+2+2+1 = 14, or similar high-signal combos)
-//   A:  ≥10  (e.g., resin + USA + COA public + named lab = 4+3+2+2 = 11, or gummy + USA + patent + COA + lab = 0+3+2+2+2 = 9)
-//   B:  ≥7
-//   C:  ≥4
-//   D:  ≥2
-//   E:  ≥1
-//   F:  0
+// Deliberately NOT scored: product form (resin vs capsule is a format preference,
+// not a quality signal — see /best/best-resin), patent claims, and fulvic acid
+// percentage (commercially available as an additive, and measured inconsistently
+// between labs, so a high number proves neither identity nor quality).
+//
+// Grade thresholds (max 14): A+ ≥13, A ≥10, B ≥7, C ≥4, D ≥2, E ≥1, F 0
 // ---------------------------------------------------------------------------
+
+/** A COA counts as verified only when a real document for this product has been reviewed. */
+export function hasCoaReview(product: ProductForGrading): boolean {
+  return !!product.coaVerified || !!product.heavyMetalsResult;
+}
+
+const COA_RECENCY_MONTHS = 24;
+
+export function isCoaRecent(
+  coaReportDate: Date | string | null | undefined,
+  now: Date = new Date(),
+): boolean {
+  if (!coaReportDate) return false;
+  const d = coaReportDate instanceof Date ? coaReportDate : new Date(coaReportDate);
+  if (Number.isNaN(d.getTime())) return false;
+  const cutoff = new Date(now);
+  cutoff.setMonth(cutoff.getMonth() - COA_RECENCY_MONTHS);
+  return d >= cutoff;
+}
 
 export const overallRubric = {
   score: {
-    coaPublic: 2,
-    coaPublicEmbedded: 1,
-    coaRequestOnly: 1,
-    namedThirdPartyLab: 2,
-    formResin: 4,
-    manufacturingUSA: 3,
-    manufacturingOther: 1,
+    coaVerifiedIndependent: 3,
+    coaManufacturerIssued: 1,
+    coaClaimedUnverified: 1,
+    heavyMetalsNumericFinished: 4,
+    heavyMetalsNumericIngredient: 2,
+    heavyMetalsPassFail: 1,
+    labNamedOnCoa: 2,
+    microbialPanel: 1,
+    batchIdentified: 1,
+    coaRecent: 1,
+    manufacturingCountry: 1,
     gmpCertified: 1,
-    hasPatent: 2,
   },
+  maxScore: 14,
 } as const;
+
+export type OverallBreakdown = {
+  score: number;
+  maxScore: number;
+  reasons: string[];
+};
+
+/** Full overall-grade breakdown: score plus the reason for every point awarded. */
+export function overallGradeBreakdown(
+  product: ProductForGrading,
+  now: Date = new Date(),
+): OverallBreakdown {
+  const r = overallRubric.score;
+  const reasons: string[] = [];
+  let score = 0;
+
+  const verified = !!product.coaVerified;
+  const manufacturerIssued =
+    product.coaIssuer === "MANUFACTURER" || product.coaIssuer === "BRAND";
+  const claimsCoa =
+    product.coaStatus === "PUBLIC" ||
+    product.coaStatus === "PUBLIC_EMBEDDED" ||
+    product.coaStatus === "REQUEST_ONLY";
+
+  if (verified && !manufacturerIssued) {
+    score += r.coaVerifiedIndependent;
+    reasons.push(`Verified COA from an independent laboratory (+${r.coaVerifiedIndependent})`);
+  } else if (verified && manufacturerIssued) {
+    score += r.coaManufacturerIssued;
+    reasons.push(
+      `COA issued by the ${product.coaIssuer === "BRAND" ? "brand" : "manufacturer"} rather than an independent lab (+${r.coaManufacturerIssued})`,
+    );
+  } else if (claimsCoa) {
+    score += r.coaClaimedUnverified;
+    reasons.push(`COA claimed but not verified against a lab document (+${r.coaClaimedUnverified})`);
+  } else {
+    reasons.push("No COA on file (+0)");
+  }
+
+  if (verified && product.heavyMetalsResult === "NUMERIC") {
+    const ingredientOnly = product.heavyMetalsScope === "INGREDIENT";
+    let points: number = ingredientOnly
+      ? r.heavyMetalsNumericIngredient
+      : r.heavyMetalsNumericFinished;
+    if (manufacturerIssued) points = Math.floor(points / 2);
+    score += points;
+    reasons.push(
+      `Numeric heavy metal results${ingredientOnly ? " on the incoming ingredient only" : " for the finished product"}${manufacturerIssued ? ", on a COA the manufacturer issued" : ""} (+${points})`,
+    );
+  } else if (product.heavyMetalsResult === "NUMERIC" || product.heavyMetalsResult === "PASS_FAIL") {
+    score += r.heavyMetalsPassFail;
+    reasons.push(`Heavy metals reported as pass/fail without concentrations (+${r.heavyMetalsPassFail})`);
+  } else {
+    reasons.push("No heavy metal results published (+0)");
+  }
+
+  if (verified && product.labNamedOnCoa && !manufacturerIssued) {
+    score += r.labNamedOnCoa;
+    reasons.push(
+      `Testing laboratory named on the COA${product.thirdPartyTestingLab?.trim() ? `: ${product.thirdPartyTestingLab}` : ""} (+${r.labNamedOnCoa})`,
+    );
+  } else {
+    reasons.push("No independent laboratory named on a verified COA (+0)");
+  }
+
+  if (verified && product.microbialPanel) {
+    score += r.microbialPanel;
+    reasons.push(`Microbial panel included on the COA (+${r.microbialPanel})`);
+  }
+
+  if (verified && product.coaBatchIdentified) {
+    score += r.batchIdentified;
+    reasons.push(`COA carries a batch or lot code (+${r.batchIdentified})`);
+  } else if (verified) {
+    reasons.push("COA has no batch or lot code, so it cannot be tied to the product sold (+0)");
+  }
+
+  if (verified && isCoaRecent(product.coaReportDate, now)) {
+    score += r.coaRecent;
+    reasons.push(`COA dated within the last ${COA_RECENCY_MONTHS} months (+${r.coaRecent})`);
+  }
+
+  if (hasManufacturingCountry(product.manufacturingCountryClaim)) {
+    score += r.manufacturingCountry;
+    reasons.push(`Country of manufacture stated: ${product.manufacturingCountryClaim} (+${r.manufacturingCountry})`);
+  } else {
+    reasons.push("Country of manufacture not disclosed (+0)");
+  }
+
+  if (product.gmpCertified) {
+    score += r.gmpCertified;
+    reasons.push(`GMP certified facility (+${r.gmpCertified})`);
+  }
+
+  return { score, maxScore: overallRubric.maxScore, reasons };
+}
 
 /** Compute the weighted overall grade score (max 14). Exported for debugging. */
 export function overallGradeScore(product: ProductForGrading): number {
-  let score = 0;
-
-  if (product.coaStatus === "PUBLIC") score += overallRubric.score.coaPublic;
-  else if (product.coaStatus === "PUBLIC_EMBEDDED") score += overallRubric.score.coaPublicEmbedded;
-  else if (product.coaStatus === "REQUEST_ONLY") score += overallRubric.score.coaRequestOnly;
-
-  if (product.thirdPartyTestingLab?.trim()) score += overallRubric.score.namedThirdPartyLab;
-
-  if (product.form === "RESIN") score += overallRubric.score.formResin;
-
-  const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
-  if (mfgPoints === 2) score += overallRubric.score.manufacturingUSA;
-  else if (mfgPoints === 1) score += overallRubric.score.manufacturingOther;
-
-  if (product.gmpCertified) score += overallRubric.score.gmpCertified;
-
-  if (product.hasPatentClaim) score += overallRubric.score.hasPatent;
-
-  return score;
+  return overallGradeBreakdown(product).score;
 }
 
 /** Compute the overall grade (A+ through F). */

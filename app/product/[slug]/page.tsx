@@ -4,8 +4,9 @@ import { prisma } from "@/lib/db";
 import {
   computeQualityTier,
   computeTransparencyGrade,
-  overallGradeScore,
-  manufacturingPointsFromCountry,
+  overallGradeBreakdown,
+  hasCoaReview,
+  hasManufacturingCountry,
   type ProductForGrading,
 } from "@/lib/grading";
 import {
@@ -63,42 +64,61 @@ function buildGradeSummary(
 ): string {
   const gradeTxt = gradeLabel(grade);
   const tierTxt = labelQualityTier(tier);
-  const mfgPoints = manufacturingPointsFromCountry(product.manufacturingCountryClaim);
 
   // Sentence 1 — verdict
   const s1 = `${brandName}'s ${product.name} scores ${score} out of ${maxScore} points, earning a ${gradeTxt} grade and ${tierTxt} quality tier.`;
 
-  // Strengths
+  // Strengths — what the product's COA actually documents
   const strengths: string[] = [];
-  if (product.coaStatus === "PUBLIC") strengths.push("a publicly available, independently auditable COA");
-  else if (product.coaStatus === "PUBLIC_EMBEDDED") strengths.push("a COA visible on the product page");
-  else if (product.coaStatus === "REQUEST_ONLY") strengths.push("a COA available on request");
-  if (product.thirdPartyTestingLab?.trim()) strengths.push(`independent testing by ${product.thirdPartyTestingLab}`);
-  if (product.form === "RESIN") strengths.push("resin form — the least processed format");
-  if (mfgPoints === 2) strengths.push("US manufacture under FDA 21 CFR Part 111 oversight");
-  else if (mfgPoints === 1) strengths.push(`stated country of manufacture (${product.manufacturingCountryClaim})`);
+  const manufacturerIssued = product.coaIssuer === "MANUFACTURER" || product.coaIssuer === "BRAND";
+  if (product.coaVerified && !manufacturerIssued) strengths.push("a verified Certificate of Analysis from an independent laboratory");
+  if (product.coaVerified && product.heavyMetalsResult === "NUMERIC") {
+    strengths.push(
+      product.heavyMetalsScope === "INGREDIENT"
+        ? "numeric heavy metal results on the incoming ingredient"
+        : "numeric heavy metal results for the finished product",
+    );
+  }
+  if (product.coaVerified && product.labNamedOnCoa && !manufacturerIssued) {
+    strengths.push(`the testing laboratory named on the COA${product.thirdPartyTestingLab?.trim() ? ` (${product.thirdPartyTestingLab})` : ""}`);
+  }
+  if (product.coaVerified && product.microbialPanel) strengths.push("a microbial panel");
+  if (product.coaVerified && product.coaBatchIdentified) strengths.push("a batch or lot code tying the COA to the product sold");
+  if (hasManufacturingCountry(product.manufacturingCountryClaim)) strengths.push(`a stated country of manufacture (${product.manufacturingCountryClaim})`);
   if (product.gmpCertified) strengths.push("GMP-certified production");
 
   // Gaps
   const gaps: string[] = [];
-  if (product.coaStatus === "NONE" || product.coaStatus === "UNKNOWN") {
-    gaps.push("no COA is publicly available");
-  } else if (product.coaStatus === "REQUEST_ONLY") {
-    gaps.push("the COA is not openly published — it must be requested directly from the brand");
-  } else if (product.coaStatus === "PUBLIC_EMBEDDED") {
-    gaps.push("the COA is an embedded page image rather than a standalone downloadable document");
+  if (!product.coaVerified) {
+    gaps.push(
+      product.coaStatus === "NONE" || product.coaStatus === "UNKNOWN"
+        ? "no Certificate of Analysis is publicly available"
+        : "no COA document has been verified for this product",
+    );
+  } else if (manufacturerIssued) {
+    gaps.push(`the COA was issued by the ${product.coaIssuer === "BRAND" ? "brand" : "manufacturer"} rather than an independent laboratory`);
   }
-  if (!product.thirdPartyTestingLab?.trim()) gaps.push("no named independent testing laboratory");
-  if (product.form !== "RESIN") gaps.push(`${labelForm(product.form).toLowerCase()} form rather than resin`);
-  if (mfgPoints === 0) gaps.push("country of manufacture not disclosed");
+  if (product.coaVerified && product.heavyMetalsResult !== "NUMERIC") {
+    gaps.push(
+      product.heavyMetalsResult === "PASS_FAIL"
+        ? "heavy metals are reported as pass/fail without actual concentrations"
+        : "the COA reports no heavy metal results",
+    );
+  }
+  if (product.coaVerified && !product.coaBatchIdentified) gaps.push("the COA carries no batch or lot code");
+  if (product.coaVerified && !product.microbialPanel) gaps.push("no microbial panel is included");
+  if (!hasManufacturingCountry(product.manufacturingCountryClaim)) gaps.push("country of manufacture not disclosed");
   if (!product.gmpCertified) gaps.push("GMP certification not confirmed");
 
   const s2 = strengths.length > 0 ? `Strengths include ${joinList(strengths)}.` : "";
   const s3 = gaps.length > 0
     ? `The main gap${gaps.length > 1 ? "s" : ""} ${gaps.length > 1 ? "are" : "is"} ${joinList(gaps)}.`
     : "It meets all major transparency criteria.";
+  const s4 = hasCoaReview(product)
+    ? ""
+    : "This product's COA has not been reviewed yet, so it scores only on what is documented elsewhere.";
 
-  return [s1, s2, s3].filter(Boolean).join(" ");
+  return [s1, s2, s3, s4].filter(Boolean).join(" ");
 }
 
 function labelListingSource(s: ListingSource) {
@@ -318,11 +338,23 @@ export default async function ProductPage({
     gmpCertified: product.gmpCertified,
     hasPatentClaim: product.hasPatentClaim,
     brandSlug: product.brand.slug,
+    coaVerified: product.coaVerified,
+    coaIssuer: product.coaIssuer,
+    coaReportDate: product.coaReportDate,
+    labNamedOnCoa: product.labNamedOnCoa,
+    coaBatchIdentified: product.coaBatchIdentified,
+    heavyMetalsResult: product.heavyMetalsResult,
+    heavyMetalsScope: product.heavyMetalsScope,
+    microbialPanel: product.microbialPanel,
   };
   const transparency = computeTransparencyGrade(productForGrading);
   const quality = computeQualityTier(productForGrading);
-  const score = overallGradeScore(productForGrading);
-  const MAX_SCORE = 14;
+  const overall = overallGradeBreakdown(productForGrading);
+  const score = overall.score;
+  const MAX_SCORE = overall.maxScore;
+  // Until a product's COA has been reviewed against the current rubric, its live
+  // score understates it — show the stored grade without a misleading point total.
+  const scoreIsCurrent = hasCoaReview(productForGrading);
 
   // Category rank — how does this product sit among same-form peers?
   const gradeOrder: Record<string, number> = { A_PLUS: 0, A: 1, B: 2, C: 3, D: 4, E: 5, F: 6 };
@@ -516,7 +548,7 @@ export default async function ProductPage({
               className="text-xs leading-tight text-[#8892B8] hover:text-[#EEF0F8] tabular-nums transition-colors"
               title="See grading methodology"
             >
-              {score} / {MAX_SCORE} pts
+              {scoreIsCurrent ? `${score} / ${MAX_SCORE} pts` : "COA review pending"}
             </Link>
             {categoryRank && (
               <span className="text-xs leading-tight text-[#8892B8] text-center">
@@ -767,7 +799,9 @@ export default async function ProductPage({
           </div>
         </div>
         <p className="mt-4 text-xs text-[#4A5070]">
-          Overall grade score: {score} / {MAX_SCORE} points.{" "}
+          {scoreIsCurrent
+            ? `Overall grade score: ${score} / ${MAX_SCORE} points.`
+            : "This product's Certificate of Analysis has not been reviewed against the current rubric yet, so no point score is shown."}{" "}
           <Link href="/methodology" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
             See full grading methodology →
           </Link>

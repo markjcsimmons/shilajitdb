@@ -28,6 +28,26 @@ enum CoaStatus {
   UNKNOWN
 }
 
+/** What a product's COA actually reports for heavy metals. Replaces the legacy HeavyMetalsTested claim field for grading. */
+enum HeavyMetalsResult {
+  NUMERIC
+  PASS_FAIL
+  NONE
+}
+
+/** Whether a test covered the finished product or only the incoming ingredient/raw extract. */
+enum TestScope {
+  FINISHED_PRODUCT
+  INGREDIENT
+}
+
+/** Who issued the COA. Manufacturer- and brand-issued documents score lower than an independent lab's. */
+enum CoaIssuer {
+  INDEPENDENT_LAB
+  MANUFACTURER
+  BRAND
+}
+
 enum HeavyMetalsTested {
   CONFIRMED
   CLAIMED
@@ -137,6 +157,20 @@ model Product {
   isCanonical               Boolean           @default(true)
   bestForTags               String[]          @default([])
   heavyMetalsTested         HeavyMetalsTested?
+  // ── COA review fields (drive the overall grade; set from a reviewed COA document) ──
+  /** True when a real lab document for this product has been reviewed and verified. */
+  coaVerified               Boolean           @default(false)
+  coaIssuer                 CoaIssuer?
+  /** Date on the COA itself (not the review date — that's coaAnalysedAt). */
+  coaReportDate             DateTime?
+  /** True when the COA itself names the testing laboratory. */
+  labNamedOnCoa             Boolean           @default(false)
+  /** True when the COA carries a batch or lot code tying it to the product sold. */
+  coaBatchIdentified        Boolean           @default(false)
+  heavyMetalsResult         HeavyMetalsResult?
+  heavyMetalsScope          TestScope?
+  /** True when the COA includes a microbial panel. */
+  microbialPanel            Boolean           @default(false)
   pricePerServingCents      Int?
   pricePerGramCents         Int?
   lastVerifiedAt            DateTime?

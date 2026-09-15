@@ -29,7 +29,7 @@ const faqSchema = {
       name: "How does ShilajitDB grade products?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Each product receives three independent scores: a Transparency Grade (A–F) based on COA availability, lab disclosure, and manufacturing claims; a Quality Tier (Poor → Ultra Premium) based on a strict checklist of six criteria; and an Overall Grade (F → A+) using a weighted 14-point score combining all quality signals.",
+        text: "Each product receives three scores: a Transparency Grade (A–F) based on COA availability, lab disclosure, and manufacturing claims; a Quality Tier (Poor → Ultra Premium) based on a strict testing checklist; and an Overall Grade (F → A+) using a weighted 14-point score built from what the Certificate of Analysis actually documents.",
       },
     },
     {
@@ -37,7 +37,7 @@ const faqSchema = {
       name: "What is an Ultra Premium shilajit product?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Ultra Premium requires all six signals simultaneously: resin form, publicly available COA, named third-party testing lab, stated manufacturing country, GMP certification, and a patented manufacturing process.",
+        text: "Ultra Premium requires all five testing signals simultaneously: a verified COA from an independent laboratory, that laboratory named on the COA itself, numeric heavy metal results for the finished product, a microbial panel, and a batch or lot code tying the COA to the product sold.",
       },
     },
     {
@@ -53,7 +53,7 @@ const faqSchema = {
       name: "Why does shilajit form matter for grading?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Resin is the least-processed form of shilajit, best preserving the fulvic-humic mineral matrix. It earns the highest form score (+4 points). Capsules, powders, and gummies involve additional processing that can affect composition.",
+        text: "Resin is the least-processed form of shilajit and best preserves the fulvic-humic mineral matrix, but product form is not scored in the Overall Grade — it is a format preference rather than evidence about a specific product. Browse by form on the best-resin and best-capsules pages instead.",
       },
     },
     {
@@ -119,12 +119,16 @@ export default function MethodologyPage() {
           <strong>GMP certification</strong> — whether the brand claims cGMP compliance.
         </li>
         <li>
-          <strong>Product form</strong> — whether the product is a minimally processed resin
-          versus a capsule, powder, tablet, or blend.
+          <strong>What the COA reports</strong> — whether a real lab document has been
+          reviewed for this product, who issued it, whether heavy metals are reported as
+          actual concentrations or only pass/fail, whether the test covered the finished
+          product or only the incoming ingredient, whether a microbial panel is included,
+          and whether the COA carries a batch or lot code and a recent date.
         </li>
         <li>
-          <strong>Patent claim</strong> — whether the brand holds a manufacturing patent.
-          Patents are scored as a quality signal and required for Ultra-Premium tier.
+          <strong>Product form and patent claims</strong> — recorded and displayed, but{" "}
+          <em>not</em> scored. Form is a format preference rather than evidence of quality,
+          and a manufacturing patent says nothing about what a laboratory measured.
         </li>
         <li>
           <strong>Source region</strong> — where the raw material originates. Displayed on
@@ -233,13 +237,13 @@ export default function MethodologyPage() {
             <tr>
               <td className="p-3 font-semibold text-[#22C55E] whitespace-nowrap">Ultra-Premium</td>
               <td className="p-3 text-[#8892B8]">
-                Resin form <em>and</em> COA publicly available <em>and</em> named third-party lab <em>and</em> manufacturing country stated <em>and</em> GMP certified <em>and</em> patent claim
+                Verified COA from an independent laboratory <em>and</em> that laboratory named on the COA <em>and</em> numeric heavy metal results for the finished product <em>and</em> a microbial panel <em>and</em> a batch or lot code
               </td>
             </tr>
             <tr>
               <td className="p-3 font-semibold text-[#3B82F6]">Premium</td>
               <td className="p-3 text-[#8892B8]">
-                COA publicly available <em>and</em> named third-party lab (any form qualifies)
+                Verified COA from an independent laboratory <em>and</em> numeric heavy metal results (any form qualifies)
               </td>
             </tr>
             <tr>
@@ -258,25 +262,29 @@ export default function MethodologyPage() {
         </table>
       </div>
 
-      <h3>Why resin form matters</h3>
+      <h3>Why product form is not scored</h3>
       <p>
         Shilajit in its natural resin form requires minimal processing and, according to
         Piccolo (2002), best preserves the humic substance molecular matrix — the complex
         of fulvic acids, humic acids, and trace minerals that characterises authentic
         shilajit.<sup><a href="#ref-piccolo">1</a></sup> Capsules, powders, tablets, and
         liquid extracts undergo additional processing steps that can alter or dilute this
-        matrix. Resin form is required for Ultra-Premium but not Premium, since a well-tested
-        product of any form demonstrates meaningful transparency.
+        matrix. That makes form worth knowing, but it describes a format rather than
+        evidence about a specific product, so it earns no points in any grade. Buyers who
+        want a particular format can browse by form directly.
       </p>
 
       <hr />
 
       <h2>3. Overall Grade (F – A+)</h2>
       <p>
-        The Overall Grade is a single composite score combining all quality signals. The
-        maximum is 14 points. Physical quality signals (resin form, USA manufacturing, patent)
-        are weighted equally with documentation signals (COA, named lab) to reflect that
-        verifiable manufacturing quality matters as much as testing transparency.
+        The Overall Grade is a single composite score built from what a product&rsquo;s
+        Certificate of Analysis actually documents. The maximum is 14 points, of which 11
+        come from laboratory evidence: whether a real COA has been verified, who issued it,
+        whether heavy metals were measured as actual concentrations on the finished product,
+        whether the laboratory is named on the document, and whether the report carries a
+        microbial panel, a batch code, and a recent date. Product form, patent claims, and
+        stated fulvic acid percentages are not scored.
       </p>
 
       <h3>Signal weights</h3>
@@ -291,44 +299,39 @@ export default function MethodologyPage() {
           </thead>
           <tbody className="divide-y divide-[#252A40]">
             <tr>
-              <td className="p-3 text-[#EEF0F8]">Form = Resin</td>
+              <td className="p-3 text-[#EEF0F8]">Numeric heavy metals, finished product</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+4</td>
-              <td className="p-3 text-[#8892B8]">Least-processed form; best preserves fulvic-humic molecular matrix (Piccolo 2002).<sup><a href="#ref-piccolo">1</a></sup> ISO 19822:2018 compositional criteria are most faithfully preserved in minimally processed resin.<sup><a href="#ref-iso">6</a></sup></td>
+              <td className="p-3 text-[#8892B8]">Actual lead, arsenic, cadmium, and mercury concentrations for the product as sold. Heavy metal contamination is the documented safety risk in shilajit,<sup><a href="#ref-frontiers">11</a></sup> and only real numbers let a buyer compare a result against a limit. Halved when the test covers the incoming ingredient rather than the finished product, and halved again on a COA the manufacturer issued.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">Manufacturing country: USA</td>
+              <td className="p-3 text-[#EEF0F8]">Verified COA from an independent laboratory</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+3</td>
-              <td className="p-3 text-[#8892B8]">FDA 21 CFR Part 111 mandates identity, purity, strength, and composition testing for dietary supplements manufactured in the US — providing a regulatory audit trail beyond self-certification.</td>
+              <td className="p-3 text-[#8892B8]">A real lab document for this product has been opened and read, not merely claimed. A COA issued by the brand or its own manufacturer scores +1 instead, as does a COA that is claimed but cannot be verified.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">Patent claim</td>
+              <td className="p-3 text-[#EEF0F8]">Testing laboratory named on the COA</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
-              <td className="p-3 text-[#8892B8]">A proprietary manufacturing patent signals a differentiated, documented process. Patents are granted only after review by a patent authority and represent a verifiable IP claim.</td>
+              <td className="p-3 text-[#8892B8]">The document itself names the laboratory, so the analytical protocol is checkable and the result accountable.<sup><a href="#ref-lamar">5</a></sup> A lab named only in marketing copy earns nothing.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">COA publicly available</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
-              <td className="p-3 text-[#8892B8]">Publicly posted testing results are independently verifiable by consumers. Heavy metal contamination is a documented concern for shilajit raw material.<sup><a href="#ref-frontiers">11</a></sup></td>
-            </tr>
-            <tr>
-              <td className="p-3 text-[#EEF0F8]">Named third-party testing lab</td>
-              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+2</td>
-              <td className="p-3 text-[#8892B8]">Independent verification by a named, checkable laboratory. Naming the lab confirms which analytical protocol was applied and makes results accountable.<sup><a href="#ref-lamar">5</a></sup></td>
-            </tr>
-            <tr>
-              <td className="p-3 text-[#EEF0F8]">COA embedded on page</td>
+              <td className="p-3 text-[#EEF0F8]">Microbial panel on the COA</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">Visible on product page but not independently downloadable. Partial credit: consumer can see results but cannot independently audit the document.</td>
+              <td className="p-3 text-[#8892B8]">Total plate count, yeast and mould, E. coli, Salmonella and Staphylococcus testing — a second real safety check beyond heavy metals.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">COA available on request</td>
+              <td className="p-3 text-[#EEF0F8]">Batch or lot code on the COA</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">Testing exists but is not openly disclosed. Partial credit only.</td>
+              <td className="p-3 text-[#8892B8]">Ties the result to the material actually sold. Without a batch code, a COA cannot be matched to the jar in front of you.</td>
             </tr>
             <tr>
-              <td className="p-3 text-[#EEF0F8]">Manufacturing country: other stated</td>
+              <td className="p-3 text-[#EEF0F8]">COA dated within the last 24 months</td>
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
-              <td className="p-3 text-[#8892B8]">Origin is disclosed, enabling traceability even without a strong local regulatory framework.</td>
+              <td className="p-3 text-[#8892B8]">Testing reflects a point in time. An old report says little about current production, so recency earns a point rather than counting forever.</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">Manufacturing country stated</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
+              <td className="p-3 text-[#8892B8]">Origin is disclosed, enabling traceability. Every supplement sold in the United States falls under FDA 21 CFR Part 111 regardless of where it is made, so no country receives extra credit.</td>
             </tr>
             <tr>
               <td className="p-3 text-[#EEF0F8]">GMP certified</td>
@@ -350,11 +353,11 @@ export default function MethodologyPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#252A40]">
-            <tr><td className="p-3 font-semibold text-green-400">A+</td><td className="p-3">≥ 13</td><td className="p-3 text-[#8892B8]">Resin + USA + patent + public COA + named lab + GMP (4+3+2+2+2+1 = 14)</td></tr>
-            <tr><td className="p-3 font-semibold text-green-300">A</td><td className="p-3">≥ 10</td><td className="p-3 text-[#8892B8]">Resin + USA + public COA + named lab + GMP (4+3+2+2+1 = 12); or non-resin with patent + USA + public COA + named lab (0+3+2+2+2 = 9... rounded up at 10)</td></tr>
-            <tr><td className="p-3 font-semibold text-blue-400">B</td><td className="p-3">≥ 7</td><td className="p-3 text-[#8892B8]">Resin + public COA + named lab (4+2+2 = 8); or non-resin + USA + public COA + named lab (0+3+2+2 = 7)</td></tr>
-            <tr><td className="p-3 font-semibold text-yellow-400">C</td><td className="p-3">≥ 4</td><td className="p-3 text-[#8892B8]">Public COA + other country (2+1 = 3... at least 4 needed, e.g. add GMP)</td></tr>
-            <tr><td className="p-3 font-semibold text-orange-400">D</td><td className="p-3">≥ 2</td><td className="p-3 text-[#8892B8]">COA on request + stated country (1+1 = 2)</td></tr>
+            <tr><td className="p-3 font-semibold text-green-400">A+</td><td className="p-3">≥ 13</td><td className="p-3 text-[#8892B8]">Verified independent COA + numeric finished-product heavy metals + lab named + microbial panel + batch code + recent date + stated country + GMP (3+4+2+1+1+1+1+1 = 14)</td></tr>
+            <tr><td className="p-3 font-semibold text-green-300">A</td><td className="p-3">≥ 10</td><td className="p-3 text-[#8892B8]">The same profile missing a microbial panel or a batch code (3+4+2+1+1+1 = 12)</td></tr>
+            <tr><td className="p-3 font-semibold text-blue-400">B</td><td className="p-3">≥ 7</td><td className="p-3 text-[#8892B8]">Verified COA with a named lab but no heavy metal values (3+2+1+1+1 = 8); or a manufacturer-issued COA reporting numeric heavy metals (1+2+1+1+1+1+1 = 8)</td></tr>
+            <tr><td className="p-3 font-semibold text-yellow-400">C</td><td className="p-3">≥ 4</td><td className="p-3 text-[#8892B8]">A COA that cannot be verified, plus pass/fail heavy metals, a stated country and GMP (1+1+1+1 = 4)</td></tr>
+            <tr><td className="p-3 font-semibold text-orange-400">D</td><td className="p-3">≥ 2</td><td className="p-3 text-[#8892B8]">COA claimed but unverified, plus a stated country (1+1 = 2)</td></tr>
             <tr><td className="p-3 font-semibold text-red-300">E</td><td className="p-3">≥ 1</td><td className="p-3 text-[#8892B8]">A single weak signal (e.g. GMP claimed only)</td></tr>
             <tr><td className="p-3 font-semibold text-red-400">F</td><td className="p-3">0</td><td className="p-3 text-[#8892B8]">No verifiable quality signal of any kind</td></tr>
           </tbody>
