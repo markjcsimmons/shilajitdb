@@ -53,7 +53,7 @@ const faqSchema = {
       name: "Why does shilajit form matter for grading?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Resin is the least-processed form of shilajit and best preserves the fulvic-humic mineral matrix, but product form is not scored in the Overall Grade — it is a format preference rather than evidence about a specific product. Browse by form on the best-resin and best-capsules pages instead.",
+        text: "Resin is the least-processed form of shilajit and best preserves the fulvic-humic mineral matrix, so product form sets the highest Overall Grade a product can reach: resin A+, liquid extracts A, powders, capsules and tablets B, and gummies, honey sticks and blends C. Within that ceiling, the grade is decided by what the product's Certificate of Analysis documents. Every step away from whole resin — extraction, high-heat drying into powder, encapsulation, reheating into a sugar or honey base — adds processing and dilution, and a clean COA cannot undo that.",
       },
     },
     {
@@ -127,8 +127,9 @@ export default function MethodologyPage() {
         </li>
         <li>
           <strong>Product form and patent claims</strong> — recorded and displayed, but{" "}
-          <em>not</em> scored. Form is a format preference rather than evidence of quality,
-          and a manufacturing patent says nothing about what a laboratory measured.
+          <em>not</em> scored as points. Form instead sets the highest Overall Grade a product
+          can reach (see below). A manufacturing patent says nothing about what a laboratory
+          measured.
         </li>
         <li>
           <strong>Source region</strong> — where the raw material originates. Displayed on
@@ -221,7 +222,10 @@ export default function MethodologyPage() {
       <p>
         The Quality Tier answers: <em>does this product meet the verifiable criteria for
         high-quality shilajit?</em> It is determined by a strict checklist — no scoring,
-        no partial credit. Any brand meeting all criteria for a tier qualifies.
+        no partial credit. Any brand meeting all criteria for a tier qualifies. Product
+        form then caps the tier: only resin can be Ultra-Premium; liquid extracts, powders,
+        capsules and tablets can reach Premium; gummies, honey sticks and blends can reach
+        Average at most.
       </p>
 
       <h3>Tier criteria</h3>
@@ -243,7 +247,7 @@ export default function MethodologyPage() {
             <tr>
               <td className="p-3 font-semibold text-[#3B82F6]">Premium</td>
               <td className="p-3 text-[#8892B8]">
-                Verified COA from an independent laboratory <em>and</em> numeric heavy metal results (any form qualifies)
+                Verified COA from an independent laboratory <em>and</em> numeric heavy metal results
               </td>
             </tr>
             <tr>
@@ -262,17 +266,43 @@ export default function MethodologyPage() {
         </table>
       </div>
 
-      <h3>Why product form is not scored</h3>
+      <h3>How product form limits the grade</h3>
       <p>
         Shilajit in its natural resin form requires minimal processing and, according to
         Piccolo (2002), best preserves the humic substance molecular matrix — the complex
         of fulvic acids, humic acids, and trace minerals that characterises authentic
-        shilajit.<sup><a href="#ref-piccolo">1</a></sup> Capsules, powders, tablets, and
-        liquid extracts undergo additional processing steps that can alter or dilute this
-        matrix. That makes form worth knowing, but it describes a format rather than
-        evidence about a specific product, so it earns no points in any grade. Buyers who
-        want a particular format can browse by form directly.
+        shilajit.<sup><a href="#ref-piccolo">1</a></sup> Liquid extracts are processed out of
+        the whole resin. Powders go further: the extract is dried at high temperature
+        (typically by spray-drying) into a powder, and that same powder is what fills
+        capsules and is pressed into tablets.
+        Gummies go furthest: extract that has already been heated and spray-dried is heated
+        again into a sugar, glycerin, and gelatin base, and most deliver 50–200 mg per piece
+        against the 250–500 mg/day used in clinical trials.{" "}
+        <Link href="/learn/shilajit-gummies">How shilajit gummies are made</Link>.
       </p>
+      <p>
+        No clinical trial has compared forms head to head, so form is not scored as points.
+        Instead it sets a ceiling: the Overall Grade cannot exceed what the product&rsquo;s
+        format can deliver, however clean its COA. The Quality Tier is capped the same
+        way: only resin can be Ultra-Premium, and gummies, honey sticks and blends stop
+        at Average.
+      </p>
+      <div className="not-prose overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-[#252A40] bg-[#171C2E] text-left">
+              <th className="p-3 font-medium text-[#8892B8]">Form</th>
+              <th className="p-3 font-medium text-[#8892B8]">Highest Overall Grade</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#252A40]">
+            <tr><td className="p-3">Resin</td><td className="p-3 font-semibold text-green-400">A+</td></tr>
+            <tr><td className="p-3">Liquid extract</td><td className="p-3 font-semibold text-green-300">A</td></tr>
+            <tr><td className="p-3">Powder, capsules, tablets, other formats</td><td className="p-3 font-semibold text-blue-400">B</td></tr>
+            <tr><td className="p-3">Gummies, honey sticks, blends</td><td className="p-3 font-semibold text-yellow-400">C</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <hr />
 
@@ -284,7 +314,8 @@ export default function MethodologyPage() {
         whether heavy metals were measured as actual concentrations on the finished product,
         whether the laboratory is named on the document, and whether the report carries a
         microbial panel, a batch code, and a recent date. Product form, patent claims, and
-        stated fulvic acid percentages are not scored.
+        stated fulvic acid percentages are not scored; product form then caps the resulting
+        grade as described above.
       </p>
 
       <h3>Signal weights</h3>
@@ -353,7 +384,7 @@ export default function MethodologyPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#252A40]">
-            <tr><td className="p-3 font-semibold text-green-400">A+</td><td className="p-3">≥ 13</td><td className="p-3 text-[#8892B8]">Verified independent COA + numeric finished-product heavy metals + lab named + microbial panel + batch code + recent date + stated country + GMP (3+4+2+1+1+1+1+1 = 14)</td></tr>
+            <tr><td className="p-3 font-semibold text-green-400">A+</td><td className="p-3">≥ 13</td><td className="p-3 text-[#8892B8]">Verified independent COA + numeric finished-product heavy metals + lab named + microbial panel + batch code + recent date + stated country + GMP (3+4+2+1+1+1+1+1 = 14). Resin only</td></tr>
             <tr><td className="p-3 font-semibold text-green-300">A</td><td className="p-3">≥ 10</td><td className="p-3 text-[#8892B8]">The same profile missing a microbial panel or a batch code (3+4+2+1+1+1 = 12)</td></tr>
             <tr><td className="p-3 font-semibold text-blue-400">B</td><td className="p-3">≥ 7</td><td className="p-3 text-[#8892B8]">Verified COA with a named lab but no heavy metal values (3+2+1+1+1 = 8); or a manufacturer-issued COA reporting numeric heavy metals (1+2+1+1+1+1+1 = 8)</td></tr>
             <tr><td className="p-3 font-semibold text-yellow-400">C</td><td className="p-3">≥ 4</td><td className="p-3 text-[#8892B8]">A COA that cannot be verified, plus pass/fail heavy metals, a stated country and GMP (1+1+1+1 = 4)</td></tr>

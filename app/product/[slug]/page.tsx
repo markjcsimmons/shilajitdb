@@ -5,6 +5,7 @@ import {
   computeQualityTier,
   computeTransparencyGrade,
   overallGradeBreakdown,
+  formCeilingNote,
   hasCoaReview,
   hasManufacturingCountry,
   type ProductForGrading,
@@ -355,6 +356,7 @@ export default async function ProductPage({
   // Until a product's COA has been reviewed against the current rubric, its live
   // score understates it — show the stored grade without a misleading point total.
   const scoreIsCurrent = hasCoaReview(productForGrading);
+  const ceilingNote = scoreIsCurrent ? formCeilingNote(productForGrading) : null;
 
   // Category rank — how does this product sit among same-form peers?
   const gradeOrder: Record<string, number> = { A_PLUS: 0, A: 1, B: 2, C: 3, D: 4, E: 5, F: 6 };
@@ -800,7 +802,7 @@ export default async function ProductPage({
         </div>
         <p className="mt-4 text-xs text-[#4A5070]">
           {scoreIsCurrent
-            ? `Overall grade score: ${score} / ${MAX_SCORE} points.`
+            ? `Overall grade score: ${score} / ${MAX_SCORE} points.${ceilingNote ? ` ${ceilingNote}` : ""}`
             : "This product's Certificate of Analysis has not been reviewed against the current rubric yet, so no point score is shown."}{" "}
           <Link href="/methodology" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
             See full grading methodology →

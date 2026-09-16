@@ -9,7 +9,7 @@
  * Dry run:  ./node_modules/.bin/tsx scripts/backfill-coa-review.ts
  * Apply:    ./node_modules/.bin/tsx scripts/backfill-coa-review.ts --apply
  */
-import { PrismaClient, type CoaIssuer, type HeavyMetalsResult, type TestScope } from "@prisma/client";
+import { PrismaClient, type CoaIssuer, type HeavyMetalsResult, type ProductForm, type TestScope } from "@prisma/client";
 import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "../lib/grading";
 
 const prisma = new PrismaClient();
@@ -84,6 +84,12 @@ const REVIEWS: Record<string, Review> = {
   "xara-shilajita-": { coaVerified: true, coaIssuer: "INDEPENDENT_LAB", heavyMetalsResult: "NUMERIC", heavyMetalsScope: "FINISHED_PRODUCT", labNamedOnCoa: true, microbialPanel: true, coaBatchIdentified: false, coaReportDate: "2026-02-01" },
 };
 
+/** Products whose stored form is wrong. Form sets the grade and tier ceilings. */
+const FORM_CORRECTIONS: Record<string, ProductForm> = {
+  // Gummies + honey sticks bundle, stored as OTHER.
+  "better-alt-ultimate-power-up-duo-shilajit-gummies-shilajit-honey-sticks": "GUMMY",
+};
+
 function reviewFor(slug: string): Review | null {
   let best: string | null = null;
   for (const key of Object.keys(REVIEWS)) {
@@ -117,8 +123,11 @@ async function main() {
         }
       : null;
     if (review) matched++;
+    const formFix = FORM_CORRECTIONS[p.slug];
+    if (formFix && formFix !== p.form) console.log(`${p.slug}: form ${p.form} -> ${formFix}`);
+    const form = formFix ?? p.form;
 
-    const forGrading = { ...p, ...(data ?? {}), brandSlug: p.brand.slug };
+    const forGrading = { ...p, ...(data ?? {}), form, brandSlug: p.brand.slug };
     const overallGrade = computeOverallGrade(forGrading);
     const quality = computeQualityTier(forGrading);
     const transparency = computeTransparencyGrade(forGrading);
@@ -139,6 +148,7 @@ async function main() {
         where: { id: p.id },
         data: {
           ...(data ?? {}),
+          form,
           overallGrade,
           qualityTier: quality.tier,
           transparencyGrade: transparency.grade,

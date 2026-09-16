@@ -1,3 +1,4 @@
+import { gradeLabel } from "./grade-colors";
 import type {
   CoaIssuer,
   CoaStatus,
@@ -175,7 +176,7 @@ function meetsUltraPremiumCriteria(product: ProductForGrading): boolean {
 
 /**
  * Criteria for PREMIUM: a verified COA from an independent lab that reports
- * actual heavy metal concentrations. Form is irrelevant; what matters is that
+ * actual heavy metal concentrations. Form is handled separately by FORM_TIER_CEILING; here what matters is that
  * someone independent measured the product and published the numbers.
  */
 function meetsPremiumCriteria(product: ProductForGrading): boolean {
@@ -186,7 +187,40 @@ function meetsPremiumCriteria(product: ProductForGrading): boolean {
   );
 }
 
+// Form ceilings for the tier mirror the overall-grade ceilings: only resin can reach
+// ULTRA_PREMIUM, and gummies, honey sticks and blends cannot rise above AVERAGE.
+const TIER_ORDER: readonly QualityTier[] = ["ULTRA_PREMIUM", "PREMIUM", "AVERAGE", "POOR"];
+
+export const FORM_TIER_CEILING: Record<ProductForm, QualityTier> = {
+  RESIN: "ULTRA_PREMIUM",
+  LIQUID: "PREMIUM",
+  POWDER: "PREMIUM",
+  CAPSULE: "PREMIUM",
+  TABLETS: "PREMIUM",
+  OTHER: "PREMIUM",
+  GUMMY: "AVERAGE",
+  HONEY_STICKS: "AVERAGE",
+  BLEND: "AVERAGE",
+};
+
 export function computeQualityTier(
+  product: ProductForGrading,
+): QualityResult {
+  const result = testingQualityTier(product);
+  const ceiling = FORM_TIER_CEILING[product.form];
+  if (TIER_ORDER.indexOf(result.tier) >= TIER_ORDER.indexOf(ceiling)) return result;
+  const reason = FORM_CEILING_REASON[product.form];
+  return {
+    tier: ceiling,
+    reasons: [
+      `${ceiling}: testing meets ${result.tier} criteria, but product form caps the tier at ${ceiling}${reason ? ` — ${reason}` : ""}`,
+      ...result.reasons.slice(1),
+    ],
+  };
+}
+
+/** The tier the product's testing alone qualifies for, before the form ceiling. */
+function testingQualityTier(
   product: ProductForGrading,
 ): QualityResult {
   const reasons: string[] = [];
@@ -197,7 +231,7 @@ export function computeQualityTier(
   }
 
   if (meetsPremiumCriteria(product)) {
-    reasons.push("PREMIUM: verified independent COA with numeric heavy metal results (any form qualifies)");
+    reasons.push("PREMIUM: verified independent COA with numeric heavy metal results");
     if (!product.labNamedOnCoa) reasons.push("Testing lab not named on the COA — required for ULTRA_PREMIUM");
     if (product.heavyMetalsScope === "INGREDIENT") reasons.push("Heavy metals tested on the incoming ingredient, not the finished product — finished-product testing required for ULTRA_PREMIUM");
     if (!product.microbialPanel) reasons.push("No microbial panel on the COA — required for ULTRA_PREMIUM");
@@ -243,13 +277,59 @@ export function computeQualityTier(
 //   Country of manufacture stated:               +1
 //   GMP certified:                               +1
 //
-// Deliberately NOT scored: product form (resin vs capsule is a format preference,
-// not a quality signal — see /best/best-resin), patent claims, and fulvic acid
+// Not scored, but product form sets a grade ceiling (see FORM_GRADE_CEILING below).
+// Deliberately NOT scored at all: patent claims and fulvic acid
 // percentage (commercially available as an additive, and measured inconsistently
 // between labs, so a high number proves neither identity nor quality).
 //
 // Grade thresholds (max 14): A+ ≥13, A ≥10, B ≥7, C ≥4, D ≥2, E ≥1, F 0
+//
+// Form ceilings: the score measures testing evidence, but the grade cannot exceed
+// what the product's form can deliver. Resin is the whole, least-processed material
+// used in clinical research; every step away from it (extraction, spray-drying,
+// encapsulation, reheating into a sugar or honey base) adds processing and dilution.
+//   Resin A+ · Liquid A · Powder, Capsule, Tablets, Other B · Gummy, Honey sticks, Blend C
 // ---------------------------------------------------------------------------
+
+const GRADE_ORDER: readonly OverallGrade[] = ["A_PLUS", "A", "B", "C", "D", "E", "F"];
+
+export const FORM_GRADE_CEILING: Record<ProductForm, OverallGrade> = {
+  RESIN: "A_PLUS",
+  LIQUID: "A",
+  POWDER: "B",
+  CAPSULE: "B",
+  TABLETS: "B",
+  OTHER: "B",
+  GUMMY: "C",
+  HONEY_STICKS: "C",
+  BLEND: "C",
+};
+
+const FORM_CEILING_REASON: Partial<Record<ProductForm, string>> = {
+  LIQUID: "liquid extracts are processed out of the whole resin",
+  POWDER: "powders are extract dried at high temperature, not whole resin",
+  CAPSULE: "capsules hold extract powder dried at high temperature, at fixed low doses",
+  TABLETS: "tablets are extract powder dried at high temperature and pressed with binders",
+  OTHER: "the format is processed away from whole resin",
+  GUMMY: "gummies use heat-processed, spray-dried extract diluted into a sugar and gelatin base, typically well below clinical doses",
+  HONEY_STICKS: "honey sticks dilute processed extract into a honey base, typically well below clinical doses",
+  BLEND: "blends dilute shilajit among other ingredients, typically well below clinical doses",
+};
+
+function gradeFromScore(score: number): OverallGrade {
+  if (score >= 13) return "A_PLUS";
+  if (score >= 10) return "A";
+  if (score >= 7) return "B";
+  if (score >= 4) return "C";
+  if (score >= 2) return "D";
+  if (score >= 1) return "E";
+  return "F";
+}
+
+/** The better (higher) of two grades is the one earlier in GRADE_ORDER. */
+function lowerGrade(a: OverallGrade, b: OverallGrade): OverallGrade {
+  return GRADE_ORDER.indexOf(a) >= GRADE_ORDER.indexOf(b) ? a : b;
+}
 
 /** A COA counts as verified only when a real document for this product has been reviewed. */
 export function hasCoaReview(product: ProductForGrading): boolean {
@@ -381,6 +461,12 @@ export function overallGradeBreakdown(
     reasons.push(`GMP certified facility (+${r.gmpCertified})`);
   }
 
+  const ceiling = FORM_GRADE_CEILING[product.form];
+  const ceilingReason = FORM_CEILING_REASON[product.form];
+  if (ceilingReason) {
+    reasons.push(`Product form caps the grade at ${gradeLabel(ceiling)}: ${ceilingReason}`);
+  }
+
   return { score, maxScore: overallRubric.maxScore, reasons };
 }
 
@@ -389,14 +475,18 @@ export function overallGradeScore(product: ProductForGrading): number {
   return overallGradeBreakdown(product).score;
 }
 
-/** Compute the overall grade (A+ through F). */
+/**
+ * When the product's form holds its grade below what the score alone would earn,
+ * a sentence explaining why; otherwise null.
+ */
+export function formCeilingNote(product: ProductForGrading): string | null {
+  const ceiling = FORM_GRADE_CEILING[product.form];
+  const fromScore = gradeFromScore(overallGradeScore(product));
+  if (lowerGrade(fromScore, ceiling) === fromScore) return null;
+  return `The score alone would earn ${gradeLabel(fromScore)}, but product form caps the grade at ${gradeLabel(ceiling)}: ${FORM_CEILING_REASON[product.form]}.`;
+}
+
+/** Compute the overall grade (A+ through F): the score's grade, capped by product form. */
 export function computeOverallGrade(product: ProductForGrading): OverallGrade {
-  const score = overallGradeScore(product);
-  if (score >= 13) return "A_PLUS";
-  if (score >= 10) return "A";
-  if (score >= 7) return "B";
-  if (score >= 4) return "C";
-  if (score >= 2) return "D";
-  if (score >= 1) return "E";
-  return "F";
+  return lowerGrade(gradeFromScore(overallGradeScore(product)), FORM_GRADE_CEILING[product.form]);
 }
