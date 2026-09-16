@@ -107,8 +107,11 @@ export default function HowToReadCOAPage() {
 
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Step 3: Find the Fulvic Acid Panel</h2>
           <p>
-            Fulvic acid is the primary bioactive in shilajit. Its percentage by dry weight is the
-            most meaningful compositional data point on a COA. What to look for:
+            Fulvic acid is the primary bioactive in shilajit, and most COAs report it as a percentage
+            by dry weight. Treat it as a plausibility check rather than a quality score: labs use
+            different methods, results are not comparable between brands, and fulvic acid is sold
+            as a standalone additive, so a high number can be bought. ShilajitDB&apos;s grading does
+            not score it. What to look for:
           </p>
           <ul className="list-disc pl-5 space-y-2 mt-2">
             <li>

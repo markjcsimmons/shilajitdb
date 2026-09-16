@@ -221,6 +221,20 @@ export default function FormsComparedPage() {
             </table>
           </div>
 
+          <p>
+            Form also sets the highest grade a product can earn on ShilajitDB. The grade itself comes
+            from COA evidence, but it is capped by form: resin can reach A+, liquid extracts A,
+            powders and capsules B, and gummies, honey sticks, and blends C. The reason is processing
+            and dose — powders are extract dried at high temperature, and gummies reheat that powder
+            into a sugar or gelatin base at 50–200 mg per piece. No trial has compared absorption
+            between forms, so the cap is not a claim that other forms are proven to work less well.
+            See{" "}
+            <Link href="/methodology" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
+              our methodology
+            </Link>{" "}
+            for the full rubric.
+          </p>
+
           <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What About Liquid Drops?</h2>
           <p>
             Some products offer liquid shilajit — typically a fulvic acid solution or a shilajit
@@ -293,7 +307,7 @@ export default function FormsComparedPage() {
           </p>
           <p>
             Whatever form you choose, the same question applies: does this brand publish a COA from
-            a named, accredited laboratory that tests the final product for fulvic acid and heavy metals?
+            a named, independent laboratory that tests the final product for heavy metals, with numeric results?
           </p>
         </section>
 
@@ -331,7 +345,7 @@ export default function FormsComparedPage() {
             </div>
             <div>
               <p className="font-semibold text-[#EEF0F8]">Are shilajit gummies effective?</p>
-              <p className="mt-1">Gummies typically contain 50–200 mg of shilajit extract per serving — significantly less than the 300–500 mg used in clinical research. They can be a low-commitment entry point, but they are unlikely to deliver the same mineral matrix and fulvic acid concentrations as resin or well-made capsules at equivalent label quantities.</p>
+              <p className="mt-1">Gummies typically contain 50–200 mg of shilajit extract per serving — significantly less than the 250–500 mg/day used in clinical research. They can be a low-commitment entry point, but they are unlikely to deliver the same mineral matrix and fulvic acid concentrations as resin or well-made capsules at equivalent label quantities.</p>
             </div>
             <div>
               <p className="font-semibold text-[#EEF0F8]">Which shilajit form has the best bioavailability?</p>

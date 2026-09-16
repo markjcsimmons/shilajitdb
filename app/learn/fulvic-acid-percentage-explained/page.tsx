@@ -243,9 +243,10 @@ export default function FulvicAcidPercentagePage() {
               COAs rarely go to this level of detail.
             </p>
             <p>
-              For practical purchasing decisions, a public COA with a numeric finished-product
-              fulvic acid percentage remains the best available proxy — with the caveats above
-              in mind.
+              For practical purchasing decisions, use the fulvic acid percentage as a plausibility
+              check — a figure far outside the natural range is a warning sign — not as a ranking.
+              Heavy metal results, lab independence, and batch traceability tell you more, which is
+              why ShilajitDB&apos;s grading does not score fulvic acid percentage at all.
             </p>
           </section>
 

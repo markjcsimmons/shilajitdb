@@ -248,11 +248,11 @@ export default function ShilajitExtractVsResinPage() {
               principle — it is transparency about what the consumer is actually getting.
             </p>
             <p>
-              In the ShilajitDB scoring system, resin products receive the highest form score
-              (+4 points) because the resin form preserves the broadest molecular profile and
-              requires the least processing. But capsule products can still achieve high grades
-              when their documentation is thorough and their COAs cover the finished product
-              with numeric results from named, accredited laboratories.
+              In the ShilajitDB grading system, form earns no points — the score comes from what the
+              COA documents. But form does cap the grade: resin can reach A+, liquid extracts A, and
+              capsules and powders B, because extract has been dried at high temperature before it
+              is encapsulated. A capsule product can still reach that B when its COA covers the
+              finished product with numeric results from a named, independent laboratory.
             </p>
           </section>
 

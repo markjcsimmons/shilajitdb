@@ -150,9 +150,9 @@ export default function ShilajitGummiesPage() {
 
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What to check before buying</h2>
             <p>
-              If you're buying gummies anyway, four things separate a defensible product from a
+              If you're buying gummies anyway, three things separate a defensible product from a
               guess: a stated mg amount of shilajit extract per gummy (not just "contains shilajit"
-              on the label), a stated fulvic acid standardization percentage for that extract, a COA
+              on the label), a COA
               — ideally on the finished gummy, not just the input extract — with numeric heavy metal
               values from a named, accredited lab, and no proprietary blend that hides the actual
               extract weight. For the full checklist across all criteria, see{" "}
@@ -199,7 +199,7 @@ export default function ShilajitGummiesPage() {
               </div>
               <div>
                 <p className="font-semibold text-[#EEF0F8]">What should I look for in a shilajit gummy?</p>
-                <p className="mt-1">A stated mg amount of shilajit extract per gummy, a stated fulvic acid standardization percentage, and — ideally — a COA on the finished gummy rather than just the raw extract input. Most gummy brands only test the extract before it's diluted and heated into the final product, which leaves the finished dose unverified.</p>
+                <p className="mt-1">A stated mg amount of shilajit extract per gummy and — ideally — a COA with numeric heavy metals on the finished gummy rather than just the raw extract input. Most gummy brands only test the extract before it's diluted and heated into the final product, which leaves the finished dose unverified.</p>
               </div>
             </div>
           </section>

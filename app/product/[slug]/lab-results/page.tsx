@@ -40,7 +40,7 @@ export async function generateMetadata({
   if (!product) return { title: "Product not found" };
 
   const title = `${product.brand.name} ${product.name} Lab Test Results & COA`;
-  const description = `Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}. Independent, unaffiliated review.`;
+  const description = `Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}. Graded by the same formula as every product.`;
   const canonical = absoluteUrl(`/product/${slug}/lab-results`);
 
   return {

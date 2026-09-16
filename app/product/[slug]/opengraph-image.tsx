@@ -251,7 +251,7 @@ export default async function ProductOgImage({
         {/* Bottom: trust badge */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: 13, color: "#6E7A9A" }}>
-            shilajitdb.com — Independent grading, unaffiliated with any brand
+            shilajitdb.com — Every product graded by the same formula
           </span>
           <div
             style={{

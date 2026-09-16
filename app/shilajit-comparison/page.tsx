@@ -15,11 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const count = `${Math.floor(totalCount / 10) * 10}+`;
   return {
     title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026)`,
-    description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
+    description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal results, lab independence, product form, and price. Every product graded by the same formula.`,
     alternates: { canonical: absoluteUrl("/shilajit-comparison") },
     openGraph: {
       title: `Shilajit Comparison: ${count} Products Ranked Side-by-Side (2026) | ShilajitDB`,
-      description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal safety, lab accreditation, fulvic acid content, and price. Independent, unaffiliated ratings.`,
+      description: `Compare ${count} shilajit products side-by-side: COA quality, heavy metal results, lab independence, product form, and price. Every product graded by the same formula.`,
       url: absoluteUrl("/shilajit-comparison"),
     },
   };
@@ -281,7 +281,7 @@ export default async function ShilajitComparisonPage() {
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#6E7A9A] mb-0.5">Best Resin</p>
-                <p className="text-sm text-[#8892B8]">Least-processed form — highest fulvic acid transparency</p>
+                <p className="text-sm text-[#8892B8]">Least-processed form — the only one that can grade A+</p>
               </div>
               <Link href="/best/best-resin" className="text-xs font-medium text-[#6E9FFF] hover:text-[#EEF0F8] transition-colors shrink-0">
                 See all 5 →

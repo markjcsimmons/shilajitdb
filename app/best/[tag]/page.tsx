@@ -30,9 +30,9 @@ const TAG_META: Record<string, {
     label: "Best Resin",
     h1: "Best Shilajit Resin (2026): Top Picks Ranked & Compared",
     metaTitle: "Best Shilajit Resin (2026) — Top Picks Ranked & Compared",
-    description: "The best shilajit resin products ranked by COA quality, lab credibility, and heavy metal safety. Only products with public third-party testing make this list.",
+    description: "The best shilajit resin products ranked by COA quality, lab credibility, and heavy metal safety. Resin is the only form that can grade A+ on ShilajitDB.",
     editorial: [
-      "Resin is the least-processed form of shilajit — raw mineral pitch dissolved and purified without encapsulation, carrier oils, or fillers. Because there is nowhere to hide, resin demands the most from a manufacturer: fulvic acid and humic acid concentrations are directly measurable, heavy metal contamination cannot be diluted by capsule filler, and the purity of the source material shows up clearly in third-party testing.",
+      "Resin is the least-processed form of shilajit — raw mineral pitch dissolved and purified without encapsulation, carrier oils, or fillers. Because there is nowhere to hide, resin demands the most from a manufacturer: there is no capsule filler or sugar base to dilute heavy metal contamination, and the purity of the source material shows up clearly in third-party testing.",
       "Our top resin picks all carry public Certificates of Analysis from named independent laboratories. We assess each COA for actual heavy metal values measured on the finished resin (not just a pass/fail stamp), whether the lab names itself on the report, and whether the report carries a batch code tying it to the product sold. Resin is also the only form that can earn an A+ in our grading — every other format has already been through extra processing that a clean COA cannot undo.",
     ],
     faq: [
@@ -139,12 +139,12 @@ const TAG_META: Record<string, {
       "Gummy-form shilajit is the most processed format in the database. The extract has already been dried into powder at high temperature, then it is heated again into a base of sugar, gelatin, and flavourings — diluting it to a fraction of a clinical dose per piece. For that reason no gummy can grade above C on ShilajitDB, however clean its lab report. If you want shilajit at its most potent, choose resin.",
       "If you prefer gummies anyway, the products below are the best-documented in the database — ranked by what their COAs actually show, within that C ceiling.",
       "What to look for in a shilajit gummy: a stated shilajit content per gummy (in mg) and a third-party lab test on the finished gummy — not just the raw extract. Many brands test the incoming shilajit extract but not the final gummy, which means the heavy metal data does not reflect what you are actually consuming.",
-      "Typical shilajit gummies contain 100–250 mg of extract per gummy, against the 250–500 mg/day used in clinical trials. Products that only state a total \"shilajit blend\" weight, without the mg of shilajit per gummy, are unverifiable — avoid them regardless of price.",
+      "Typical shilajit gummies contain 50–200 mg of extract per gummy, against the 250–500 mg/day used in clinical trials. Products that only state a total \"shilajit blend\" weight, without the mg of shilajit per gummy, are unverifiable — avoid them regardless of price.",
     ],
     faq: [
       {
         q: "Are shilajit gummies effective?",
-        a: "They are the weakest way to take shilajit. A gummy holds extract that has been heated twice — once when it is dried into powder and again when it is set into the gummy base — at usually 100–250 mg per piece, well below the 250–500 mg/day used in clinical trials. No study has tested a shilajit gummy on its own. That is why our grading caps every gummy at C.",
+        a: "They are the weakest way to take shilajit. A gummy holds extract that has been heated twice — once when it is dried into powder and again when it is set into the gummy base — at usually 50–200 mg per piece, well below the 250–500 mg/day used in clinical trials. No study has tested a shilajit gummy on its own. That is why our grading caps every gummy at C.",
       },
       {
         q: "Shilajit gummies vs resin: which is better?",
@@ -156,7 +156,7 @@ const TAG_META: Record<string, {
       },
       {
         q: "How much shilajit is in a gummy?",
-        a: "Most shilajit gummies contain 100–300 mg of shilajit extract per gummy. Compare this against the 300–500 mg typically used in clinical research on shilajit — you may need multiple gummies per day to reach an equivalent dose.",
+        a: "Most shilajit gummies contain 50–200 mg of shilajit extract per gummy. Compare this against the 250–500 mg/day used in clinical research on shilajit — you may need several gummies a day to reach an equivalent dose, which also means several servings of sugar or sweetener.",
       },
     ],
   },
@@ -220,7 +220,7 @@ const TAG_META: Record<string, {
     faq: [
       {
         q: "Does shilajit help with iron levels or energy in women?",
-        a: "Shilajit's fulvic acid forms soluble complexes with iron that may improve bioavailability compared to inorganic iron salts, which is a mechanistically credible pathway for women experiencing fatigue related to low iron. This evidence is less extensive than the testosterone research done primarily in men, and results depend on the fulvic acid content of the specific product used.",
+        a: "Shilajit's fulvic acid forms soluble complexes with iron that may improve bioavailability compared to inorganic iron salts, which is a mechanistically credible pathway for women experiencing fatigue related to low iron. This evidence is less extensive than the testosterone research done primarily in men. Don't choose a product on its advertised fulvic acid percentage — labs measure it inconsistently and it can be raised with added fulvic acid — so look for a COA with numeric heavy metal results instead.",
       },
       {
         q: "Is shilajit safe during pregnancy?",

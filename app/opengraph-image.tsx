@@ -95,7 +95,7 @@ export default async function OgImage() {
             }}
           >
             <span style={{ fontSize: 13, color: "#3D7AFF", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-              Independent · Unaffiliated · Free
+              Independent Grading · Transparent · Free
             </span>
           </div>
         </div>

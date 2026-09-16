@@ -123,8 +123,9 @@ export default function ShilajitBenefitsForWomenPage() {
             <p>
               None of the benefits above apply to a product that hasn't been independently tested.
               Look for a public Certificate of Analysis from a named, accredited laboratory with
-              numeric heavy metal values — not a pass/fail stamp — and a fulvic acid percentage
-              measured on the finished product. See{" "}
+              numeric heavy metal values — not a pass/fail stamp — measured on the finished product,
+              plus a microbial panel. Don&apos;t rely on an advertised fulvic acid percentage: labs
+              measure it inconsistently and it can be raised with added fulvic acid. See{" "}
               <Link href="/learn/how-to-read-shilajit-coa" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
                 How to Read a Shilajit COA
               </Link>{" "}
@@ -153,7 +154,7 @@ export default function ShilajitBenefitsForWomenPage() {
               </div>
               <div>
                 <p className="font-semibold text-[#EEF0F8]">What quality markers matter most?</p>
-                <p className="mt-1">A public COA from a named, accredited lab with numeric heavy metal results, and a fulvic acid percentage on the finished product. Heavy metal safety is a particular concern for women of reproductive age, since lead has no established safe exposure level during pregnancy.</p>
+                <p className="mt-1">A public COA from a named, accredited lab with numeric heavy metal results and a microbial panel on the finished product. An advertised fulvic acid percentage is not a reliable quality marker — labs measure it inconsistently. Heavy metal safety is a particular concern for women of reproductive age, since lead has no established safe exposure level during pregnancy.</p>
               </div>
             </div>
           </section>

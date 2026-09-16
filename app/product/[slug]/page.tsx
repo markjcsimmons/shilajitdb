@@ -19,6 +19,7 @@ import {
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
 import { isAffiliateTrackingUrl } from "@/lib/affiliate";
+import { getCompareProducts } from "@/lib/compare-set";
 import { AffiliateTag, AffiliateNote } from "@/components/affiliate-tag";
 import { cn } from "@/components/ui";
 import type { EvidenceType, ListingSource, OverallGrade, QualityTier } from "@prisma/client";
@@ -467,15 +468,10 @@ export default async function ProductPage({
     take: 200,
   });
 
-  // Top 15 (same set /compare/[pair] pre-renders) — used for crawlable quick-compare links
-  const top15 = await prisma.product.findMany({
-    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
-    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-    take: 15,
-    select: { slug: true, name: true, brand: { select: { name: true } } },
-  });
-  const quickCompareLinks = top15.some((p) => p.slug === product.slug)
-    ? top15
+  // Compare set (the products /compare/[pair] pre-renders) — used for crawlable quick-compare links
+  const compareSet = await getCompareProducts();
+  const quickCompareLinks = compareSet.some((p) => p.slug === product.slug)
+    ? compareSet
         .filter((p) => p.slug !== product.slug)
         .slice(0, 3)
         .map((other) => ({

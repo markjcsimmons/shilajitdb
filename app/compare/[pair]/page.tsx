@@ -6,6 +6,7 @@ import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
 import { absoluteUrl } from "@/lib/site";
+import { getCompareProducts } from "@/lib/compare-set";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -13,17 +14,12 @@ import { notFound, redirect } from "next/navigation";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const top15 = await prisma.product.findMany({
-    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
-    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-    take: 15,
-    select: { slug: true },
-  });
+  const compareSet = await getCompareProducts();
 
   const pairs: { pair: string }[] = [];
-  for (let i = 0; i < top15.length; i++) {
-    for (let j = i + 1; j < top15.length; j++) {
-      const [a, b] = [top15[i].slug, top15[j].slug].sort();
+  for (let i = 0; i < compareSet.length; i++) {
+    for (let j = i + 1; j < compareSet.length; j++) {
+      const [a, b] = [compareSet[i].slug, compareSet[j].slug].sort();
       pairs.push({ pair: `${a}-vs-${b}` });
     }
   }
@@ -182,7 +178,7 @@ export async function generateMetadata({
       : "Compare products";
   const description =
     a && b
-      ? `Compare ${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name} on COA availability, lab accreditation, heavy metal testing, form, and price. Independent, unaffiliated analysis.`
+      ? `Compare ${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name} on COA evidence, lab independence, heavy metal results, form, and price. Both graded by the same formula.`
       : "Compare two shilajit products side-by-side.";
 
   const thinData = !a || !b || a._count.evidence < 2 || b._count.evidence < 2;
@@ -242,14 +238,9 @@ export default async function ComparePage({
     orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
   });
 
-  // Top 15 (same set used by generateStaticParams) for related-comparison links
-  const top15 = await prisma.product.findMany({
-    where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
-    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-    take: 15,
-    select: { slug: true, name: true, brand: { select: { name: true } } },
-  });
-  const others = top15.filter((p) => p.slug !== aSlug && p.slug !== bSlug);
+  // Compare set (same one generateStaticParams uses) for related-comparison links
+  const compareSet = await getCompareProducts();
+  const others = compareSet.filter((p) => p.slug !== aSlug && p.slug !== bSlug);
   const relatedPairs = [
     ...others.slice(0, 3).map((other) => ({
       anchor: a,

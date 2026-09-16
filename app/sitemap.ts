@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
+import { getCompareProducts } from "@/lib/compare-set";
 import type { MetadataRoute } from "next";
 
 export const revalidate = 3600; // cache for 1 hour
@@ -65,13 +66,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, updatedAt: true },
       orderBy: { slug: "asc" },
     }),
-    // Top 15 products for compare page pairs
-    prisma.product.findMany({
-      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { not: null } },
-      orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
-      take: 15,
-      select: { slug: true },
-    }),
+    // Products for compare page pairs (same set /compare/[pair] pre-renders)
+    getCompareProducts(),
     // Brands that have at least one product with a COA URL (for lab-tests pages)
     prisma.brand.findMany({
       where: { products: { some: { isCanonical: true, coaUrl: { not: null } } } },
@@ -150,7 +146,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.65,
     }));
 
-  // Generate all compare page pairs from top 15 products
+  // Generate all compare page pairs from the compare set (top-graded, 2 per brand)
   const comparePages: MetadataRoute.Sitemap = [];
   for (let i = 0; i < compareProducts.length; i++) {
     for (let j = i + 1; j < compareProducts.length; j++) {
