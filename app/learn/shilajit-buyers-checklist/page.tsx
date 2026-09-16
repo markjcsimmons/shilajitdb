@@ -42,7 +42,7 @@ export default function BuyersChecklistPage() {
             <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
               The Shilajit Buyer&apos;s Checklist: 9 Things to Verify Before You Buy
             </h1>
-            <p className="mt-3 text-sm text-[#4A5070]">Last reviewed May 2026 · 9 min read</p>
+            <p className="mt-3 text-sm text-[#4A5070]">Last reviewed September 2026 · 9 min read</p>
           <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
@@ -136,22 +136,23 @@ export default function BuyersChecklistPage() {
                 <div className="flex items-start gap-3 mb-3">
                   <div className="shrink-0 h-8 w-8 rounded-lg bg-[#3D7AFF]/20 border border-[#3D7AFF]/30 flex items-center justify-center text-sm font-bold text-[#6E9FFF]">4</div>
                   <div>
-                    <p className="text-sm font-semibold text-[#EEF0F8]">Fulvic acid percentage is reported on the finished product</p>
+                    <p className="text-sm font-semibold text-[#EEF0F8]">The COA includes a microbial panel</p>
                   </div>
                 </div>
                 <p className="text-xs text-[#8892B8] leading-relaxed mb-3">
-                  Fulvic acid content is the primary active compound claim in shilajit. A
-                  percentage is only meaningful if it refers to the finished product as sold —
-                  not the raw extract used to make it. Capsule products in particular should
-                  report the percentage per capsule or the mg per serving, not just the extract
-                  concentration.
+                  Shilajit is collected from rock and processed by hand, so contamination is not
+                  only a heavy metals question. A complete COA also tests for total bacteria,
+                  yeast and mould, E. coli and Salmonella. Don&apos;t treat an advertised fulvic
+                  acid percentage as a substitute: fulvic acid is sold as a standalone additive,
+                  labs measure it with different methods, and a high figure proves neither
+                  authenticity nor safety — which is why it earns no points in our grading.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded bg-[#052010] border border-[#22C55E]/20 p-2">
-                    <p className="text-xs text-[#22C55E]">✓ Fulvic acid: 42.3% (of finished product batch #XXXXX)</p>
+                    <p className="text-xs text-[#22C55E]">✓ Total plate count, yeast &amp; mould, E. coli, Salmonella with numeric results</p>
                   </div>
                   <div className="rounded bg-[#200505] border border-[#EF4444]/20 p-2">
-                    <p className="text-xs text-[#EF4444]">✗ &quot;Made with 50% fulvic acid extract&quot; — this is the extract, not the product</p>
+                    <p className="text-xs text-[#EF4444]">✗ &quot;80% fulvic acid&quot; as the headline claim, with no microbial results</p>
                   </div>
                 </div>
               </div>
@@ -234,22 +235,23 @@ export default function BuyersChecklistPage() {
                 <div className="flex items-start gap-3 mb-3">
                   <div className="shrink-0 h-8 w-8 rounded-lg bg-[#3D7AFF]/20 border border-[#3D7AFF]/30 flex items-center justify-center text-sm font-bold text-[#6E9FFF]">8</div>
                   <div>
-                    <p className="text-sm font-semibold text-[#EEF0F8]">The form factor matches your use case</p>
+                    <p className="text-sm font-semibold text-[#EEF0F8]">The form is as close to whole resin as you can use</p>
                   </div>
                 </div>
                 <p className="text-xs text-[#8892B8] leading-relaxed mb-3">
-                  Resin is the least processed form and the one used in most clinical studies.
-                  Capsules and powders involve additional processing steps that may affect
-                  bioactive composition; gummies introduce the most additives and the most
-                  dilution. This does not mean capsules are ineffective, but it does mean
-                  the standard of testing evidence should be higher for more processed forms.
+                  Resin is the least processed form and the closest to the material used in
+                  clinical studies. Powders are extract dried at high temperature, capsules and
+                  tablets are made from that powder, and gummies reheat it into a sugar and gelatin
+                  base at a fraction of a clinical dose. A clean COA cannot undo that processing,
+                  so our grading caps the grade by form: resin A+, liquid extracts A, powders,
+                  capsules and tablets B, gummies, honey sticks and blends C.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded bg-[#052010] border border-[#22C55E]/20 p-2">
-                    <p className="text-xs text-[#22C55E]">✓ Resin with documented processing; or capsule with full COA covering the finished product</p>
+                    <p className="text-xs text-[#22C55E]">✓ Purified resin with a finished-product COA</p>
                   </div>
                   <div className="rounded bg-[#200505] border border-[#EF4444]/20 p-2">
-                    <p className="text-xs text-[#EF4444]">✗ Gummy product with only an extract-level COA</p>
+                    <p className="text-xs text-[#EF4444]">✗ Gummies chosen as the &quot;premium&quot; option</p>
                   </div>
                 </div>
               </div>
@@ -283,14 +285,15 @@ export default function BuyersChecklistPage() {
 
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">How This Maps to Our Grading</h2>
             <p>
-              These nine criteria directly correspond to the signals we assess for every
-              product in the ShilajitDB database. No product in our database earns a top grade
-              without meeting criteria 1, 2, and 3 at minimum. Criteria 4–9 further differentiate
-              products within the upper tiers.
+              These nine criteria correspond to the signals we assess for every product in the
+              ShilajitDB database. No product earns an A or A+ without meeting criteria 1, 2, and
+              3, and none earns an A+ unless it is resin. Criteria 4–7 and 9 further differentiate
+              products within the upper grades.
             </p>
             <p>
-              Of the 189+ products reviewed in the database, fewer than 30% meet all of criteria
-              1–3. The checklist is not a high bar — it is the minimum for meaningful transparency.
+              Of the 243 products in the database, only about 1 in 10 has a verified COA from a
+              named independent laboratory with numeric heavy metal results. The checklist is not
+              a high bar — it is the minimum for meaningful transparency.
             </p>
           </section>
 

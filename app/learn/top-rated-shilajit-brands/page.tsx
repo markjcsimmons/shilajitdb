@@ -42,7 +42,7 @@ export default function TopRatedShilajitBrandsPage() {
             <h1 className="text-2xl font-semibold tracking-tight text-[#EEF0F8] leading-snug">
               Top Rated Shilajit Brands: Ranked by Lab Data, Not Reviews
             </h1>
-            <p className="mt-3 text-sm text-[#4A5070]">Last reviewed August 2026 · 7 min read</p>
+            <p className="mt-3 text-sm text-[#4A5070]">Last reviewed September 2026 · 7 min read</p>
             <p className="mt-1.5 text-xs text-[#4A5070]"><Link href="/shilajit-comparison" className="underline underline-offset-2 hover:text-[#8892B8] transition-colors">Browse all graded products →</Link></p>
           </header>
 
@@ -69,17 +69,18 @@ export default function TopRatedShilajitBrandsPage() {
 
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">What "top rated" should actually mean</h2>
             <p>
-              We grade every product in this database (A+ through F) on four criteria that map to
+              We grade every product in this database (A+ through F) on five criteria that map to
               the questions a genuinely top-rated brand should be able to answer without hedging:
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong className="text-[#EEF0F8]">COA status</strong> — is there a public Certificate of Analysis for this specific product, or is it "available on request" (which in practice usually means unavailable)?</li>
               <li><strong className="text-[#EEF0F8]">Heavy metals testing</strong> — does the COA show numeric ppm values for lead, arsenic, mercury, and cadmium, or just a pass/fail checkbox that hides how close the product actually came to the limit?</li>
               <li><strong className="text-[#EEF0F8]">Lab credibility</strong> — was testing done by a named, accredited third-party lab, or an in-house/unnamed source with no way to verify the result?</li>
-              <li><strong className="text-[#EEF0F8]">Manufacturing transparency</strong> — does the brand disclose sourcing region, extraction method, and batch-level testing, or only marketing language?</li>
+              <li><strong className="text-[#EEF0F8]">Batch traceability</strong> — does the COA carry a batch or lot code and a recent date, so it describes the product actually on sale?</li>
+              <li><strong className="text-[#EEF0F8]">Product form</strong> — resin is the least-processed form, so it is the only one that can grade A+. Powders and capsules (extract dried at high temperature) cap at B; gummies cap at C.</li>
             </ul>
             <p>
-              A brand that scores well on all four isn't "top rated" because it says so on its own
+              A brand that scores well on all five isn't "top rated" because it says so on its own
               packaging — it's top rated because the underlying documents hold up. For the full
               rubric, see{" "}
               <Link href="/learn/shilajit-grading-explained" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">
@@ -137,8 +138,8 @@ export default function TopRatedShilajitBrandsPage() {
             <h2 className="text-lg font-semibold text-[#EEF0F8] mt-6 mb-2">Is there really a "best shilajit in the world"?</h2>
             <p>
               No single product wins across every criterion, and be skeptical of any list that
-              claims otherwise. A resin with an A+ grade for lab transparency might still not be the
-              right form for someone who wants capsules; the highest-graded Himalayan product isn't
+              claims otherwise. Someone who cannot take resin may reasonably choose a
+              well-tested capsule, even though capsules cap at B; the highest-graded Himalayan product isn't
               automatically better than a well-documented Altai or Caucasus-sourced one — origin
               region is a sourcing detail, not a quality guarantee on its own. See{" "}
               <Link href="/learn/shilajit-sourcing-regions" className="text-[#6E9FFF] underline underline-offset-2 hover:text-[#EEF0F8] transition-colors">

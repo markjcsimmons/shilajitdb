@@ -33,24 +33,24 @@ const TAG_META: Record<string, {
     description: "The best shilajit resin products ranked by COA quality, lab credibility, and heavy metal safety. Only products with public third-party testing make this list.",
     editorial: [
       "Resin is the least-processed form of shilajit — raw mineral pitch dissolved and purified without encapsulation, carrier oils, or fillers. Because there is nowhere to hide, resin demands the most from a manufacturer: fulvic acid and humic acid concentrations are directly measurable, heavy metal contamination cannot be diluted by capsule filler, and the purity of the source material shows up clearly in third-party testing.",
-      "Our top resin picks all carry public Certificates of Analysis from named independent laboratories. We assess each COA for actual heavy metal values (not just a pass/fail stamp), fulvic acid percentage measured on the finished product, and the accreditation status of the testing lab.",
+      "Our top resin picks all carry public Certificates of Analysis from named independent laboratories. We assess each COA for actual heavy metal values measured on the finished resin (not just a pass/fail stamp), whether the lab names itself on the report, and whether the report carries a batch code tying it to the product sold. Resin is also the only form that can earn an A+ in our grading — every other format has already been through extra processing that a clean COA cannot undo.",
     ],
     faq: [
       {
         q: "Is shilajit resin better than capsules or powder?",
-        a: "Resin is the least-processed form of shilajit, so fulvic acid and heavy metal levels appear directly in lab testing without a capsule excipient or powder carrier that can dilute or obscure them. Capsules and powders trade some of that transparency for convenience and consistent dosing. If verifiable purity is the priority, resin is the stronger choice; if convenience matters more, a capsule or powder with a public COA on the finished product is a reasonable alternative.",
+        a: "Resin is the least-processed form of shilajit and the closest to the material used in clinical research. Powders are extract dried at high temperature, and capsules are filled with that powder, so both have been through processing that resin has not. That is why our grading caps powders and capsules at B while resin can reach A+. If you choose a capsule or powder for convenience, look for a public COA on the finished product.",
       },
       {
         q: "How much shilajit resin should I take per day?",
-        a: "Most clinical studies used 250–500 mg per day, often split into two doses. Resin is typically measured as a pea-sized portion (roughly 300–500 mg) dissolved in warm water or milk. Because potency varies by fulvic acid percentage, check the product's COA rather than relying on a generic 'pea-sized' instruction alone.",
+        a: "Most clinical studies used 250–500 mg per day, often split into two doses. Resin is typically measured as a pea-sized portion (roughly 300–500 mg) dissolved in warm water or milk. Because concentration varies between products, weigh your dose rather than relying on a generic 'pea-sized' instruction alone.",
       },
       {
         q: "What should I look for before buying shilajit resin?",
-        a: "A public Certificate of Analysis from a named independent laboratory with numeric heavy metal values (not a pass/fail stamp), a fulvic acid percentage measured on the finished resin rather than the raw material, and a stated purification process. Because resin has no filler to hide contamination behind, a missing or vague COA is a bigger red flag here than in capsule or gummy form.",
+        a: "A public Certificate of Analysis from a named independent laboratory with numeric heavy metal values measured on the finished resin (not a pass/fail stamp), a batch or lot code that matches your jar, and a report dated within the last two years. Don't rely on an advertised fulvic acid percentage — fulvic acid is sold as a standalone additive and labs measure it inconsistently. Because resin has no filler to hide contamination behind, a missing or vague COA is a bigger red flag here than in capsule or gummy form.",
       },
       {
         q: "How can you tell if shilajit resin is genuine and pure?",
-        a: "Appearance and texture (a shiny, tar-like consistency that softens with body heat) are suggestive but not proof of purity — the only reliable signal is a public COA from a named lab showing the fulvic acid percentage and confirming heavy metals are below safety thresholds. Resin that hasn't been tested can't be verified as genuine or safe regardless of how it looks or smells.",
+        a: "Appearance and texture (a shiny, tar-like consistency that softens with body heat) are suggestive but not proof of purity — the only reliable signal is a public COA from a named lab with numeric heavy metal results for the batch you bought. Resin that hasn't been tested can't be verified as genuine or safe regardless of how it looks or smells.",
       },
     ],
   },
@@ -61,20 +61,20 @@ const TAG_META: Record<string, {
     description: "The best shilajit capsule products ranked by COA quality, lab credibility, and transparency. Compare shilajit capsules by testing credentials and price per serving.",
     editorial: [
       "Capsule-form shilajit trades some of the purity transparency of resin for daily convenience. The key questions are: what is the excipient? what is the stated shilajit content per capsule? and is there a public COA showing actual heavy metal concentrations below safe thresholds?",
-      "Capsules also introduce more processing steps than resin, which makes third-party testing especially important. Our top picks all have public COAs from named labs and realistic per-serving doses — not the vanishingly small amounts sometimes used to qualify for a testing claim.",
+      "Capsules are filled with shilajit extract that has been dried into a powder at high temperature, so they are further from whole resin than the label suggests. Our grading caps capsules at B for that reason — the highest-ranked capsules below earn it with a verified COA reporting numeric heavy metals, and few capsule brands publish one. Treat any capsule without a public COA on the finished product as unverified.",
     ],
     faq: [
       {
         q: "Are shilajit capsules as effective as resin?",
-        a: "Capsules can deliver comparable shilajit content if the manufacturer discloses a realistic dose per capsule and confirms it with a COA on the finished capsule, not just the raw extract used to fill it. In practice, many capsule brands understate processing losses, so the same labeled mg amount doesn't always translate to the same fulvic acid delivery as resin.",
+        a: "No study has compared capsules and resin head to head, but they are not the same material. Capsules hold extract that has been dried into powder at high temperature, while resin is the least-processed form and the closest to what clinical trials used. That is why our grading caps capsules at B and allows resin to reach A+. If you prefer capsules, choose one with a realistic dose per capsule and a COA covering the finished capsule.",
       },
       {
         q: "What is a realistic dose in a shilajit capsule?",
-        a: "Look for capsules stating 300–500 mg of shilajit extract per serving, matching the range used in most clinical studies. Some brands use much smaller amounts — sometimes under 100 mg — to qualify for a 'contains shilajit' label while delivering a sub-clinical dose. Always check the fulvic acid percentage alongside the raw mg amount.",
+        a: "Look for capsules stating 300–500 mg of shilajit extract per serving, matching the range used in most clinical studies. Some brands use much smaller amounts — sometimes under 100 mg — to qualify for a 'contains shilajit' label while delivering a sub-clinical dose. Check the mg of shilajit per capsule, not the total capsule weight.",
       },
       {
         q: "What should I check before buying shilajit capsules?",
-        a: "Three things: a public COA from a named independent lab covering the finished capsule (not just the incoming extract), a stated shilajit content per capsule in mg, and a fulvic acid percentage. Capsules introduce an excipient and encapsulation step that resin doesn't have, so testing the finished product — not just the raw material — matters more here.",
+        a: "Three things: a public COA from a named independent lab with numeric heavy metals for the finished capsule (not just the incoming extract), a batch code on that COA, and a stated shilajit content per capsule in mg. Capsules introduce an excipient and encapsulation step that resin doesn't have, so testing the finished product — not just the raw material — matters more here.",
       },
       {
         q: "Do shilajit capsules contain fillers?",
@@ -89,7 +89,7 @@ const TAG_META: Record<string, {
     description: "Shilajit products with a public Certificate of Analysis from a named independent laboratory, showing actual heavy metal concentrations. The most transparently tested products in the database.",
     editorial: [
       "'Third-party tested' is one of the most abused claims in the supplement industry. Many brands use the phrase to refer to in-house testing, summary COAs that cover multiple products, or documents that show only pass/fail results rather than actual values.",
-      "We define it strictly: a public COA from a named, independent laboratory with actual numerical results for at least the four primary heavy metals — lead, mercury, arsenic, and cadmium. The products on this list meet that bar. Several go further, including fulvic acid percentages, microbial panels, and radioactivity screening.",
+      "We define it strictly: a public COA from a named, independent laboratory with actual numerical results for at least the four primary heavy metals — lead, mercury, arsenic, and cadmium. The products on this list meet that bar. Several go further, with microbial panels and batch codes that tie the report to the product sold.",
     ],
     faq: [
       {
@@ -136,27 +136,27 @@ const TAG_META: Record<string, {
     metaTitle: "Best Shilajit Gummies (2026) — Top Picks Ranked & Compared",
     description: "The best shilajit gummy products ranked by COA quality, lab credibility, and transparency. Gummies introduce more processing steps than resin — testing credentials matter more, not less.",
     editorial: [
-      "Gummy-form shilajit is the most processed format in the database. Sugar, gelatin, flavourings, and colourants are added to the shilajit extract, which makes testing credentials especially important — not as a formality but because the processing introduces additional contamination risk and dilutes the active compounds.",
-      "We only list gummies with a public COA that covers the finished product (not just the raw shilajit extract). The products below are the best-performing gummies in the database on our grading criteria.",
-      "What to look for in a shilajit gummy: a stated shilajit content per gummy (in mg), a fulvic acid percentage on the label or COA, and a third-party lab test on the finished gummy — not just the raw extract. Many brands test the incoming shilajit extract but not the final gummy, which means the heavy metals and fulvic acid data does not reflect what you are actually consuming.",
-      "Typical shilajit gummies contain 100–250 mg of extract per gummy. Better products standardise this to a fulvic acid percentage (usually 20–60%). Products that only state a total \"shilajit blend\" weight without a fulvic acid percentage are unverifiable — avoid them regardless of price.",
+      "Gummy-form shilajit is the most processed format in the database. The extract has already been dried into powder at high temperature, then it is heated again into a base of sugar, gelatin, and flavourings — diluting it to a fraction of a clinical dose per piece. For that reason no gummy can grade above C on ShilajitDB, however clean its lab report. If you want shilajit at its most potent, choose resin.",
+      "If you prefer gummies anyway, the products below are the best-documented in the database — ranked by what their COAs actually show, within that C ceiling.",
+      "What to look for in a shilajit gummy: a stated shilajit content per gummy (in mg) and a third-party lab test on the finished gummy — not just the raw extract. Many brands test the incoming shilajit extract but not the final gummy, which means the heavy metal data does not reflect what you are actually consuming.",
+      "Typical shilajit gummies contain 100–250 mg of extract per gummy, against the 250–500 mg/day used in clinical trials. Products that only state a total \"shilajit blend\" weight, without the mg of shilajit per gummy, are unverifiable — avoid them regardless of price.",
     ],
     faq: [
       {
         q: "Are shilajit gummies effective?",
-        a: "Shilajit gummies can deliver real doses of fulvic acid and trace minerals, but the effective dose per gummy is typically lower than resin or capsules — usually 100–250 mg versus 300–500 mg. Whether a gummy works depends on the shilajit content per serving and the fulvic acid concentration. Look for products with a COA covering the finished gummy and a stated fulvic acid percentage.",
+        a: "They are the weakest way to take shilajit. A gummy holds extract that has been heated twice — once when it is dried into powder and again when it is set into the gummy base — at usually 100–250 mg per piece, well below the 250–500 mg/day used in clinical trials. No study has tested a shilajit gummy on its own. That is why our grading caps every gummy at C.",
       },
       {
         q: "Shilajit gummies vs resin: which is better?",
-        a: "Resin delivers a higher dose of full-spectrum shilajit with less processing and lower adulteration risk. Gummies are more convenient and taste better, but contain significantly less shilajit per serving and cost more per mg of active content. For maximum potency, resin is the better choice. For ease of use and palatability, gummies are a reasonable trade-off — provided the brand publishes a COA on the finished product.",
+        a: "Resin. It is the least-processed form, delivers a clinical-range dose in a single serving, and costs less per mg of shilajit. Gummies are more convenient and taste better, but contain far less shilajit per serving after heat processing and dilution into sugar and gelatin. On ShilajitDB, resin can grade up to A+; gummies are capped at C.",
       },
       {
         q: "What should I look for in a shilajit gummy?",
-        a: "Three things: (1) a stated shilajit content per gummy in mg, not just a total blend weight; (2) a fulvic acid percentage — ideally standardised to at least 20%; and (3) a COA from a named independent laboratory that covers the finished gummy, not just the raw extract. Brands that only test the incoming extract cannot confirm what the final product contains after blending with sugars and other ingredients.",
+        a: "Three things: (1) a stated shilajit content per gummy in mg, not just a total blend weight; (2) enough per serving that you are not eating five gummies to reach a clinical dose; and (3) a COA from a named independent laboratory with numeric heavy metals for the finished gummy, not just the raw extract. Brands that only test the incoming extract cannot confirm what the final product contains after blending with sugars and other ingredients.",
       },
       {
         q: "How much shilajit is in a gummy?",
-        a: "Most shilajit gummies contain 100–300 mg of shilajit extract per gummy. Higher-quality products standardise this to a fulvic acid percentage. Compare this against the 300–500 mg typically used in clinical research on shilajit — you may need multiple gummies per day to reach an equivalent dose.",
+        a: "Most shilajit gummies contain 100–300 mg of shilajit extract per gummy. Compare this against the 300–500 mg typically used in clinical research on shilajit — you may need multiple gummies per day to reach an equivalent dose.",
       },
     ],
   },
@@ -167,20 +167,20 @@ const TAG_META: Record<string, {
     description: "Hand-selected shilajit products that stand out across quality, testing transparency, and value. These are the products we would recommend to someone buying shilajit for the first time.",
     editorial: [
       "Our editor's picks are hand-selected products that stand out on multiple dimensions simultaneously: strong testing credentials, transparent manufacturing, a realistic price, and a track record of consistent quality. These are not necessarily the highest-graded on every single metric — they are the ones we would recommend without hesitation to a first-time buyer.",
-      "All picks carry at minimum a Premium quality tier. Each has a public Certificate of Analysis from a named independent laboratory, confirmed heavy metals testing, and a publicly stated manufacturing country. The grade shown reflects our full grading methodology.",
+      "Every pick has a public Certificate of Analysis. The grade and quality tier shown on each card come from the same formula applied to every product — being a pick does not change them, so check both before you buy.",
     ],
     faq: [
       {
         q: "What makes a product a ShilajitDB Editor's Pick?",
-        a: "Editor's Picks stand out on multiple dimensions at once — testing credentials, transparent manufacturing, a realistic price, and a track record of consistent quality — rather than leading on a single metric. Every pick carries at minimum a Premium quality tier, a public COA from a named lab, confirmed heavy metals testing, and a publicly stated manufacturing country.",
+        a: "Editor's Picks stand out on multiple dimensions at once — testing credentials, transparent manufacturing, a realistic price, and a track record of consistent quality — rather than leading on a single metric. Every pick has a public COA; its grade and quality tier are calculated by the same formula as every other product.",
       },
       {
         q: "Are Editor's Picks sponsored or affiliate placements?",
-        a: "No. ShilajitDB has no affiliate relationships or brand partnerships with any product in the database. Editor's Picks are selected using the same objective grading criteria applied everywhere on the site — COA quality, lab credibility, heavy metal safety, and manufacturing transparency — not paid placement.",
+        a: "No placement is paid for. Some outbound links on ShilajitDB are affiliate links — currently for Pürblack, whose products appear among these picks — and we may earn a commission on purchases made through them; those links are labelled wherever they appear. Affiliate relationships have no effect on grades, which are calculated by the same formula for every product. See our affiliate disclosure page for details.",
       },
       {
         q: "What's the difference between Editor's Picks and the highest-graded products?",
-        a: "The highest-graded products are ranked purely by our algorithmic grading criteria. Editor's Picks are a curated subset of those top performers, selected for buyers who want a straightforward recommendation without comparing every data point themselves — but every pick still meets the same Premium-or-above quality bar reflected in its grade.",
+        a: "The highest-graded products are ranked purely by our algorithmic grading criteria. Editor's Picks are a curated subset of those top performers, selected for buyers who want a straightforward recommendation without comparing every data point themselves — and every pick's grade is still calculated by the same formula, so a pick is not guaranteed to be top-graded.",
       },
     ],
   },
@@ -215,7 +215,7 @@ const TAG_META: Record<string, {
     description: "The best shilajit products for women, ranked by COA quality, lab credibility, and heavy metal safety. Includes context on the iron bioavailability and energy evidence relevant to female physiology.",
     editorial: [
       "The most relevant clinical evidence for women relates to iron bioavailability and energy. Shilajit has been studied for its effect on iron absorption — fulvic acid forms soluble complexes with iron that may improve bioavailability compared to inorganic iron salts. For women who experience fatigue related to low iron, this is a mechanistically credible pathway. The testosterone evidence, primarily studied in men, is less directly applicable, though shilajit's broader adaptogenic and mitochondrial support effects are not sex-specific.",
-      "Heavy metal safety is especially important for women, particularly those of reproductive age or who are pregnant. Lead, which shilajit can accumulate in poorly purified products, passes the placental barrier and has no safe level of exposure for developing foetuses. Every product on this list has confirmed numeric heavy metal results on a public COA — not just a 'tested' claim — and is manufactured under documented GMP conditions.",
+      "Heavy metal safety is especially important for women, particularly those of reproductive age or who are pregnant. Lead, which shilajit can accumulate in poorly purified products, passes the placental barrier and has no safe level of exposure for developing foetuses. Check the grade and COA on every product below before buying — for women who are pregnant or trying to conceive, we would only consider a product with numeric heavy metal results on a public COA, not just a 'tested' claim.",
     ],
     faq: [
       {
@@ -239,7 +239,7 @@ const TAG_META: Record<string, {
     description: "The best Himalayan shilajit products ranked by COA quality, lab accreditation, and heavy metal safety. 'Himalayan origin' is a marketing claim without independent testing — these products back it up.",
     editorial: [
       "The Himalayas are the most commonly cited shilajit source region, and for good reason — the high-altitude geology produces resin with a recognised mineral and fulvic acid profile. But 'Himalayan shilajit' on a label is an unverifiable origin claim without a COA. Because shilajit is not a geographically protected ingredient, any brand can print 'Himalayan' regardless of where their raw material was actually sourced. Independent third-party testing does not confirm geographic origin, but it does confirm that the product contains what it claims and is free of unsafe heavy metal levels — which is the more actionable signal for buyers.",
-      "Of the 166 Himalayan-sourced products in the ShilajitDB database, 56 have a public Certificate of Analysis. The products below are the highest-graded among those — ranked on the same criteria we apply across the full database: COA availability, named laboratory, numeric heavy metal values, and manufacturing transparency.",
+      "Of the 166 Himalayan-sourced products in the ShilajitDB database, 56 have a public Certificate of Analysis. The products below are ranked on the same criteria we apply across the full database: a verified COA, a named laboratory, numeric heavy metal values, and product form.",
     ],
     faq: [
       {
@@ -248,11 +248,11 @@ const TAG_META: Record<string, {
       },
       {
         q: "How many Himalayan shilajit brands actually publish lab results?",
-        a: "Of the 166 Himalayan-sourced products in our database, only 56 have a public Certificate of Analysis. The products on this list are the highest-graded among those 56, ranked on the same criteria applied database-wide: COA availability, named laboratory, numeric heavy metal values, and manufacturing transparency.",
+        a: "Of the 166 Himalayan-sourced products in our database, only 56 have a public Certificate of Analysis. The products on this list are ranked on the same criteria applied database-wide: a verified COA, a named laboratory, numeric heavy metal values, and product form.",
       },
       {
         q: "Is Himalayan shilajit better than shilajit from other regions?",
-        a: "There's no independent testing standard that confirms one geographic source is inherently superior — origin claims aren't verified by heavy metal or fulvic acid testing. What matters more than the region printed on the label is whether the specific product has a public COA confirming its actual composition and safety, regardless of where it claims to be sourced.",
+        a: "There's no independent testing standard that confirms one geographic source is inherently superior — origin claims aren't verified by heavy metal testing. What matters more than the region printed on the label is whether the specific product has a public COA confirming its actual composition and safety, regardless of where it claims to be sourced.",
       },
     ],
   },

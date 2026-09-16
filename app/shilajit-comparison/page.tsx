@@ -38,39 +38,39 @@ const PRODUCT_SELECT = {
 const GRADE_ORDER = ["A_PLUS", "A", "B", "C", "D", "E", "F"] as const;
 
 const GRADE_EXPLAIN = [
-  { grade: "A_PLUS", label: "A+", desc: "Public COA, named accredited lab, numeric heavy metals, GMP manufacturing" },
-  { grade: "A",      label: "A",  desc: "Public COA, named lab, most transparency criteria met" },
-  { grade: "B",      label: "B",  desc: "Some COA evidence but gaps — unnamed lab, pass/fail only, or missing panels" },
-  { grade: "C",      label: "C",  desc: "Limited or embedded COA, partial transparency" },
-  { grade: "D",      label: "D",  desc: "No public COA, claims only" },
-  { grade: "E",      label: "E",  desc: "No evidence of any testing" },
-  { grade: "F",      label: "F",  desc: "Active safety or transparency concerns" },
+  { grade: "A_PLUS", label: "A+", desc: "Resin only. Verified independent COA with numeric finished-product heavy metals, named lab, microbial panel, batch code" },
+  { grade: "A",      label: "A",  desc: "Verified independent COA with numeric heavy metals, missing an extra such as a batch code. Resin or liquid extract" },
+  { grade: "B",      label: "B",  desc: "Verified COA with gaps — no heavy metal values, or issued by the manufacturer. Highest grade for powders, capsules, tablets" },
+  { grade: "C",      label: "C",  desc: "Unverified COA with partial evidence. Highest grade for gummies, honey sticks, blends" },
+  { grade: "D",      label: "D",  desc: "COA claimed but not verified" },
+  { grade: "E",      label: "E",  desc: "A single weak signal, such as a GMP claim" },
+  { grade: "F",      label: "F",  desc: "No verifiable quality signal of any kind" },
 ];
 
 const FAQS = [
   {
     q: "What is the best shilajit brand in 2026?",
-    a: "Based on COA quality, lab accreditation, and heavy metal testing, the highest-graded brands in our database are Pürblack, Life Cykel, and Healthforce — all carrying A+ or A grades with public COAs from named ISO 17025-accredited laboratories. The 'best' brand depends on your priorities: resin vs capsules, price range, and sourcing region all vary across top picks.",
+    a: "The products graded A+ in our database are resins from Pürblack, Life Cykel, and Mars by GHC — each with a verified COA from a named independent laboratory reporting numeric heavy metals for the finished product. Pure Himalayan Shilajit Store, Pure Indian Foods, Puralis, and U.S. Shilajit (a liquid extract) follow at A. Only resin can reach A+, because every other form has been through extra processing. We earn affiliate commission on Pürblack links; it has no effect on grades.",
   },
   {
     q: "What does an A+ grade mean on ShilajitDB?",
-    a: "An A+ grade means the product has a publicly available Certificate of Analysis from a named, independent, ISO 17025-accredited laboratory, with actual numeric values for at least the four primary heavy metals (lead, mercury, arsenic, cadmium), documented GMP manufacturing, and a transparent sourcing claim. Fewer than 10% of products reviewed reach this standard.",
+    a: "An A+ grade means the product is a resin with a verified Certificate of Analysis from an independent laboratory that names itself on the report, with actual numeric values for lead, mercury, arsenic, and cadmium on the finished product, plus most of: a microbial panel, a batch code, a report dated within two years, a stated manufacturing country, and GMP certification. Powders, capsules, and gummies cannot reach A+ however good their COA. Fewer than 5% of products reviewed reach this standard.",
   },
   {
     q: "Which shilajit has the most fulvic acid?",
-    a: "Fulvic acid percentage varies by brand and product form. Resin products in our database typically report 60–85% fulvic acid on the finished product. Some brands report fulvic acid only on the raw extract, which inflates the figure. We flag whether fulvic acid was measured on the finished product vs raw material in each product's COA notes.",
+    a: "Fulvic acid percentages are not comparable between brands. Fulvic acid is sold as a standalone additive, labs measure it with different methods, and some brands report it on the raw extract rather than the finished product — so a higher number proves neither authenticity nor quality. That is why fulvic acid percentage earns no points in our grading; we score heavy metal results, lab independence, and batch traceability instead.",
   },
   {
     q: "Is Pürblack shilajit worth the price?",
-    a: "Pürblack carries A+ grades across its product line — the highest in the database — with public COAs from named accredited labs, confirmed numeric heavy metal values, and proprietary radioactivity screening not seen in other brands. Whether the premium price is justified depends on how much weight you place on testing depth versus cost per gram.",
+    a: "Pürblack's resins grade A+, with public COAs from Cambium Analytica reporting numeric heavy metal values for the finished product. They sit in the Premium rather than Ultra Premium tier because those COAs carry no batch or lot code. Whether the premium price is justified depends on how much weight you place on testing depth versus cost per gram. Disclosure: we earn affiliate commission on Pürblack links, which has no effect on its grade.",
   },
   {
     q: "What is a Certificate of Analysis (COA) and why does it matter?",
-    a: "A COA is a document from a laboratory showing what was actually found in a tested sample. For shilajit, a meaningful COA shows: the lab's name and accreditation, numeric heavy metal concentrations (not just pass/fail), and fulvic acid content on the finished product. Without a public COA from a named lab, there is no independent verification that the product contains what it claims or that it is safe.",
+    a: "A COA is a document from a laboratory showing what was actually found in a tested sample. For shilajit, a meaningful COA shows: the lab's name and accreditation, numeric heavy metal concentrations for the finished product (not just pass/fail), and a batch code tying the report to what you bought. Without a public COA from a named lab, there is no independent verification that the product contains what it claims or that it is safe.",
   },
   {
     q: "Which shilajit is safest for heavy metals?",
-    a: "Products with the lowest measured heavy metal concentrations in our database include Pürblack (Lead 0.121 mg/kg), Healing Shilajit (Lead 0.087 mg/kg), and Based (Lead 0.0005 mg/serving). All products with an A or A+ grade have confirmed numeric heavy metal values below established safety thresholds. Products without a public COA cannot be assessed for heavy metal safety.",
+    a: "Products with low measured lead in our database include Pürblack (0.121 mg/kg) and Based (0.0005 mg/serving). Every product currently graded A or A+ has a verified independent COA with numeric heavy metal values. Products without a public COA cannot be assessed for heavy metal safety at all.",
   },
 ];
 
@@ -253,7 +253,7 @@ export default async function ShilajitComparisonPage() {
         {/* ── Grade key ── */}
         <div>
           <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-1">How to read the grades</h2>
-          <p className="text-sm text-[#8892B8] mb-4">Each product receives an overall grade from A+ to F based on COA availability, lab credibility, heavy metals testing, and manufacturing transparency.</p>
+          <p className="text-sm text-[#8892B8] mb-4">Each product receives an overall grade from A+ to F based on what its COA documents, capped by product form.</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {GRADE_EXPLAIN.map((g) => (
               <div key={g.grade} className="flex items-start gap-3 rounded-lg border border-[#252A40] bg-[#0F1320] p-3">
@@ -368,8 +368,8 @@ export default async function ShilajitComparisonPage() {
                 body: "Shilajit is a mineral-rich substance sourced from mountain rock deposits, which means heavy metal contamination is a genuine risk. We look for numeric results for lead, mercury, arsenic, and cadmium — not just a claim of testing.",
               },
               {
-                title: "Fulvic acid percentage",
-                body: "Fulvic acid is the primary active compound in shilajit. Some COAs report fulvic acid content on the raw extract; what matters is the percentage in the finished, formulated product you actually consume.",
+                title: "Batch code and report date",
+                body: "A COA without a batch or lot code could describe any sample a brand chose to send. We check that the report is tied to a batch and dated within the last two years. Advertised fulvic acid percentages are not scored — they are measured inconsistently and easy to inflate.",
               },
               {
                 title: "Manufacturing transparency",
@@ -377,7 +377,7 @@ export default async function ShilajitComparisonPage() {
               },
               {
                 title: "Form factor",
-                body: "Resin is the least processed form — no carriers, no fillers, the mineral matrix is intact. Capsules and powders introduce additional processing steps. Gummies introduce the most. Form affects both what you get and what can be hidden.",
+                body: "Resin is the least processed form and the only one that can grade A+. Liquid extracts cap at A; powders, capsules, and tablets — made from extract dried at high temperature — cap at B; gummies, honey sticks, and blends cap at C.",
               },
             ].map((item) => (
               <div key={item.title} className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
