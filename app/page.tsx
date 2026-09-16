@@ -8,7 +8,7 @@ import { CompareProvider } from "@/components/compare-provider";
 import { CompareButton } from "@/components/compare-button";
 import { prisma } from "@/lib/db";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
-import { latestArticleDate } from "@/lib/article-dates";
+import { latestArticleDate } from "@/lib/learn-articles";
 import {
   buildOrderBy,
   buildProductWhere,

@@ -1,46 +1,10 @@
 import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
 import { getCompareProducts } from "@/lib/compare-set";
+import { LEARN_ARTICLES } from "@/lib/learn-articles";
 import type { MetadataRoute } from "next";
 
 export const revalidate = 3600; // cache for 1 hour
-
-const LEARN_SLUGS = [
-  "what-is-shilajit",
-  "shilajit-benefits",
-  "shilajit-heavy-metals",
-  "how-to-read-shilajit-coa",
-  "shilajit-forms-compared",
-  "fulvic-acid-shilajit",
-  "fake-shilajit-how-to-spot",
-  "shilajit-sourcing-regions",
-  "shilajit-men-vs-women",
-  "shilajit-dosing-timeline",
-  "fulvic-acid-percentage-explained",
-  "shilajit-extraction-methods",
-  "shilajit-muscle-recovery",
-  "shilajit-sleep",
-  "shilajit-endurance-athletes",
-  "shilajit-clinical-dosage",
-  "shilajit-buyers-checklist",
-  "shilajit-pre-workout",
-  "shilajit-grading-explained",
-  "shilajit-coa-pass-fail-vs-numeric",
-  "shilajit-testing-labs-compared",
-  "shilajit-extract-vs-resin",
-  "himalayan-shilajit-india-pakistan-nepal",
-  "shilajit-ashwagandha-combination",
-  "shilajit-fulvic-acid-how-much",
-  "shilajit-gummies",
-  "shilajit-honey-sticks",
-  "shilajit-sea-moss",
-  "shilajit-benefits-for-men",
-  "shilajit-benefits-for-women",
-  "top-rated-shilajit-brands",
-  "shilajit-spelling-pronunciation",
-  "shilajit-kidney-safety",
-  "shilajit-erectile-dysfunction",
-];
 
 const BEST_TAGS = [
   "editors-pick",
@@ -102,8 +66,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/updates"),               changeFrequency: "weekly",  priority: 0.7 },
   ];
 
-  const learnPages: MetadataRoute.Sitemap = LEARN_SLUGS.map((slug) => ({
-    url: absoluteUrl(`/learn/${slug}`),
+  const learnPages: MetadataRoute.Sitemap = LEARN_ARTICLES.map((a) => ({
+    url: absoluteUrl(`/learn/${a.slug}`),
     changeFrequency: "monthly",
     priority: 0.8,
   }));
