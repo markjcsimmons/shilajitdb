@@ -8,6 +8,8 @@ import { prisma } from "@/lib/db";
 import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { slugify } from "@/lib/slug";
+import { isAffiliateTrackingUrl } from "@/lib/affiliate";
+import { isFutureVerifiedDate } from "@/lib/verified-date";
 
 const VALID_FORM: ProductForm[] = [
   "RESIN",
@@ -47,6 +49,8 @@ export type ImportResult = {
   productsUpdated: number;
   productsDeleted: number;
   errors: string[];
+  /** Rows that imported, with a value that was ignored or needs a human check. */
+  warnings: string[];
 };
 
 export async function importDataFromCsv(
@@ -60,6 +64,7 @@ export async function importDataFromCsv(
     productsUpdated: 0,
     productsDeleted: 0,
     errors: [],
+    warnings: [],
   };
 
   let rows: Record<string, string>[];
@@ -156,6 +161,17 @@ export async function importDataFromCsv(
       }
 
       const productId = String(r.product_id ?? "").trim();
+      const rowLabel = `Row ${i + 2} (${productSlug})`;
+
+      let lastVerifiedAt = toDateOrNull(r.last_verified_at ?? "");
+      if (lastVerifiedAt && isFutureVerifiedDate(lastVerifiedAt)) {
+        result.warnings.push(
+          `${rowLabel}: last_verified_at ${lastVerifiedAt.toISOString().slice(0, 10)} is in the future — ignored`,
+        );
+        lastVerifiedAt = null;
+      }
+      const officialCanonicalUrl = String(r.official_canonical_url ?? "").trim() || null;
+
       const ingredientsNormalized = String(r.ingredients_normalized ?? "")
         .split("|")
         .map((s) => s.trim())
@@ -173,9 +189,10 @@ export async function importDataFromCsv(
         manufacturingEvidenceUrl: String(r.manufacturing_evidence_url ?? "").trim() || null,
         coaStatus: coerce(r.coa_status, VALID_COA),
         coaUrl: String(r.coa_url ?? "").trim() || null,
-        lastVerifiedAt: toDateOrNull(r.last_verified_at ?? ""),
+        // undefined leaves an existing product's date untouched when the CSV date was rejected
+        lastVerifiedAt: lastVerifiedAt ?? (String(r.last_verified_at ?? "").trim() ? undefined : null),
         isCanonical: String(r.is_canonical ?? "").trim() === "1",
-        officialCanonicalUrl: String(r.official_canonical_url ?? "").trim() || null,
+        officialCanonicalUrl,
         officialDomain: String(r.official_domain ?? "").trim() || null,
         gtin: String(r.gtin ?? "").trim() || null,
         mpn: String(r.mpn ?? "").trim() || null,
@@ -192,6 +209,15 @@ export async function importDataFromCsv(
       const existingProduct = productId
         ? await tx.product.findUnique({ where: { id: productId }, include: { evidence: { select: { id: true } }, brand: { select: { slug: true } } } })
         : null;
+
+      // Product pages label affiliate links at render time, but a new one still needs a human
+      // to confirm the relationship is real and disclosed (see /disclosure).
+      if (
+        isAffiliateTrackingUrl(officialCanonicalUrl) &&
+        officialCanonicalUrl !== existingProduct?.officialCanonicalUrl
+      ) {
+        result.warnings.push(`${rowLabel}: official_canonical_url is an affiliate tracking link — confirm disclosure`);
+      }
 
       if (existingProduct) {
         await tx.product.update({

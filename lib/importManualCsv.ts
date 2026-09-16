@@ -4,6 +4,7 @@ import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
 import { isAffiliateTrackingUrl } from "@/lib/affiliate";
+import { isFutureVerifiedDate } from "@/lib/verified-date";
 import { computeAllGrades, GRADING_SELECT, type ProductForGrading } from "@/lib/grading";
 import type { CoaStatus, ListingSource, ProductForm } from "@prisma/client";
 
@@ -157,7 +158,11 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     const metaDescription = (r.meta_description ?? "").trim().slice(0, 160) || null;
     const officialUrlRaw = (r.official_url ?? "").trim();
     const amazonAsinRaw = (r.amazon_asin ?? "").trim();
-    const lastVerifiedAt = parseVerifiedDate(r.last_verified_date ?? "");
+    let lastVerifiedAt: Date | null | undefined = parseVerifiedDate(r.last_verified_date ?? "");
+    if (lastVerifiedAt && isFutureVerifiedDate(lastVerifiedAt)) {
+      result.errors.push(`Row ${rowNum}: last_verified_date ${r.last_verified_date} is in the future — ignored`);
+      lastVerifiedAt = undefined; // leave an existing product's date untouched
+    }
     const bbbGradeRaw = (r.bbb_grade ?? "").trim();
 
     // Price: stored in cents on the listing
