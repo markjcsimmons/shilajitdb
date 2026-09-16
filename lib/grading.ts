@@ -1,5 +1,6 @@
 import { gradeLabel } from "./grade-colors";
 import type {
+  Prisma,
   CoaIssuer,
   CoaStatus,
   HeavyMetalsResult,
@@ -55,6 +56,35 @@ export type ProductForGrading = {
   /** Brand slug — used only to evaluate ULTRA_PREMIUM tier eligibility. */
   brandSlug?: string | null;
 };
+
+/**
+ * Every column the grading functions read. Load products with this select and pass them
+ * through toProductForGrading() — hand-building ProductForGrading from a partial select
+ * silently drops the COA review fields and wipes a reviewed product's grade.
+ */
+export const GRADING_SELECT = {
+  form: true,
+  coaStatus: true,
+  manufacturingCountryClaim: true,
+  thirdPartyTestingLab: true,
+  gmpCertified: true,
+  hasPatentClaim: true,
+  coaVerified: true,
+  coaIssuer: true,
+  coaReportDate: true,
+  labNamedOnCoa: true,
+  coaBatchIdentified: true,
+  heavyMetalsResult: true,
+  heavyMetalsScope: true,
+  microbialPanel: true,
+  brand: { select: { slug: true } },
+} as const satisfies Prisma.ProductSelect;
+
+export type GradingRow = Prisma.ProductGetPayload<{ select: typeof GRADING_SELECT }>;
+
+export function toProductForGrading({ brand, ...rest }: GradingRow): ProductForGrading {
+  return { ...rest, brandSlug: brand.slug };
+}
 
 export type TransparencyResult = {
   grade: TransparencyGrade;
@@ -489,4 +519,17 @@ export function formCeilingNote(product: ProductForGrading): string | null {
 /** Compute the overall grade (A+ through F): the score's grade, capped by product form. */
 export function computeOverallGrade(product: ProductForGrading): OverallGrade {
   return lowerGrade(gradeFromScore(overallGradeScore(product)), FORM_GRADE_CEILING[product.form]);
+}
+
+/** All three stored grades for a product, as written to the Product row. */
+export function computeAllGrades(product: ProductForGrading): {
+  overallGrade: OverallGrade;
+  qualityTier: QualityTier;
+  transparencyGrade: TransparencyGrade;
+} {
+  return {
+    overallGrade: computeOverallGrade(product),
+    qualityTier: computeQualityTier(product).tier,
+    transparencyGrade: computeTransparencyGrade(product).grade,
+  };
 }

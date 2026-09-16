@@ -1,22 +1,13 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { computeOverallGrade, overallGradeScore } from "@/lib/grading";
+import { computeOverallGrade, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 
 const GRADE_ORDER = ["A_PLUS", "A", "B", "C", "D", "E", "F"] as const;
 
 async function main() {
   const products = await prisma.product.findMany({
-    select: {
-      id: true,
-      form: true,
-      coaStatus: true,
-      manufacturingCountryClaim: true,
-      thirdPartyTestingLab: true,
-      gmpCertified: true,
-      hasPatentClaim: true,
-      brand: { select: { slug: true } },
-    },
+    select: { id: true, ...GRADING_SELECT },
   });
 
   const distribution: Record<string, number> = {};
@@ -25,15 +16,7 @@ async function main() {
   }
 
   for (const p of products) {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: p.coaStatus,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      hasPatentClaim: p.hasPatentClaim,
-      brandSlug: p.brand.slug,
-    };
+    const productForGrading = toProductForGrading(p);
     const grade = computeOverallGrade(productForGrading);
     distribution[grade] += 1;
 

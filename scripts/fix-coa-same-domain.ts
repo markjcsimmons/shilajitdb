@@ -18,6 +18,8 @@ import {
   computeTransparencyGrade,
   computeQualityTier,
   computeOverallGrade,
+  GRADING_SELECT,
+  toProductForGrading,
 } from "../lib/grading";
 
 function extractDomain(url: string | null | undefined): string | null {
@@ -36,15 +38,10 @@ async function main() {
       id: true,
       name: true,
       coaUrl: true,
-      coaStatus: true,
       transparencyGrade: true,
       qualityTier: true,
       overallGrade: true,
-      form: true,
-      manufacturingCountryClaim: true,
-      thirdPartyTestingLab: true,
-      gmpCertified: true,
-      hasPatentClaim: true,
+      ...GRADING_SELECT,
       officialDomain: true,
       brand: { select: { name: true, slug: true, websiteDomain: true, website: true } },
     },
@@ -78,15 +75,7 @@ async function main() {
   console.log(`\nFound ${toUpdate.length} product(s) to update. Applying changes...\n`);
 
   for (const p of toUpdate) {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: "PUBLIC_EMBEDDED" as const,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      hasPatentClaim: p.hasPatentClaim,
-      brandSlug: p.brand.slug,
-    };
+    const productForGrading = { ...toProductForGrading(p), coaStatus: "PUBLIC_EMBEDDED" as const };
 
     const transparency = computeTransparencyGrade(productForGrading);
     const quality = computeQualityTier(productForGrading);

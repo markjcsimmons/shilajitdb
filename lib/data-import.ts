@@ -5,7 +5,7 @@ import type {
   ProductForm,
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
+import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { slugify } from "@/lib/slug";
 
@@ -16,6 +16,8 @@ const VALID_FORM: ProductForm[] = [
   "GUMMY",
   "LIQUID",
   "BLEND",
+  "TABLETS",
+  "HONEY_STICKS",
   "OTHER",
 ];
 const VALID_COA: CoaStatus[] = ["PUBLIC", "REQUEST_ONLY", "NONE", "UNKNOWN"];
@@ -231,24 +233,16 @@ export async function importDataFromCsv(
     }
   });
 
+  // Regrade from stored data. The CSV never carries COA review fields, so they are kept
+  // from the database; products created by this import start unreviewed.
   const allProducts = await prisma.product.findMany({
-    include: { brand: { select: { slug: true } } },
+    select: { id: true, ...GRADING_SELECT },
   });
 
-  for (const p of allProducts) {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: p.coaStatus,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      brandSlug: p.brand.slug,
-    };
-    const t = computeTransparencyGrade(productForGrading);
-    const q = computeQualityTier(productForGrading);
+  for (const { id, ...p } of allProducts) {
     await prisma.product.update({
-      where: { id: p.id },
-      data: { transparencyGrade: t.grade, qualityTier: q.tier },
+      where: { id },
+      data: computeAllGrades(toProductForGrading(p)),
     });
   }
 

@@ -5,7 +5,7 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { computeOverallGrade, computeQualityTier, computeTransparencyGrade, overallGradeScore } from "@/lib/grading";
+import { computeOverallGrade, computeQualityTier, computeTransparencyGrade, GRADING_SELECT, overallGradeScore, toProductForGrading } from "@/lib/grading";
 
 async function main() {
   const brandName = process.argv[2] ?? "Pürblack";
@@ -14,19 +14,13 @@ async function main() {
     include: {
       products: {
         select: {
+          ...GRADING_SELECT,
           id: true,
           name: true,
-          form: true,
-          coaStatus: true,
-          manufacturingCountryClaim: true,
-          thirdPartyTestingLab: true,
-          gmpCertified: true,
-          hasPatentClaim: true,
           sourceRegion: true,
           overallGrade: true,
           qualityTier: true,
           transparencyGrade: true,
-          brand: { select: { slug: true } },
         },
       },
     },
@@ -37,15 +31,7 @@ async function main() {
   }
   console.log(`\nBrand: ${brand.name} (slug: ${brand.slug})\nProducts: ${brand.products.length}\n`);
   for (const p of brand.products) {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: p.coaStatus,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      hasPatentClaim: p.hasPatentClaim,
-      brandSlug: p.brand.slug,
-    };
+    const productForGrading = toProductForGrading(p);
     const grade = computeOverallGrade(productForGrading);
     const score = overallGradeScore(productForGrading);
     const transparency = computeTransparencyGrade(productForGrading);

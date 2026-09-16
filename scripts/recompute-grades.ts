@@ -1,39 +1,18 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
-import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
+import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 
 async function main() {
   const products = await prisma.product.findMany({
-    select: {
-      id: true,
-      form: true,
-      coaStatus: true,
-      manufacturingCountryClaim: true,
-      thirdPartyTestingLab: true,
-      gmpCertified: true,
-      hasPatentClaim: true,
-      brand: { select: { slug: true } },
-    },
+    select: { id: true, ...GRADING_SELECT },
   });
 
   let updated = 0;
-  for (const p of products) {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: p.coaStatus,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      hasPatentClaim: p.hasPatentClaim,
-      brandSlug: p.brand.slug,
-    };
-    const t = computeTransparencyGrade(productForGrading);
-    const q = computeQualityTier(productForGrading);
-    const overallGrade = computeOverallGrade(productForGrading);
+  for (const { id, ...p } of products) {
     await prisma.product.update({
-      where: { id: p.id },
-      data: { transparencyGrade: t.grade, qualityTier: q.tier, overallGrade },
+      where: { id },
+      data: computeAllGrades(toProductForGrading(p)),
     });
     updated += 1;
   }

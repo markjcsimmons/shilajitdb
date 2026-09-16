@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
+import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
 import { slugify } from "@/lib/slug";
@@ -60,41 +60,11 @@ export async function adminDeleteBrand(formData: FormData) {
 }
 
 async function recomputeAndSaveProductGrades(productId: string) {
-  const p = await prisma.product.findUnique({
-    where: { id: productId },
-    select: {
-      form: true,
-      coaStatus: true,
-      manufacturingCountryClaim: true,
-      thirdPartyTestingLab: true,
-      gmpCertified: true,
-      hasPatentClaim: true,
-      brand: { select: { slug: true } },
-    },
-  });
+  const p = await prisma.product.findUnique({ where: { id: productId }, select: GRADING_SELECT });
   if (!p) return;
-
-  const productForGrading = {
-    form: p.form,
-    coaStatus: p.coaStatus,
-    manufacturingCountryClaim: p.manufacturingCountryClaim,
-    thirdPartyTestingLab: p.thirdPartyTestingLab,
-    gmpCertified: p.gmpCertified,
-    hasPatentClaim: p.hasPatentClaim,
-    brandSlug: p.brand.slug,
-  };
-
-  const transparency = computeTransparencyGrade(productForGrading);
-  const quality = computeQualityTier(productForGrading);
-  const overallGrade = computeOverallGrade(productForGrading);
-
   await prisma.product.update({
     where: { id: productId },
-    data: {
-      transparencyGrade: transparency.grade,
-      qualityTier: quality.tier,
-      overallGrade,
-    },
+    data: computeAllGrades(toProductForGrading(p)),
   });
 }
 
@@ -317,36 +287,11 @@ export async function adminRecomputeAllGrades(formData: FormData) {
 
   // Fetch all products in one query
   const products = await prisma.product.findMany({
-    select: {
-      id: true,
-      form: true,
-      coaStatus: true,
-      manufacturingCountryClaim: true,
-      thirdPartyTestingLab: true,
-      gmpCertified: true,
-      hasPatentClaim: true,
-      brand: { select: { slug: true } },
-    },
+    select: { id: true, ...GRADING_SELECT },
   });
 
   // Compute all grades in memory
-  const updates = products.map((p) => {
-    const productForGrading = {
-      form: p.form,
-      coaStatus: p.coaStatus,
-      manufacturingCountryClaim: p.manufacturingCountryClaim,
-      thirdPartyTestingLab: p.thirdPartyTestingLab,
-      gmpCertified: p.gmpCertified,
-      hasPatentClaim: p.hasPatentClaim,
-      brandSlug: p.brand.slug,
-    };
-    return {
-      id: p.id,
-      transparencyGrade: computeTransparencyGrade(productForGrading).grade,
-      qualityTier: computeQualityTier(productForGrading).tier,
-      overallGrade: computeOverallGrade(productForGrading),
-    };
-  });
+  const updates = products.map(({ id, ...p }) => ({ id, ...computeAllGrades(toProductForGrading(p)) }));
 
   // Batch all updates in a single transaction
   await prisma.$transaction(

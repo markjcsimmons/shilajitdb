@@ -4,11 +4,7 @@ import { slugify } from "@/lib/slug";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
 import { isAffiliateTrackingUrl } from "@/lib/affiliate";
-import {
-  computeTransparencyGrade,
-  computeQualityTier,
-  computeOverallGrade,
-} from "@/lib/grading";
+import { computeAllGrades, GRADING_SELECT, type ProductForGrading } from "@/lib/grading";
 import type { CoaStatus, ListingSource, ProductForm } from "@prisma/client";
 
 export type ImportManualCsvResult = {
@@ -247,7 +243,23 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       }
     }
 
-    const productForGrading = {
+    // Check if product already exists — match by officialCanonicalUrl first, then fall back to slug
+    let product: { id: string };
+    const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
+
+    const existingByUrl = officialCanonicalUrl
+      ? await prisma.product.findFirst({ where: { officialCanonicalUrl }, select: { id: true, ...GRADING_SELECT } })
+      : null;
+    const existingBySlug = !existingByUrl
+      ? await prisma.product.findUnique({ where: { slug: baseSlug }, select: { id: true, ...GRADING_SELECT } })
+      : null;
+
+    const existing = existingByUrl ?? existingBySlug;
+
+    // The CSV has no COA review columns: keep an existing product's reviewed COA fields when
+    // regrading, otherwise every re-import would wipe its grade. New products start unreviewed.
+    const productForGrading: ProductForGrading = {
+      ...(existing ?? {}),
       form,
       manufacturingCountryClaim: countryOfManufacture,
       coaStatus,
@@ -256,10 +268,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       hasPatentClaim,
       brandSlug,
     };
-
-    const transparencyResult = computeTransparencyGrade(productForGrading);
-    const qualityResult = computeQualityTier(productForGrading);
-    const overallGrade = computeOverallGrade(productForGrading);
+    const grades = computeAllGrades(productForGrading);
 
     const productData = {
       brandId,
@@ -276,9 +285,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       officialCanonicalUrl,
       officialDomain,
       lastVerifiedAt,
-      transparencyGrade: transparencyResult.grade,
-      qualityTier: qualityResult.tier,
-      overallGrade,
+      ...grades,
       dataCompleteness: "HIGH" as const,
       isCanonical: true,
       ...(heavyMetalsTested !== null ? { heavyMetalsTested } : {}),
@@ -286,19 +293,6 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
       ...(pricePerGramCents !== null ? { pricePerGramCents } : {}),
     };
-
-    // Check if product already exists — match by officialCanonicalUrl first, then fall back to slug
-    let product: { id: string };
-    const baseSlug = slugify(`${brandSlug}-${productNameRaw}`).slice(0, 96);
-
-    const existingByUrl = officialCanonicalUrl
-      ? await prisma.product.findFirst({ where: { officialCanonicalUrl }, select: { id: true } })
-      : null;
-    const existingBySlug = !existingByUrl
-      ? await prisma.product.findUnique({ where: { slug: baseSlug }, select: { id: true } })
-      : null;
-
-    const existing = existingByUrl ?? existingBySlug;
 
     if (existing) {
       // Update existing product with latest data from CSV
