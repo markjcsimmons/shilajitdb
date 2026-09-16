@@ -3,6 +3,7 @@ import { QualityBadge, TransparencyBadge } from "@/components/grade-badges";
 import { prisma } from "@/lib/db";
 import { labelCoaStatus, labelForm } from "@/lib/labels";
 import { absoluteUrl } from "@/lib/site";
+import { BRAND_INDEXING_SELECT, hasIndexableProduct } from "@/lib/brand-indexing";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,7 +29,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const brand = await prisma.brand.findUnique({
     where: { slug },
-    select: { name: true, description: true, slug: true },
+    select: { name: true, description: true, slug: true, ...BRAND_INDEXING_SELECT },
   });
   if (!brand) return { title: "Brand not found" };
 
@@ -43,6 +44,7 @@ export async function generateMetadata({
     description,
     alternates: { canonical },
     openGraph: { title, description, url: canonical },
+    ...(hasIndexableProduct(brand) ? {} : { robots: "noindex, follow" }),
   };
 }
 

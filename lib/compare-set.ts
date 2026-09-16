@@ -23,6 +23,7 @@ export async function getCompareProducts() {
     select: {
       slug: true,
       name: true,
+      updatedAt: true,
       overallGrade: true,
       qualityTier: true,
       bestForTags: true,

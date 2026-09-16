@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
 import { getCompareProducts } from "@/lib/compare-set";
 import { LEARN_ARTICLES } from "@/lib/learn-articles";
+import { BRAND_INDEXING_SELECT, hasIndexableProduct } from "@/lib/brand-indexing";
 import type { MetadataRoute } from "next";
 
 export const revalidate = 3600; // cache for 1 hour
@@ -27,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       orderBy: { lastVerifiedAt: "desc" },
     }),
     prisma.brand.findMany({
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, updatedAt: true, ...BRAND_INDEXING_SELECT },
       orderBy: { slug: "asc" },
     }),
     // Products for compare page pairs (same set /compare/[pair] pre-renders)
@@ -68,6 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const learnPages: MetadataRoute.Sitemap = LEARN_ARTICLES.map((a) => ({
     url: absoluteUrl(`/learn/${a.slug}`),
+    lastModified: new Date(a.updated),
     changeFrequency: "monthly",
     priority: 0.8,
   }));
@@ -87,7 +89,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-  const brandPages: MetadataRoute.Sitemap = brands.map((b) => ({
+  // Thin brands (no indexable product) are noindexed on the page, so leave them out here too.
+  const brandPages: MetadataRoute.Sitemap = brands.filter(hasIndexableProduct).map((b) => ({
     url: absoluteUrl(`/brand/${b.slug}`),
     lastModified: b.updatedAt,
     changeFrequency: "weekly",
@@ -114,9 +117,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const comparePages: MetadataRoute.Sitemap = [];
   for (let i = 0; i < compareProducts.length; i++) {
     for (let j = i + 1; j < compareProducts.length; j++) {
-      const [a, b] = [compareProducts[i].slug, compareProducts[j].slug].sort();
+      const [p, q] = [compareProducts[i], compareProducts[j]];
+      const [a, b] = [p.slug, q.slug].sort();
       comparePages.push({
         url: absoluteUrl(`/compare/${a}-vs-${b}`),
+        // The page shows both products' grades and COA data, so it changes when either product does.
+        lastModified: p.updatedAt > q.updatedAt ? p.updatedAt : q.updatedAt,
         changeFrequency: "monthly",
         priority: 0.5,
       });
