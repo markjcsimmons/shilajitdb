@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // AI search/retrieval agents (OAI-SearchBot, ChatGPT-User, Claude-SearchBot,
 // Claude-User, PerplexityBot, Perplexity-User) and model crawlers (GPTBot,
-// ClaudeBot) are intentionally NOT listed — keep in sync with app/robots.ts.
+// ClaudeBot) are intentionally NOT listed — keep in sync with app/robots.txt/route.ts.
 const BLOCKED_USER_AGENTS = [
   "CCBot",
   "Bytespider",
