@@ -149,12 +149,11 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       heavyMetalsRaw === "CLAIMED" ? "CLAIMED" as const :
       heavyMetalsRaw === "NO" ? "NONE" as const : null;
 
-    // Best-for tags (comma-separated, e.g. "best_value,best_tested")
-    const VALID_TAGS = ["best_value","best_tested","best_resin","best_capsules","best_gummies","editors_pick"] as const;
-    const bestForTags = (r.best_for ?? "")
-      .split(",")
-      .map((t: string) => t.trim().toLowerCase())
-      .filter((t: string) => (VALID_TAGS as readonly string[]).includes(t));
+    // bestForTags are never written from CSV: they come from scripts/retag-best-for.ts (eligibility
+    // rules, per-brand caps) and scripts/set-editors-picks.ts, and a CSV value would overwrite them.
+    if ((r.best_for ?? "").trim()) {
+      result.errors.push(`Row ${rowNum}: best_for ignored — run scripts/retag-best-for.ts after importing`);
+    }
     const metaDescription = (r.meta_description ?? "").trim().slice(0, 160) || null;
     const officialUrlRaw = (r.official_url ?? "").trim();
     const amazonAsinRaw = (r.amazon_asin ?? "").trim();
@@ -294,7 +293,6 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       dataCompleteness: "HIGH" as const,
       isCanonical: true,
       ...(heavyMetalsTested !== null ? { heavyMetalsTested } : {}),
-      ...(bestForTags.length > 0 ? { bestForTags } : {}),
       ...(pricePerServingCents !== null ? { pricePerServingCents } : {}),
       ...(pricePerGramCents !== null ? { pricePerGramCents } : {}),
     };
