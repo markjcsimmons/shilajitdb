@@ -326,7 +326,16 @@ async function fetchProducts(tag: string): Promise<ProductResult[]> {
       ...BASE_WHERE,
       bestForTags: { has: tag },
     },
-    orderBy: [{ overallGrade: "asc" }, { name: "asc" }],
+    // Must mirror byRank() in scripts/retag-best-for.ts: grade, tier, COA recency, name.
+    // Note the opposite directions: OverallGrade is declared best-first (A_PLUS…F) so "asc" is
+    // best-first, while QualityTier is declared worst-first (POOR…ULTRA_PREMIUM) so it needs "desc".
+    // nulls: "last" matters — Postgres would otherwise sort undated COAs first on a desc sort.
+    orderBy: [
+      { overallGrade: "asc" },
+      { qualityTier: "desc" },
+      { coaReportDate: { sort: "desc", nulls: "last" } },
+      { name: "asc" },
+    ],
     take: 5,
     select: PRODUCT_SELECT,
   });

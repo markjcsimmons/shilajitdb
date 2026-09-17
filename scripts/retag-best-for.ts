@@ -2,7 +2,7 @@
  * Rebuild the bestForTags that drive /best/[tag] from current grades and COA review fields.
  *
  * Each tag has an eligibility rule; eligible products are ranked (grade, then tier, then
- * name — the same order the page uses), capped at 2 per brand (1 for best_for_women) and 15 per tag.
+ * COA recency, then name), capped at 2 per brand (1 for best_for_women) and 15 per tag.
  * White-label brands count as their parent brand for the cap (BRAND_GROUPS).
  * editors_pick is hand-curated and left untouched, as are any tags not listed here.
  *
@@ -39,6 +39,7 @@ const TIER_ORDER = ["ULTRA_PREMIUM", "PREMIUM", "AVERAGE", "POOR"];
 const SELECT = {
   id: true,
   slug: true,
+  name: true,
   brandId: true,
   brand: { select: { slug: true } },
   form: true,
@@ -51,6 +52,7 @@ const SELECT = {
   microbialPanel: true,
   heavyMetalsResult: true,
   heavyMetalsScope: true,
+  coaReportDate: true,
   sourceRegion: true,
   pricePerGramCents: true,
   bestForTags: true,
@@ -77,6 +79,18 @@ const RULES: Record<string, (p: P) => boolean> = {
 
 const rank = (p: P) => GRADE_ORDER.indexOf(p.overallGrade ?? "F") * 10 + TIER_ORDER.indexOf(p.qualityTier);
 
+/**
+ * COA recency breaks ties between products on the same grade and tier: the more recently
+ * tested product ranks first. A product with no COA date on file sorts last among equals.
+ */
+const coaTime = (p: P) => (p.coaReportDate ? new Date(p.coaReportDate).getTime() : 0);
+
+/**
+ * Grade, then tier, then most recently tested, then name as a deterministic last resort.
+ * Must stay in sync with the orderBy in app/best/[tag]/page.tsx, which renders this order.
+ */
+const byRank = (a: P, b: P) => rank(a) - rank(b) || coaTime(b) - coaTime(a) || a.name.localeCompare(b.name);
+
 /** best_value ranks by grade per dollar, not grade alone. */
 const valueScore = (p: P) => (GRADE_ORDER.length - GRADE_ORDER.indexOf(p.overallGrade ?? "F")) / p.pricePerGramCents!;
 
@@ -84,8 +98,8 @@ function pick(tag: string, products: P[]): P[] {
   const eligible = products.filter(RULES[tag]);
   eligible.sort(
     tag === "best_value"
-      ? (a, b) => valueScore(b) - valueScore(a)
-      : (a, b) => rank(a) - rank(b) || a.slug.localeCompare(b.slug),
+      ? (a, b) => valueScore(b) - valueScore(a) || coaTime(b) - coaTime(a) || a.name.localeCompare(b.name)
+      : byRank,
   );
   const preferred = new Set(PREFERRED[tag] ?? []);
   const groupOf = (p: P) => BRAND_GROUPS[p.brand.slug] ?? p.brand.slug;
@@ -113,7 +127,7 @@ function pick(tag: string, products: P[]): P[] {
 const label = (p: P) => `${(p.overallGrade ?? "—").replace("_PLUS", "+")} ${p.qualityTier} ${p.form} ${p.slug.slice(0, 60)}`;
 
 /** What /best/[tag] shows: the top 5 by grade among tagged products. */
-const shown = (list: P[]) => [...list].sort((a, b) => rank(a) - rank(b) || a.slug.localeCompare(b.slug)).slice(0, SHOWN_ON_PAGE);
+const shown = (list: P[]) => [...list].sort(byRank).slice(0, SHOWN_ON_PAGE);
 
 async function main() {
   const apply = process.argv.includes("--apply");
