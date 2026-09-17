@@ -75,7 +75,9 @@ export async function importDataFromCsv(
       skip_empty_lines: true,
       bom: true,
       trim: true,
-      relax_column_count: true,
+      // Strict: a row with a different column count than the header means columns have shifted
+      // (the export once wrote a stale header), and importing it would write values into the
+      // wrong fields.
     }) as Record<string, string>[];
   } catch (e) {
     result.errors.push(`CSV parse error: ${e instanceof Error ? e.message : String(e)}`);

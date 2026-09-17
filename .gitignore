@@ -8,7 +8,8 @@ dist
 .env.local
 .env.*.local
 .cursor
-data
+# Root-level CSV working files only — unanchored, this also hid app/admin/(protected)/data/
+/data
 prisma/dev.db
 npm-debug.log*
 yarn-debug.log*
