@@ -1,8 +1,14 @@
 /**
  * Set the hand-curated editors_pick tag. retag-best-for.ts never touches this tag.
  *
- * Picks (2026-09-16): chosen across testing, price, and first-time-buyer suitability,
- * with at most one Pürblack product (affiliate brand).
+ * Picks (2026-09-17): chosen across testing, price, and first-time-buyer suitability.
+ *
+ * Mars by GHC was removed on 2026-09-17: its COA turned out to be a manufacturer document
+ * with no independent lab named and heavy metals reported only as "Complies", so it regraded
+ * A+ -> B (see scripts/fix-mars-coa-review.ts). That left two Pürblack products on this page,
+ * against the one-per-affiliate-brand convention this list previously followed. Kept
+ * deliberately for now because the A+ tier is currently all Pürblack-group; revisit once the
+ * image-only COAs on the A-grade products have been reviewed by eye.
  *
  * Dry run:  ./node_modules/.bin/tsx scripts/set-editors-picks.ts
  * Apply:    ./node_modules/.bin/tsx scripts/set-editors-picks.ts --apply
@@ -14,8 +20,8 @@ const TAG = "editors_pick";
 
 /** Exact slugs; a key ending in "-" matches by prefix and must match exactly one product. */
 const PICKS = [
-  "mars-by-ghc-store-mars-himalayan-organic-shilajit-resin",
   "purblack-purblack-research-grade-shilajit-resin-15-grams",
+  "purblack-purblack-white-rabbit-serene-shilajit-resin-15-grams",
   "pure-indian-foods-best-shilajit-ever-",
   "pure-himalayan-shilajit-store-shilajit-resin",
   "healthforce-shilajit",
