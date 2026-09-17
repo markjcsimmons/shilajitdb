@@ -1,6 +1,7 @@
 import { Badge, Button } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ export default async function AdminProductsPage({
 }: {
   searchParams: Promise<{ page?: string; grade?: string }>;
 }) {
+  await requireAdmin();
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;

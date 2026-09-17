@@ -3,6 +3,7 @@ import { Button, Input } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export default async function AdminBrandEditPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ saved?: string; error?: string }>;
 }) {
+  await requireAdmin();
   const { id } = await params;
   const { saved, error } = await searchParams;
 

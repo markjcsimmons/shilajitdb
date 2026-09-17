@@ -1,6 +1,6 @@
 import { Button, Input } from "@/components/ui";
 import { prisma } from "@/lib/db";
-import { isAdminAuthed } from "@/lib/admin-auth";
+import { isAdminAuthed, requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { importDataFromCsv } from "@/lib/data-import";
@@ -16,6 +16,7 @@ export default async function AdminDataPage({
 }: {
   searchParams: Promise<{ imported?: string; error?: string; replace?: string; warnings?: string }>;
 }) {
+  await requireAdmin();
   const { imported, error, replace, warnings } = await searchParams;
 
   async function importCsvAction(formData: FormData) {

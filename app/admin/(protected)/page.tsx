@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { removeBrandsWithNoProductsAction } from "@/app/admin/actions";
 import { RecomputeGradesButton } from "@/app/admin/recompute-grades-button";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export default async function AdminDashboardPage({
 }: {
   searchParams: Promise<{ ran?: string; removed?: string }>;
 }) {
+  await requireAdmin();
   const { ran, removed } = await searchParams;
   const [brandCount, productCount, evidenceCount, brandsWithNoProducts] = await Promise.all([
     prisma.brand.count(),

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const COOKIE_NAME = "shilajitdb_admin";
 const SESSION_TTL_SECONDS = 60 * 60 * 6; // 6 hours
@@ -115,3 +116,12 @@ export function checkAdminPassword(password: string) {
   });
 }
 
+
+/**
+ * Call at the top of every admin page. The (protected) layout's auth redirect runs in parallel
+ * with the page, so without this a logged-out request still receives the page's rendered data
+ * (product lists, internal IDs) in the response alongside the redirect.
+ */
+export async function requireAdmin(): Promise<void> {
+  if (!(await isAdminAuthed())) redirect("/admin/login");
+}

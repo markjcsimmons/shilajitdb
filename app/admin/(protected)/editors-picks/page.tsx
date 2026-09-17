@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { adminAddEditorsPick, adminRemoveEditorsPick } from "@/app/admin/actions";
 import { Button } from "@/components/ui";
 import type { SearchParams } from "@/lib/search";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export default async function EditorsPicksPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  await requireAdmin();
   const sp = await searchParams;
 
   const [currentPicks, allProducts] = await Promise.all([

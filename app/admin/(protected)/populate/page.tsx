@@ -1,6 +1,7 @@
 import { ImportCsvForm } from "@/components/import-csv-form";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export default async function AdminPopulatePage({
     error?: string;
   }>;
 }) {
+  await requireAdmin();
   const { ran, imported, error } = await searchParams;
 
   const [productCount, brandCount] = await Promise.all([

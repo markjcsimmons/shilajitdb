@@ -2,6 +2,7 @@ import { adminUpsertProduct } from "@/app/admin/actions";
 import { MetaDescriptionField } from "@/components/meta-description-field";
 import { Button, Input, Select } from "@/components/ui";
 import { prisma } from "@/lib/db";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export default async function AdminProductNewPage({
 }: {
   searchParams: Promise<{ error?: string; meta_error?: string }>;
 }) {
+  await requireAdmin();
   const brands = await prisma.brand.findMany({ orderBy: { name: "asc" } });
   const { error, meta_error } = await searchParams;
 

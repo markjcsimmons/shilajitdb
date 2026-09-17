@@ -1,9 +1,11 @@
 import { adminUpsertBrand } from "@/app/admin/actions";
 import { Button, Input } from "@/components/ui";
+import { requireAdmin } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminBrandNewPage() {
+export default async function AdminBrandNewPage() {
+  await requireAdmin();
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
       <h1 className="text-xl font-semibold tracking-tight text-slate-900">New brand</h1>
