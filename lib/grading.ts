@@ -1,6 +1,7 @@
 import { gradeLabel } from "./grade-colors";
 import type {
   Prisma,
+  CoaDiscoverability,
   CoaIssuer,
   CoaStatus,
   HeavyMetalsResult,
@@ -53,6 +54,8 @@ export type ProductForGrading = {
   heavyMetalsResult?: HeavyMetalsResult | null;
   heavyMetalsScope?: TestScope | null;
   microbialPanel?: boolean;
+  /** How findable the COA is from the product page. Affects the transparency grade only. */
+  coaDiscoverability?: CoaDiscoverability | null;
   /** Brand slug — used only to evaluate ULTRA_PREMIUM tier eligibility. */
   brandSlug?: string | null;
 };
@@ -77,6 +80,7 @@ export const GRADING_SELECT = {
   heavyMetalsResult: true,
   heavyMetalsScope: true,
   microbialPanel: true,
+  coaDiscoverability: true,
   brand: { select: { slug: true } },
 } as const satisfies Prisma.ProductSelect;
 
@@ -100,8 +104,12 @@ export type QualityResult = {
 // ---------------------------------------------------------------------------
 // Transparency Grade
 // Signals: how openly documented is this product's safety and origin?
-// Max score: 11 (COA public 4 + named lab 3 + USA 2 + request-only 1 + other country 1 + GMP 1)
+// Max score: 10 (COA public 4 + named lab 3 + USA 2 + GMP 1)
 // Grades: A≥9, B≥6, C≥3, D≥1, F<1
+//
+// A published COA that a buyer cannot actually find is less transparent than one linked in
+// plain sight, so a public COA loses points when it is buried or unlinked (see
+// discoverabilityPenalty). The penalty only applies where there is a public COA to find.
 // ---------------------------------------------------------------------------
 
 export const transparencyRubric = {
@@ -113,6 +121,11 @@ export const transparencyRubric = {
     manufacturingCountryUSA: 2,
     manufacturingCountryOther: 1,
     gmpCertified: 1,
+  },
+  /** Deducted from a public COA's points when it is hard to find from the product page. */
+  discoverabilityPenalty: {
+    BURIED: 1,
+    UNLINKED: 2,
   },
   gradeByScore(score: number): TransparencyGrade {
     if (score >= 9) return "A";
@@ -145,6 +158,20 @@ export function computeTransparencyGrade(
     reasons.push("COA status unknown (+0)");
   }
 
+  // Discoverability: only meaningful when there is a published COA to find.
+  const coaIsPublished = product.coaStatus === "PUBLIC" || product.coaStatus === "PUBLIC_EMBEDDED";
+  if (coaIsPublished) {
+    if (product.coaDiscoverability === "BURIED") {
+      score -= transparencyRubric.discoverabilityPenalty.BURIED;
+      reasons.push("COA is published but buried — collapsed behind an accordion, or labelled so vaguely a buyer is unlikely to find it (-1)");
+    } else if (product.coaDiscoverability === "UNLINKED") {
+      score -= transparencyRubric.discoverabilityPenalty.UNLINKED;
+      reasons.push("COA is published but nothing on the product page links to it (-2)");
+    } else if (product.coaDiscoverability === "PROMINENT") {
+      reasons.push("COA is linked in plain sight on the product page (+0)");
+    }
+  }
+
   // Named 3rd-party lab
   const hasNamedLab = !!product.thirdPartyTestingLab?.trim();
   if (hasNamedLab) {
@@ -173,6 +200,9 @@ export function computeTransparencyGrade(
   } else {
     reasons.push("GMP certification not confirmed (+0)");
   }
+
+  // A penalty must never drive the score below zero.
+  score = Math.max(0, score);
 
   const grade = transparencyRubric.gradeByScore(score);
   return { grade, score, reasons };

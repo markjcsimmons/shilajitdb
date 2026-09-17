@@ -143,7 +143,14 @@ export default function MethodologyPage() {
       <h2>1. Transparency Grade (A–F)</h2>
       <p>
         The Transparency Grade answers: <em>how openly has this brand documented its product&rsquo;s
-        safety and origin?</em> The maximum score is 11 points.
+        safety and origin?</em> The maximum score is 10 points.
+      </p>
+      <p>
+        Publishing a COA only counts if a buyer can actually find it. A certificate that exists
+        but sits behind a collapsed accordion, or is linked as nothing more than
+        &ldquo;Learn more,&rdquo; loses part of its credit; one that is public at its URL but not
+        linked from the product page at all loses more. Discoverability affects this grade only
+        &mdash; it has no bearing on the Quality Tier or the Overall Grade.
       </p>
 
       <h3>Signal weights</h3>
@@ -192,11 +199,21 @@ export default function MethodologyPage() {
               <td className="p-3 text-center font-semibold text-[#EEF0F8]">+1</td>
               <td className="p-3 text-[#8892B8]">A documented manufacturing standard, but ~80% of products claim it, making it a weak differentiator.</td>
             </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">Published COA is buried</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">&minus;1</td>
+              <td className="p-3 text-[#8892B8]">The COA is linked, but collapsed inside an accordion or labelled so vaguely that a buyer scanning the page would not find it. Published in name, not in practice.</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-[#EEF0F8]">Published COA is not linked</td>
+              <td className="p-3 text-center font-semibold text-[#EEF0F8]">&minus;2</td>
+              <td className="p-3 text-[#8892B8]">The document is public at its own URL, but nothing on the product page points to it &mdash; so only someone who already has the link can read it.</td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <h3>Grade thresholds (max 11 points)</h3>
+      <h3>Grade thresholds (max 10 points)</h3>
       <div className="not-prose overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>

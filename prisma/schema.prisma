@@ -48,6 +48,22 @@ enum CoaIssuer {
   BRAND
 }
 
+/**
+ * How easy the COA is to find from the product's own page. A certificate that exists but is
+ * hidden behind a collapsed accordion is less transparent to a buyer than one linked in plain
+ * sight, even though both are technically public.
+ */
+enum CoaDiscoverability {
+  /** Linked from the product page in plain sight, with link text that says what it is. */
+  PROMINENT
+  /** Linked, but collapsed behind an accordion or labelled so vaguely it can't be scanned for. */
+  BURIED
+  /** The COA URL is public, but nothing on the product page links to it. */
+  UNLINKED
+  /** Not yet checked, or the product page could not be fetched. */
+  UNKNOWN
+}
+
 enum HeavyMetalsTested {
   CONFIRMED
   CLAIMED
@@ -171,6 +187,8 @@ model Product {
   heavyMetalsScope          TestScope?
   /** True when the COA includes a microbial panel. */
   microbialPanel            Boolean           @default(false)
+  /** How findable the COA is from the product page. Set by scripts/audit-coa-discoverability.ts. */
+  coaDiscoverability        CoaDiscoverability @default(UNKNOWN)
   pricePerServingCents      Int?
   pricePerGramCents         Int?
   lastVerifiedAt            DateTime?
