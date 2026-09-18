@@ -551,6 +551,18 @@ export function computeOverallGrade(product: ProductForGrading): OverallGrade {
   return lowerGrade(gradeFromScore(overallGradeScore(product)), FORM_GRADE_CEILING[product.form]);
 }
 
+/** The highest score each grade band covers (inverse of gradeFromScore). */
+const GRADE_TOP_SCORE: Record<OverallGrade, number> = { A_PLUS: 14, A: 12, B: 9, C: 6, D: 3, E: 1, F: 0 };
+
+/**
+ * The overall score, held to the top of the band the product is actually graded in. Differs
+ * from overallGradeScore() only when a form ceiling lowered the grade: a gummy scoring 12 is
+ * graded C and ranks as a 6, so the cap can't be sidestepped by ranking on the raw score.
+ */
+export function effectiveOverallScore(product: ProductForGrading): number {
+  return Math.min(overallGradeScore(product), GRADE_TOP_SCORE[computeOverallGrade(product)]);
+}
+
 /** All three stored grades for a product, as written to the Product row. */
 export function computeAllGrades(product: ProductForGrading): {
   overallGrade: OverallGrade;

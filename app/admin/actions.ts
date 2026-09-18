@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { retagBestFor } from "@/lib/best-for-tags";
 import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import { BrandInputSchema, EvidenceInputSchema, parseCsvList, ProductInputSchema } from "@/lib/admin-validators";
@@ -66,6 +67,8 @@ async function recomputeAndSaveProductGrades(productId: string) {
     where: { id: productId },
     data: computeAllGrades(toProductForGrading(p)),
   });
+  // Any product edit can move a grade, price, form or evidence count, so rebuild /best tags too.
+  await retagBestFor(prisma, { apply: true });
 }
 
 export async function adminUpsertProduct(formData: FormData) {
@@ -238,6 +241,7 @@ export async function adminDeleteProduct(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
   if (!id) redirect("/admin/products");
   await prisma.product.delete({ where: { id } });
+  await retagBestFor(prisma, { apply: true });
   redirect("/admin/products?deleted=1");
 }
 
@@ -302,6 +306,7 @@ export async function adminRecomputeAllGrades(formData: FormData) {
       })
     )
   );
+  await retagBestFor(prisma, { apply: true });
 
   redirect(`/admin?recomputedAll=${updates.length}`);
 }
@@ -315,6 +320,7 @@ export async function adminPromoteToCanonical(formData: FormData) {
     data: { isCanonical: true },
     select: { id: true },
   });
+  await retagBestFor(prisma, { apply: true });
   redirect(`/admin/products/${productId}?promoted=1`);
 }
 

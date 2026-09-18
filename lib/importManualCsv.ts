@@ -5,6 +5,7 @@ import { deriveWebsiteDomain } from "@/lib/url";
 import { canonicalizeUrl, extractDomain } from "@/lib/urlCanonicalize";
 import { isAffiliateTrackingUrl } from "@/lib/affiliate";
 import { isFutureVerifiedDate } from "@/lib/verified-date";
+import { retagBestFor } from "@/lib/best-for-tags";
 import { computeAllGrades, GRADING_SELECT, type ProductForGrading } from "@/lib/grading";
 import type { CoaStatus, ListingSource, ProductForm } from "@prisma/client";
 
@@ -149,10 +150,10 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       heavyMetalsRaw === "CLAIMED" ? "CLAIMED" as const :
       heavyMetalsRaw === "NO" ? "NONE" as const : null;
 
-    // bestForTags are never written from CSV: they come from scripts/retag-best-for.ts (eligibility
+    // bestForTags are never written from CSV: they come from lib/best-for-tags.ts (eligibility
     // rules, per-brand caps) and scripts/set-editors-picks.ts, and a CSV value would overwrite them.
     if ((r.best_for ?? "").trim()) {
-      result.errors.push(`Row ${rowNum}: best_for ignored — run scripts/retag-best-for.ts after importing`);
+      result.errors.push(`Row ${rowNum}: best_for ignored — /best tags are rebuilt from grades automatically after the import`);
     }
     const metaDescription = (r.meta_description ?? "").trim().slice(0, 160) || null;
     const officialUrlRaw = (r.official_url ?? "").trim();
@@ -403,5 +404,6 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
     }
   }
 
+  await retagBestFor(prisma, { apply: true });
   return result;
 }

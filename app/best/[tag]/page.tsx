@@ -1,4 +1,5 @@
 import { ProductCard } from "@/components/product-card";
+import { RANK_SELECT, rankForTag } from "@/lib/best-for-tags";
 import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
 import type { Metadata } from "next";
@@ -112,13 +113,13 @@ const TAG_META: Record<string, {
     metaTitle: "Best Value Shilajit (2026) — Quality at a Competitive Price",
     description: "The best shilajit for the money — ranked by testing quality per dollar. These products combine meaningful transparency credentials with a competitive price per gram.",
     editorial: [
-      "Value is not just the lowest price — it is quality per dollar. We score each product on COA quality, lab credibility, and safety signals, then normalise by price per gram. A cheap product with no testing credentials scores poorly; a moderately priced product with a public COA from a named lab scores well.",
-      "All products on this list have at minimum an Average quality tier, meaning they carry some form of verifiable testing transparency. None are the cheapest options in the database, but all represent strong quality-to-price ratios relative to what you actually get.",
+      "Value is not just the lowest price — it is quality per dollar. Every product's grade comes from a score out of 14 for what its COA documents: independent lab, numeric heavy metals, microbial panel, batch code and more. We divide price per gram by that score to get the cost of each quality point, and rank from cheapest to most expensive. A resin scoring 12 at $1.33/g costs about $0.11 per point; one scoring 13 at $3.30/g costs about $0.25.",
+      "Only products graded C or better qualify, so nothing on this list is cheap because it skipped testing. Price per gram is only comparable between products sold by weight, which today means resins: capsules, gummies and liquids are priced per serving, and serving sizes vary too much between brands to rank them fairly against each other.",
     ],
     faq: [
       {
         q: "What is the best value shilajit brand?",
-        a: "Value in our rankings isn't the lowest price — it's testing quality per dollar. The products on this list combine at least an Average quality tier, meaning some verifiable testing transparency, with a competitive price per gram, rather than being the cheapest options in the database with no evidence behind them.",
+        a: "Value in our rankings isn't the lowest price — it's testing quality per dollar. We divide each product's price per gram by its quality score out of 14 and rank by the lowest cost per point. Only products graded C or better are eligible, so a cheap product with no verifiable testing can't top the list.",
       },
       {
         q: "Is cheap shilajit safe?",
@@ -126,7 +127,7 @@ const TAG_META: Record<string, {
       },
       {
         q: "How do you calculate price per gram for shilajit?",
-        a: "We divide the total product price by the net weight of shilajit content in grams, using the manufacturer's stated serving size and net weight. For capsules and gummies, this accounts for the actual shilajit extract per serving, not the total capsule or gummy weight, since fillers and excipients aren't shilajit.",
+        a: "We divide the listed price by the net weight in grams on the label. That works for resin, which is sold by weight and is nearly all shilajit. Capsules, gummies and liquids don't state their shilajit content in a way that can be compared across brands, so they aren't ranked on this page.",
       },
     ],
   },
@@ -313,32 +314,22 @@ const BASE_WHERE = {
   isCanonical: true,
 };
 
-type ProductResult = Awaited<ReturnType<typeof prisma.product.findMany<{ select: typeof PRODUCT_SELECT }>>>[number];
 
 // ── Per-tag product fetchers ──────────────────────────────────────────────────
 
-async function fetchProducts(tag: string): Promise<ProductResult[]> {
-  // All tags are driven by the bestForTags field, which is maintained by the
-  // tagging script (with 2-per-brand cap and 15-product limit per category).
-  // best_value uses a quality-per-dollar score but still reads from bestForTags.
-  return prisma.product.findMany({
+async function fetchProducts(tag: string) {
+  // All tags are driven by the bestForTags field, rebuilt by retagBestFor() in
+  // lib/best-for-tags.ts (2-per-brand cap, 15 products max per category). The order uses
+  // computed scores Prisma can't sort on, so fetch the whole tag (≤15 rows) and rank here
+  // with the same function the tagging uses.
+  const products = await prisma.product.findMany({
     where: {
       ...BASE_WHERE,
       bestForTags: { has: tag },
     },
-    // Must mirror byRank() in scripts/retag-best-for.ts: grade, tier, COA recency, name.
-    // Note the opposite directions: OverallGrade is declared best-first (A_PLUS…F) so "asc" is
-    // best-first, while QualityTier is declared worst-first (POOR…ULTRA_PREMIUM) so it needs "desc".
-    // nulls: "last" matters — Postgres would otherwise sort undated COAs first on a desc sort.
-    orderBy: [
-      { overallGrade: "asc" },
-      { qualityTier: "desc" },
-      { coaReportDate: { sort: "desc", nulls: "last" } },
-      { name: "asc" },
-    ],
-    take: 5,
-    select: PRODUCT_SELECT,
+    select: { ...RANK_SELECT, ...PRODUCT_SELECT },
   });
+  return rankForTag(tag, products).slice(0, 5);
 }
 
 // ── Route ─────────────────────────────────────────────────────────────────────

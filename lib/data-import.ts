@@ -5,6 +5,7 @@ import type {
   ProductForm,
 } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { retagBestFor } from "@/lib/best-for-tags";
 import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 import { deriveWebsiteDomain } from "@/lib/url";
 import { slugify } from "@/lib/slug";
@@ -273,6 +274,7 @@ export async function importDataFromCsv(
       data: computeAllGrades(toProductForGrading(p)),
     });
   }
+  await retagBestFor(prisma, { apply: true });
 
   return result;
 }

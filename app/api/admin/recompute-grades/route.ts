@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthed } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
+import { retagBestFor } from "@/lib/best-for-tags";
 import { computeAllGrades, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 
 export const maxDuration = 60; // Vercel max for pro plan
@@ -24,6 +25,7 @@ export async function POST() {
       })
     )
   );
+  const retag = await retagBestFor(prisma, { apply: true });
 
-  return NextResponse.json({ ok: true, count: updates.length });
+  return NextResponse.json({ ok: true, count: updates.length, tagChanges: retag.changed });
 }

@@ -11,6 +11,7 @@
  * Apply:    ./node_modules/.bin/tsx scripts/backfill-coa-review.ts --apply
  */
 import { PrismaClient, type CoaIssuer, type HeavyMetalsResult, type ProductForm, type TestScope } from "@prisma/client";
+import { retagBestFor } from "../lib/best-for-tags";
 import { computeOverallGrade, computeQualityTier, computeTransparencyGrade } from "../lib/grading";
 
 const prisma = new PrismaClient();
@@ -468,6 +469,10 @@ async function main() {
     `\n${products.length} canonical products; ${matched} matched a reviewed COA; ${changed} grade/tier changes.`,
   );
   console.log(apply ? "Applied." : "Dry run — pass --apply to write.");
+  if (apply) {
+    const retag = await retagBestFor(prisma, { apply: true });
+    console.log(`Rebuilt /best tags: ${retag.changed} product(s) changed.`);
+  }
   await prisma.$disconnect();
 }
 

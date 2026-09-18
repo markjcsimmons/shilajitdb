@@ -21,6 +21,7 @@
  * One slug: ./node_modules/.bin/tsx scripts/audit-coa-discoverability.ts --slug=foo
  */
 import { PrismaClient, type CoaDiscoverability } from "@prisma/client";
+import { retagBestFor } from "../lib/best-for-tags";
 import { GRADING_SELECT, toProductForGrading, computeTransparencyGrade } from "../lib/grading";
 
 const prisma = new PrismaClient();
@@ -162,6 +163,10 @@ async function main() {
     console.log(`${tally.UNLINKED} UNLINKED verdict(s) stored as UNKNOWN (no penalty) — review by eye, then re-run with --trust-unlinked.`);
   }
   console.log(apply ? "Applied." : "Dry run — pass --apply to write.");
+  if (apply) {
+    const retag = await retagBestFor(prisma, { apply: true });
+    console.log(`Rebuilt /best tags: ${retag.changed} product(s) changed.`);
+  }
   await prisma.$disconnect();
 }
 

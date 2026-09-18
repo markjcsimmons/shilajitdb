@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { prisma } from "@/lib/db";
+import { retagBestFor } from "@/lib/best-for-tags";
 import { computeOverallGrade, GRADING_SELECT, toProductForGrading } from "@/lib/grading";
 
 const GRADE_ORDER = ["A_PLUS", "A", "B", "C", "D", "E", "F"] as const;
@@ -34,6 +35,8 @@ async function main() {
     console.log(`  ${g.padEnd(6)} ${String(count).padStart(5)} (${pct.padStart(5)}%) ${bar}`);
   }
   console.log(`\n  Total: ${products.length} products\n`);
+  const retag = await retagBestFor(prisma, { apply: true });
+  console.log(`Rebuilt /best tags: ${retag.changed} product(s) changed.`);
 }
 
 main()
