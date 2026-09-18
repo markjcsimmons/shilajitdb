@@ -165,15 +165,15 @@ const TAG_META: Record<string, {
     label: "Editor's Picks",
     h1: "Editor's Picks: The Best Shilajit Brands Overall",
     metaTitle: "Editor's Picks: Best Shilajit Brands Overall (2026)",
-    description: "Hand-selected shilajit products that stand out across quality, testing transparency, and value. These are the products we would recommend to someone buying shilajit for the first time.",
+    description: "The top-graded shilajit products that rank across several of our best-of lists at once — strong on testing, transparency and value together. The products we would recommend to someone buying shilajit for the first time.",
     editorial: [
-      "Our editor's picks are hand-selected products that stand out on multiple dimensions simultaneously: strong testing credentials, transparent manufacturing, a realistic price, and a track record of consistent quality. These are not necessarily the highest-graded on every single metric — they are the ones we would recommend without hesitation to a first-time buyer.",
+      "Our editor's picks are the A+ and A graded products that earn a place on at least two of our other best-of lists — tested, third-party tested, resin, value and so on — so they are strong on several fronts at once, not just one. A+ products come before A products, and no brand has more than two picks. Pürblack Research Grade is our standing first pick; Pürblack is also our affiliate partner (see below).",
       "Every pick has a public Certificate of Analysis. The grade and quality tier shown on each card come from the same formula applied to every product — being a pick does not change them, so check both before you buy.",
     ],
     faq: [
       {
         q: "What makes a product a ShilajitDB Editor's Pick?",
-        a: "Editor's Picks stand out on multiple dimensions at once — testing credentials, transparent manufacturing, a realistic price, and a track record of consistent quality — rather than leading on a single metric. Every pick has a public COA; its grade and quality tier are calculated by the same formula as every other product.",
+        a: "A product must be graded A+ or A and appear on at least two of our other best-of lists, which means it leads on several measures at once rather than a single one. A+ picks are listed before A picks, with at most two per brand. Pürblack Research Grade is always listed first as our standing pick. Every pick has a public COA, and its grade and quality tier are calculated by the same formula as every other product.",
       },
       {
         q: "Are Editor's Picks sponsored or affiliate placements?",
@@ -181,7 +181,7 @@ const TAG_META: Record<string, {
       },
       {
         q: "What's the difference between Editor's Picks and the highest-graded products?",
-        a: "The highest-graded products are ranked purely by our algorithmic grading criteria. Editor's Picks are a curated subset of those top performers, selected for buyers who want a straightforward recommendation without comparing every data point themselves — and every pick's grade is still calculated by the same formula, so a pick is not guaranteed to be top-graded.",
+        a: "The highest-graded products are ranked purely by our grading formula. Editor's Picks narrow those down to the A+ and A products that also rank on several of our best-of lists, capped at two per brand so one brand can't fill the page — a short list for buyers who want a straightforward recommendation without comparing every data point themselves.",
       },
     ],
   },

@@ -151,7 +151,7 @@ export async function importManualCsv(csvBuffer: Buffer): Promise<ImportManualCs
       heavyMetalsRaw === "NO" ? "NONE" as const : null;
 
     // bestForTags are never written from CSV: they come from lib/best-for-tags.ts (eligibility
-    // rules, per-brand caps) and scripts/set-editors-picks.ts, and a CSV value would overwrite them.
+    // rules, per-brand caps, Editor's Picks), and a CSV value would overwrite them.
     if ((r.best_for ?? "").trim()) {
       result.errors.push(`Row ${rowNum}: best_for ignored — /best tags are rebuilt from grades automatically after the import`);
     }

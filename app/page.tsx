@@ -6,6 +6,7 @@ import { SortSelect } from "@/components/sort-select";
 import { ProductCard } from "@/components/product-card";
 import { CompareProvider } from "@/components/compare-provider";
 import { CompareButton } from "@/components/compare-button";
+import { RANK_SELECT, rankForTag } from "@/lib/best-for-tags";
 import { prisma } from "@/lib/db";
 import { absoluteUrl, getSiteUrl } from "@/lib/site";
 import { latestArticleDate } from "@/lib/learn-articles";
@@ -112,12 +113,13 @@ export default async function HomePage({
       orderBy: { lastVerifiedAt: "desc" },
       select: { lastVerifiedAt: true },
     }),
-    prisma.product.findMany({
-      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, bestForTags: { has: "editors_pick" } },
-      orderBy: buildOrderBy("recommended"),
-      take: 5,
-      select: productSelect,
-    }),
+    // Same order as /best/editors-pick: the pinned pick first (lib/best-for-tags.ts).
+    prisma.product
+      .findMany({
+        where: { isCanonical: true, dataCompleteness: { not: "LOW" }, bestForTags: { has: "editors_pick" } },
+        select: { ...RANK_SELECT, ...productSelect },
+      })
+      .then((picks) => rankForTag("editors_pick", picks).slice(0, 5)),
   ]);
 
   const coaPercent = productCount > 0 ? Math.round((publicCoaCount / productCount) * 100) : 0;

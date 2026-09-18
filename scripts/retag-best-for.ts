@@ -35,6 +35,7 @@ async function main() {
     for (const p of rankForTag(tag, after).slice(0, SHOWN_ON_PAGE)) console.log(`    ${label(tag, p)}`);
   }
 
+  for (const w of result.warnings) console.warn(`! ${w}`);
   console.log(`\n${result.products} products; ${result.changed} tag changes.`);
   console.log(apply ? "Applied." : "Dry run — pass --apply to write.");
   await prisma.$disconnect();
