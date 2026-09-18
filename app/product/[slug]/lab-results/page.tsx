@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
+import { brandedName } from "@/lib/product-names";
 import { absoluteUrl } from "@/lib/site";
+import { trackAttrs } from "@/lib/track";
 import { labelCoaStatus } from "@/lib/labels";
 import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
 import { ArticleSchema } from "@/components/article-schema";
@@ -39,8 +41,9 @@ export async function generateMetadata({
   });
   if (!product) return { title: "Product not found" };
 
-  const title = `${product.brand.name} ${product.name} Lab Test Results & COA`;
-  const description = `Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}. Graded by the same formula as every product.`;
+  const fullName = brandedName(product.brand.name, product.name);
+  const title = `${fullName} Lab Test Results & COA`;
+  const description = `Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${fullName}. Graded by the same formula as every product.`;
   const canonical = absoluteUrl(`/product/${slug}/lab-results`);
 
   return {
@@ -126,8 +129,8 @@ export default async function ProductLabResultsPage({
       <ArticleSchema
         slug={`product-lab-results-${product.slug}`}
         path={`/product/${product.slug}/lab-results`}
-        title={`${product.brand.name} ${product.name}: Lab Test Results & COA`}
-        description={`Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${product.brand.name} ${product.name}.`}
+        title={`${brandedName(product.brand.name, product.name)}: Lab Test Results & COA`}
+        description={`Certificate of Analysis status, third-party lab testing, and heavy metal safety data for ${brandedName(product.brand.name, product.name)}.`}
         datePublished="2026-05-14"
       />
 
@@ -187,6 +190,7 @@ export default async function ProductLabResultsPage({
                   href={product.coaUrl}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
+                  {...trackAttrs("coa_click", { location: "lab_results", product: product.slug, brand: product.brand.name })}
                   className="inline-flex items-center gap-1.5 rounded bg-[#3D7AFF] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#6E9FFF] transition-colors"
                 >
                   View COA

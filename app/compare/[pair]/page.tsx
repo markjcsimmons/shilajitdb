@@ -5,11 +5,17 @@ import { prisma } from "@/lib/db";
 import { computeQualityTier, computeTransparencyGrade } from "@/lib/grading";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
 import { gradeBadgeClasses, gradeLabel } from "@/lib/grade-colors";
+import { brandedName, nameWithoutBrand, shortName } from "@/lib/product-names";
 import { absoluteUrl } from "@/lib/site";
 import { getCompareProducts } from "@/lib/compare-set";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+
+/** "Brand — Product" with the brand printed once. */
+function dashName(p: { name: string; brand: { name: string } }): string {
+  return `${p.brand.name} — ${nameWithoutBrand(p.brand.name, p.name)}`;
+}
 
 export const revalidate = 3600;
 
@@ -58,9 +64,9 @@ function generateInsights(a: AnyProduct, b: AnyProduct): Insight[] {
 
   // COA status
   if (a.coaStatus === "PUBLIC" && b.coaStatus !== "PUBLIC") {
-    out.push({ label: "advantage", text: `${a.brand.name} — ${a.name} has a publicly available Certificate of Analysis; ${b.brand.name} — ${b.name} does not. This is the single most important transparency signal.` });
+    out.push({ label: "advantage", text: `${dashName(a)} has a publicly available Certificate of Analysis; ${dashName(b)} does not. This is the single most important transparency signal.` });
   } else if (b.coaStatus === "PUBLIC" && a.coaStatus !== "PUBLIC") {
-    out.push({ label: "advantage", text: `${b.brand.name} — ${b.name} has a publicly available Certificate of Analysis; ${a.brand.name} — ${a.name} does not. This is the single most important transparency signal.` });
+    out.push({ label: "advantage", text: `${dashName(b)} has a publicly available Certificate of Analysis; ${dashName(a)} does not. This is the single most important transparency signal.` });
   } else if (a.coaStatus === "PUBLIC" && b.coaStatus === "PUBLIC") {
     out.push({ label: "neutral", text: "Both products have publicly available Certificates of Analysis — the baseline transparency standard is met by each." });
   } else {
@@ -129,24 +135,24 @@ function generateBetterFor(a: AnyProduct, b: AnyProduct): BetterFor[] {
   const bS = (b.coaStatus === "PUBLIC" ? 2 : 0) + (b.thirdPartyTestingLab ? 1 : 0) + (b.heavyMetalsTested === "CONFIRMED" ? 1 : 0);
   if (aS !== bS) {
     const pick = aS > bS ? a : b;
-    out.push({ persona: "Safety-focused buyers", pick: `${pick.brand.name} — ${pick.name}`, reason: "Stronger testing transparency across COA availability, lab disclosure, and heavy metals confirmation." });
+    out.push({ persona: "Safety-focused buyers", pick: dashName(pick), reason: "Stronger testing transparency across COA availability, lab disclosure, and heavy metals confirmation." });
   }
 
   // Budget
   if (a.pricePerGramCents && b.pricePerGramCents && Math.abs(a.pricePerGramCents - b.pricePerGramCents) >= 10) {
     const pick = a.pricePerGramCents < b.pricePerGramCents ? a : b;
-    out.push({ persona: "Budget-conscious buyers", pick: `${pick.brand.name} — ${pick.name}`, reason: `Lower cost per gram ($${(pick.pricePerGramCents! / 100).toFixed(2)}/g).` });
+    out.push({ persona: "Budget-conscious buyers", pick: dashName(pick), reason: `Lower cost per gram ($${(pick.pricePerGramCents! / 100).toFixed(2)}/g).` });
   }
 
   // Form preference
   if (a.form !== b.form) {
     if (a.form === "RESIN" || b.form === "RESIN") {
       const resinPick = a.form === "RESIN" ? a : b;
-      out.push({ persona: "Buyers wanting the least-processed form", pick: `${resinPick.brand.name} — ${resinPick.name}`, reason: "Resin is shilajit in its least-processed state — no capsule fillers, excipients, or additional processing steps." });
+      out.push({ persona: "Buyers wanting the least-processed form", pick: dashName(resinPick), reason: "Resin is shilajit in its least-processed state — no capsule fillers, excipients, or additional processing steps." });
     }
     if (a.form === "CAPSULE" || b.form === "CAPSULE") {
       const capPick = a.form === "CAPSULE" ? a : b;
-      out.push({ persona: "Buyers prioritising daily convenience", pick: `${capPick.brand.name} — ${capPick.name}`, reason: "Pre-measured capsule dose removes the need for weighing resin each morning." });
+      out.push({ persona: "Buyers prioritising daily convenience", pick: dashName(capPick), reason: "Pre-measured capsule dose removes the need for weighing resin each morning." });
     }
   }
 
@@ -154,6 +160,26 @@ function generateBetterFor(a: AnyProduct, b: AnyProduct): BetterFor[] {
 }
 
 // ── Metadata ──────────────────────────────────────────────────────────────────
+
+const TITLE_SELECT = {
+  name: true,
+  brand: {
+    select: {
+      name: true,
+      _count: { select: { products: { where: { isCanonical: true, dataCompleteness: { not: "LOW" as const } } } } },
+    },
+  },
+  _count: { select: { evidence: true } },
+};
+
+/**
+ * How a product is named in a compare-page title. Brand names alone repeat when a brand sells
+ * several products ("Pürblack vs Pürblack", or two pages both titled "Pürblack vs Puralis"),
+ * so those brands get the product name; single-product brands keep the short brand name.
+ */
+function titleName(p: { name: string; brand: { name: string; _count: { products: number } } }): string {
+  return p.brand._count.products > 1 ? shortName(brandedName(p.brand.name, p.name)) : p.brand.name;
+}
 
 export async function generateMetadata({
   params,
@@ -168,17 +194,19 @@ export async function generateMetadata({
   const canonical = absoluteUrl(`/compare/${aSlug}-vs-${bSlug}`);
 
   const [a, b] = await Promise.all([
-    prisma.product.findUnique({ where: { slug: aSlug }, select: { name: true, brand: { select: { name: true } }, _count: { select: { evidence: true } } } }),
-    prisma.product.findUnique({ where: { slug: bSlug }, select: { name: true, brand: { select: { name: true } }, _count: { select: { evidence: true } } } }),
+    prisma.product.findUnique({ where: { slug: aSlug }, select: TITLE_SELECT }),
+    prisma.product.findUnique({ where: { slug: bSlug }, select: TITLE_SELECT }),
   ]);
 
   const title =
     a && b
-      ? `${a.brand.name} vs ${b.brand.name} Shilajit Comparison`
+      ? titleName(a) === a.brand.name && titleName(b) === b.brand.name
+        ? `${a.brand.name} vs ${b.brand.name} Shilajit Comparison`
+        : `${titleName(a)} vs ${titleName(b)}`
       : "Compare products";
   const description =
     a && b
-      ? `Compare ${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name} on COA evidence, lab independence, heavy metal results, form, and price. Both graded by the same formula.`
+      ? `Compare ${brandedName(a.brand.name, a.name)} vs ${brandedName(b.brand.name, b.name)} on COA evidence, lab independence, heavy metal results, form, and price. Both graded by the same formula.`
       : "Compare two shilajit products side-by-side.";
 
   const thinData = !a || !b || a._count.evidence < 2 || b._count.evidence < 2;
@@ -324,7 +352,7 @@ export default async function ComparePage({
   const compareJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${a.brand.name} ${a.name} vs ${b.brand.name} ${b.name}`,
+    name: `${brandedName(a.brand.name, a.name)} vs ${brandedName(b.brand.name, b.name)}`,
     description: `Side-by-side comparison of COA availability, lab accreditation, heavy metal testing, form, and price.`,
     url: absoluteUrl(`/compare/${canonicalPair}`),
   };
@@ -401,7 +429,7 @@ export default async function ComparePage({
           slugB={bSlug}
           options={allProducts.map((p) => ({
             slug: p.slug,
-            label: `${p.brand.name} — ${p.name}`,
+            label: dashName(p),
           }))}
         />
       </div>
@@ -413,9 +441,9 @@ export default async function ComparePage({
             Signal
           </div>
           <div className="border-b border-[#252A40] p-4 text-sm font-semibold text-[#EEF0F8] lg:border-b-0 lg:border-r">
-            {a.brand.name} — {a.name}
+            {dashName(a)}
           </div>
-          <div className="p-4 text-sm font-semibold text-[#EEF0F8]">{b.brand.name} — {b.name}</div>
+          <div className="p-4 text-sm font-semibold text-[#EEF0F8]">{dashName(b)}</div>
         </div>
         <div className="divide-y divide-[#252A40]">
           {rows.map((r) => (
@@ -481,7 +509,7 @@ export default async function ComparePage({
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
           <h2 className="text-base font-semibold text-[#EEF0F8] mb-4">
-            Transparency signals: {a.brand.name} — {a.name}
+            Transparency signals: {dashName(a)}
           </h2>
           <div className="mb-3">
             <div className="text-xs font-medium text-[#6E7A9A] uppercase tracking-wide mb-2">Transparency</div>
@@ -503,7 +531,7 @@ export default async function ComparePage({
         </div>
         <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
           <h2 className="text-base font-semibold text-[#EEF0F8] mb-4">
-            Transparency signals: {b.brand.name} — {b.name}
+            Transparency signals: {dashName(b)}
           </h2>
           <div className="mb-3">
             <div className="text-xs font-medium text-[#6E7A9A] uppercase tracking-wide mb-2">Transparency</div>
@@ -554,7 +582,7 @@ export default async function ComparePage({
                 href={`/compare/${p}`}
                 className="rounded-lg border border-[#252A40] bg-[#0F1320] p-4 text-sm text-[#8892B8] hover:border-[#3D7AFF] hover:text-[#EEF0F8] transition-colors"
               >
-                {anchor.brand.name} — {anchor.name} <span className="text-[#4A5070]">vs</span> {other.brand.name} — {other.name}
+                {dashName(anchor)} <span className="text-[#4A5070]">vs</span> {dashName(other)}
               </Link>
             ))}
           </div>

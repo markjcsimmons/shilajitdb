@@ -26,6 +26,8 @@ const TAG_META: Record<string, {
   description: string;
   editorial: string[];
   faq?: { q: string; a: string }[];
+  /** How many ranked products to show (default 5). The tag itself holds at most 15. */
+  limit?: number;
 }> = {
   best_resin: {
     label: "Best Resin",
@@ -138,7 +140,7 @@ const TAG_META: Record<string, {
     description: "The best shilajit gummy products ranked by COA quality, lab credibility, and transparency. Gummies introduce more processing steps than resin — testing credentials matter more, not less.",
     editorial: [
       "Gummy-form shilajit is the most processed format in the database. The extract has already been dried into powder at high temperature, then it is heated again into a base of sugar, gelatin, and flavourings — diluting it to a fraction of a clinical dose per piece. For that reason no gummy can grade above C on ShilajitDB, however clean its lab report. If you want shilajit at its most potent, choose resin.",
-      "If you prefer gummies anyway, the products below are the best-documented in the database — ranked by what their COAs actually show, within that C ceiling.",
+      "If you prefer gummies anyway, the products above are the best-documented in the database — ranked by what their COAs actually show, within that C ceiling.",
       "What to look for in a shilajit gummy: a stated shilajit content per gummy (in mg) and a third-party lab test on the finished gummy — not just the raw extract. Many brands test the incoming shilajit extract but not the final gummy, which means the heavy metal data does not reflect what you are actually consuming.",
       "Typical shilajit gummies contain 50–200 mg of extract per gummy, against the 250–500 mg/day used in clinical trials. Products that only state a total \"shilajit blend\" weight, without the mg of shilajit per gummy, are unverifiable — avoid them regardless of price.",
     ],
@@ -240,7 +242,7 @@ const TAG_META: Record<string, {
     description: "The best Himalayan shilajit products ranked by COA quality, lab accreditation, and heavy metal safety. 'Himalayan origin' is a marketing claim without independent testing — these products back it up.",
     editorial: [
       "The Himalayas are the most commonly cited shilajit source region, and for good reason — the high-altitude geology produces resin with a recognised mineral and fulvic acid profile. But 'Himalayan shilajit' on a label is an unverifiable origin claim without a COA. Because shilajit is not a geographically protected ingredient, any brand can print 'Himalayan' regardless of where their raw material was actually sourced. Independent third-party testing does not confirm geographic origin, but it does confirm that the product contains what it claims and is free of unsafe heavy metal levels — which is the more actionable signal for buyers.",
-      "Of the 166 Himalayan-sourced products in the ShilajitDB database, 56 have a public Certificate of Analysis. The products below are ranked on the same criteria we apply across the full database: a verified COA, a named laboratory, numeric heavy metal values, and product form.",
+      "Of the 166 Himalayan-sourced products in the ShilajitDB database, 56 have a public Certificate of Analysis. The products above are ranked on the same criteria we apply across the full database: a verified COA, a named laboratory, numeric heavy metal values, and product form.",
     ],
     faq: [
       {
@@ -262,6 +264,8 @@ const TAG_META: Record<string, {
     h1: "Best Third-Party Tested Shilajit (2026): Named Lab, Public COA, Heavy Metals Confirmed",
     metaTitle: "Best Third-Party Tested Shilajit (2026) — Named Lab & COA",
     description: "Shilajit products with a public COA from a named independent laboratory AND confirmed numeric heavy metal results. The strictest testing standard in the ShilajitDB database.",
+    // Few products pass this bar, so show every one of them rather than a top 5.
+    limit: 15,
     editorial: [
       "This list applies the strictest criteria in the database: a publicly accessible Certificate of Analysis from a named independent laboratory, with actual numeric values for lead, arsenic, mercury, and cadmium — not a pass/fail stamp, not a summary certificate, and not an in-house lab. Fewer than 15% of products reviewed meet all three criteria simultaneously.",
       "The distinction between 'third-party tested' and genuinely third-party tested matters. Brands that do not name their laboratory cannot have their testing claim independently verified. Brands that show only pass/fail results rather than specific values cannot be evaluated against regulatory thresholds such as USP 232 or California Proposition 65. The products here show the actual numbers — you can verify them yourself.",
@@ -317,7 +321,7 @@ const BASE_WHERE = {
 
 // ── Per-tag product fetchers ──────────────────────────────────────────────────
 
-async function fetchProducts(tag: string) {
+async function fetchProducts(tag: string, limit: number) {
   // All tags are driven by the bestForTags field, rebuilt by retagBestFor() in
   // lib/best-for-tags.ts (2-per-brand cap, 15 products max per category). The order uses
   // computed scores Prisma can't sort on, so fetch the whole tag (≤15 rows) and rank here
@@ -329,7 +333,7 @@ async function fetchProducts(tag: string) {
     },
     select: { ...RANK_SELECT, ...PRODUCT_SELECT },
   });
-  return rankForTag(tag, products).slice(0, 5);
+  return rankForTag(tag, products).slice(0, limit);
 }
 
 // ── Route ─────────────────────────────────────────────────────────────────────
@@ -361,7 +365,7 @@ export default async function BestTagPage({
   const meta = TAG_META[dbTag];
   if (!meta) notFound();
 
-  const products = await fetchProducts(dbTag);
+  const products = await fetchProducts(dbTag, meta.limit ?? 5);
 
   const canonicalUrl = absoluteUrl(`/best/${tag}`);
   const itemListSchema = {
@@ -402,6 +406,8 @@ export default async function BestTagPage({
       />
     )}
     <div className="space-y-4">
+      {/* The ranked list comes straight after a short intro; the longer editorial sits below it,
+          so visitors arriving from an AI answer see the products without scrolling. */}
       <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
         <div className="flex items-center gap-2 text-xs text-[#6E7A9A] mb-3">
           <Link href="/" className="hover:text-[#8892B8] transition-colors">Home</Link>
@@ -411,12 +417,8 @@ export default async function BestTagPage({
         <h1 className="font-serif text-2xl font-semibold text-[#EEF0F8] leading-snug">
           {meta.h1}
         </h1>
-        <div className="mt-4 space-y-3 max-w-2xl">
-          {meta.editorial.map((para, i) => (
-            <p key={i} className="text-sm text-[#C8D0E8] leading-relaxed">{para}</p>
-          ))}
-        </div>
-        <p className="mt-4 text-xs text-[#6E7A9A]">{products.length} product{products.length !== 1 ? "s" : ""} · <Link href="/methodology" className="hover:text-[#8892B8] transition-colors underline underline-offset-2">How we grade →</Link></p>
+        <p className="mt-3 max-w-2xl text-sm text-[#C8D0E8] leading-relaxed">{meta.description}</p>
+        <p className="mt-3 text-xs text-[#6E7A9A]">{products.length} product{products.length !== 1 ? "s" : ""}, ranked · <a href="#how-this-list-works" className="hover:text-[#8892B8] transition-colors underline underline-offset-2">How this list works ↓</a> · <Link href="/methodology" className="hover:text-[#8892B8] transition-colors underline underline-offset-2">How we grade →</Link></p>
       </div>
 
       {products.length === 0 ? (
@@ -430,6 +432,15 @@ export default async function BestTagPage({
           ))}
         </div>
       )}
+
+      <div id="how-this-list-works" className="scroll-mt-20 rounded-lg border border-[#252A40] bg-[#0F1320] p-6">
+        <h2 className="text-sm font-semibold text-[#EEF0F8] uppercase tracking-wider">How this list works</h2>
+        <div className="mt-4 space-y-3 max-w-2xl">
+          {meta.editorial.map((para, i) => (
+            <p key={i} className="text-sm text-[#C8D0E8] leading-relaxed">{para}</p>
+          ))}
+        </div>
+      </div>
 
       {meta.faq && (
         <div className="rounded-lg border border-[#252A40] bg-[#0F1320] p-6 space-y-4">

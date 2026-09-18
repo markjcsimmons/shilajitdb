@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ProductForm } from "@prisma/client";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { ProductCard, coaLabel, formLabel } from "@/components/product-card";
@@ -47,11 +48,34 @@ const GRADE_EXPLAIN = [
   { grade: "F",      label: "F",  desc: "No verifiable quality signal of any kind" },
 ];
 
+const BEST_BRAND_Q = "What is the best shilajit brand in 2026?";
+
+/**
+ * Answer to BEST_BRAND_Q, built from the live A+/A products — a hand-written list went stale
+ * when Mars by GHC and Pure Indian Foods were regraded (Sep 2026).
+ */
+function bestBrandAnswer(products: { form: ProductForm; overallGrade: string | null; brand: { name: string } }[]): string {
+  const brands = (grade: string) => {
+    const seen = new Map<string, ProductForm[]>();
+    for (const p of products.filter((p) => p.overallGrade === grade)) {
+      seen.set(p.brand.name, [...(seen.get(p.brand.name) ?? []), p.form]);
+    }
+    return [...seen].map(([name, forms]) =>
+      forms.every((f) => f === "RESIN") ? name : `${name} (${[...new Set(forms)].map((f) => formLabel(f).toLowerCase()).join(", ")})`,
+    );
+  };
+  const join = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+  const aPlus = brands("A_PLUS");
+  const a = brands("A");
+  return [
+    aPlus.length ? `The products graded A+ in our database are resins from ${join(aPlus)}.` : "",
+    a.length ? `${join(a)} follow at A.` : "",
+    "Only resin can reach A+, because every other form has been through extra processing. Grades come from what each product's COA documents — lab independence, numeric heavy metal results for the finished product, batch traceability — not from brand claims.",
+    "We earn affiliate commission on Pürblack links; it has no effect on grades.",
+  ].filter(Boolean).join(" ");
+}
+
 const FAQS = [
-  {
-    q: "What is the best shilajit brand in 2026?",
-    a: "The products graded A+ in our database are resins from Pürblack, Life Cykel, and Mars by GHC — each with a verified COA from a named independent laboratory reporting numeric heavy metals for the finished product. Pure Himalayan Shilajit Store, Pure Indian Foods, Puralis, and U.S. Shilajit (a liquid extract) follow at A. Only resin can reach A+, because every other form has been through extra processing. We earn affiliate commission on Pürblack links; it has no effect on grades.",
-  },
   {
     q: "What does an A+ grade mean on ShilajitDB?",
     a: "An A+ grade means the product is a resin with a verified Certificate of Analysis from an independent laboratory that names itself on the report, with actual numeric values for lead, mercury, arsenic, and cadmium on the finished product, plus most of: a microbial panel, a batch code, a report dated within two years, a stated manufacturing country, and GMP certification. Powders, capsules, and gummies cannot reach A+ however good their COA. Fewer than 5% of products reviewed reach this standard.",
@@ -75,7 +99,7 @@ const FAQS = [
 ];
 
 export default async function ShilajitComparisonPage() {
-  const [topProducts, gradeCounts, coaCount, totalCount, bestResin, bestTested, bestValue] = await Promise.all([
+  const [topProducts, gradeCounts, coaCount, totalCount, bestResin, bestTested, topGraded, bestValue] = await Promise.all([
     // Top 6 highest-graded products with public COA
     prisma.product.findMany({
       where: { isCanonical: true, coaStatus: "PUBLIC", dataCompleteness: { not: "LOW" } },
@@ -107,6 +131,12 @@ export default async function ShilajitComparisonPage() {
       take: 3,
       select: PRODUCT_SELECT,
     }),
+    // A+/A products for the "best brand" FAQ answer (indexable ones only, like /llms.txt)
+    prisma.product.findMany({
+      where: { isCanonical: true, dataCompleteness: { not: "LOW" }, overallGrade: { in: ["A_PLUS", "A"] } },
+      select: { form: true, overallGrade: true, brand: { select: { name: true } }, _count: { select: { evidence: true } } },
+      orderBy: { name: "asc" },
+    }),
     // Shortlist: best value
     prisma.product.findMany({
       where: { isCanonical: true, bestForTags: { has: "best_value" } },
@@ -115,6 +145,11 @@ export default async function ShilajitComparisonPage() {
       select: PRODUCT_SELECT,
     }),
   ]);
+
+  const faqs = [
+    { q: BEST_BRAND_Q, a: bestBrandAnswer(topGraded.filter((p) => p._count.evidence >= 2)) },
+    ...FAQS,
+  ];
 
   const gradeMap = Object.fromEntries(
     gradeCounts.map((g) => [g.overallGrade ?? "null", g._count])
@@ -138,7 +173,7 @@ export default async function ShilajitComparisonPage() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -421,7 +456,7 @@ export default async function ShilajitComparisonPage() {
         <div>
           <h2 className="font-serif text-xl font-semibold text-[#EEF0F8] mb-4">Frequently asked questions</h2>
           <div className="space-y-3">
-            {FAQS.map((faq) => (
+            {faqs.map((faq) => (
               <div key={faq.q} className="rounded-lg border border-[#252A40] bg-[#0F1320] p-5">
                 <p className="text-sm font-semibold text-[#EEF0F8] mb-2">{faq.q}</p>
                 <p className="text-xs text-[#8892B8] leading-relaxed">{faq.a}</p>

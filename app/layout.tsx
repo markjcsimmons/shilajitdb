@@ -156,17 +156,37 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }),
           }}
         />
-        {/* Google Analytics */}
+        {/* Google Analytics. Admin pages are excluded through GA's own opt-out flag, defined as a
+            getter so it follows client-side navigation between admin and public pages.
+            The click listener sends links marked with lib/track.ts trackAttrs() as GA4 events. */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
+            Object.defineProperty(window, 'ga-disable-${GA_ID}', {
+              get: function () { return location.pathname.indexOf('/admin') === 0; },
+              configurable: true
+            });
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_ID}');
+            document.addEventListener('click', function (e) {
+              var a = e.target && e.target.closest ? e.target.closest('a[data-track]') : null;
+              if (!a) return;
+              var d = a.dataset;
+              gtag('event', d.track, {
+                link_location: d.location,
+                product_slug: d.product,
+                brand: d.brand,
+                affiliate: d.affiliate,
+                retailer: d.retailer,
+                link_url: a.href,
+                transport_type: 'beacon'
+              });
+            }, true);
           `}
         </Script>
       </body>

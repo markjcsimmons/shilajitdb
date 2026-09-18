@@ -17,7 +17,9 @@ import {
   qualityTierClasses,
 } from "@/lib/grade-colors";
 import { labelCoaStatus, labelForm, labelQualityTier } from "@/lib/labels";
+import { brandedName, nameWithoutBrand } from "@/lib/product-names";
 import { absoluteUrl } from "@/lib/site";
+import { trackAttrs } from "@/lib/track";
 import { isAffiliateTrackingUrl } from "@/lib/affiliate";
 import { getCompareProducts } from "@/lib/compare-set";
 import { AffiliateTag, AffiliateNote } from "@/components/affiliate-tag";
@@ -196,12 +198,7 @@ export async function generateMetadata({
   const grade = product.overallGrade ? gradeLabel[product.overallGrade] ?? null : null;
   const coa = product.coaStatus ? coaLabel[product.coaStatus] ?? null : null;
   const gradePart = grade && coa ? ` — Grade ${grade}, ${coa}` : grade ? ` — Grade ${grade}` : "";
-  const brandPrefix = product.brand.name.toLowerCase();
-  const productNameDeduped = product.name.toLowerCase().startsWith(brandPrefix)
-    ? product.name.slice(product.brand.name.length).trimStart()
-    : product.name;
-  const displayName = productNameDeduped || product.name;
-  const title = `${product.brand.name} ${displayName}${gradePart}`;
+  const title = `${brandedName(product.brand.name, product.name)}${gradePart}`;
 
   const coaShortLabel = product.coaStatus ? (coaShort[product.coaStatus] ?? "") : "";
   const heavy = product.heavyMetalsTested ? (heavyLabel[product.heavyMetalsTested] ?? "") : "";
@@ -242,11 +239,13 @@ function StatChip({
   value,
   href,
   valueClass,
+  linkAttrs,
 }: {
   label: string;
   value: string;
   href?: string | null;
   valueClass?: string;
+  linkAttrs?: Record<string, string>;
 }) {
   return (
     <div className="rounded-lg border border-[#252A40] bg-[#171C2E] p-3">
@@ -258,6 +257,7 @@ function StatChip({
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2 hover:text-[#6E9FFF] transition-colors"
+            {...linkAttrs}
           >
             {value}
           </a>
@@ -488,6 +488,9 @@ export default async function ProductPage({
   const officialUrlIsAffiliate = isAffiliateTrackingUrl(product.officialCanonicalUrl);
   const hasAffiliateListing =
     product.listings.some((l) => l.isAffiliate) || officialUrlIsAffiliate;
+  const buyLinkSource = officialListing?.url === buyLink ? "OFFICIAL" : "AMAZON";
+  const track = (event: "shop_click" | "coa_click", location: string, affiliate?: boolean, retailer?: string) =>
+    trackAttrs(event, { location, product: product.slug, brand: product.brand.name, affiliate, retailer });
 
   return (
     <div className="space-y-3">
@@ -599,6 +602,7 @@ export default async function ProductPage({
                   href={product.coaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  {...track("coa_click", "coa_button")}
                   className="inline-flex items-center gap-1 rounded-lg border border-[#22C55E]/30 bg-[#052010] px-3 py-1.5 text-xs font-medium text-[#22C55E] hover:bg-[#073018] transition-colors"
                 >
                   View COA →
@@ -609,6 +613,7 @@ export default async function ProductPage({
                   href={buyLink}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
+                  {...track("shop_click", "shop_button", buyLinkIsAffiliate, buyLinkSource)}
                   className="inline-flex items-center gap-1 rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8] transition-colors"
                 >
                   Shop →
@@ -643,6 +648,7 @@ export default async function ProductPage({
             label="COA"
             value={labelCoaStatus(product.coaStatus)}
             href={product.coaUrl}
+            linkAttrs={track("coa_click", "coa_stat_chip")}
             valueClass={
               product.coaStatus === "PUBLIC"
                 ? "text-emerald-700"
@@ -757,6 +763,7 @@ export default async function ProductPage({
                 href={product.coaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                {...track("coa_click", "coa_review")}
                 className="inline-block text-xs text-[#6E9FFF] hover:text-[#EEF0F8] underline underline-offset-2 transition-colors"
               >
                 View COA document →
@@ -881,6 +888,7 @@ export default async function ProductPage({
                   className="text-[#6E9FFF] underline underline-offset-4 hover:text-[#EEF0F8] transition-colors"
                   target="_blank"
                   rel="nofollow noopener noreferrer"
+                  {...track("shop_click", "official_page", officialUrlIsAffiliate, "OFFICIAL")}
                 >
                   Visit brand site →
                 </a>
@@ -983,6 +991,7 @@ export default async function ProductPage({
                               className="hover:text-[#EEF0F8] transition-colors"
                               target="_blank"
                               rel="nofollow noopener noreferrer"
+                              {...track("shop_click", "where_to_buy", l.isAffiliate, l.source)}
                             >
                               {l.title ?? l.url}
                             </a>
@@ -998,6 +1007,7 @@ export default async function ProductPage({
                           href={l.url}
                           target="_blank"
                           rel="nofollow noopener noreferrer"
+                          {...track("shop_click", "where_to_buy", l.isAffiliate, l.source)}
                           className="shrink-0 rounded-lg border border-[#252A40] bg-[#0F1320] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#313760] hover:text-[#EEF0F8] transition-colors"
                         >
                           Visit →
@@ -1038,7 +1048,7 @@ export default async function ProductPage({
                 href={`/compare/${p}`}
                 className="rounded-lg border border-[#252A40] bg-[#171C2E] px-3 py-1.5 text-xs font-medium text-[#8892B8] hover:border-[#3D7AFF] hover:text-[#6E9FFF] transition-colors"
               >
-                vs {other.brand.name} — {other.name} →
+                vs {other.brand.name} — {nameWithoutBrand(other.brand.name, other.name)} →
               </Link>
             ))}
           </div>
@@ -1054,7 +1064,7 @@ export default async function ProductPage({
           currentSlug={product.slug}
           options={compareOptions.map((p) => ({
             slug: p.slug,
-            label: `${p.brand.name} — ${p.name}`,
+            label: `${p.brand.name} — ${nameWithoutBrand(p.brand.name, p.name)}`,
           }))}
         />
       </Accordion>

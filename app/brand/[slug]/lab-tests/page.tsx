@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { absoluteUrl } from "@/lib/site";
+import { trackAttrs } from "@/lib/track";
 import { labelCoaStatus } from "@/lib/labels";
 import { ArticleSchema } from "@/components/article-schema";
 import { notFound } from "next/navigation";
@@ -238,6 +239,7 @@ export default async function BrandLabTestsPage({
                             href={p.coaUrl}
                             target="_blank"
                             rel="nofollow noopener noreferrer"
+                            {...trackAttrs("coa_click", { location: "brand_lab_tests", product: p.slug, brand: brand.name })}
                             className="inline-flex items-center gap-1 rounded bg-[#3D7AFF] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#6E9FFF] transition-colors"
                           >
                             View COA

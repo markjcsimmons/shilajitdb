@@ -1,6 +1,7 @@
 import type { CoaStatus, OverallGrade, QualityTier, ProductForm, HeavyMetalsTested } from "@prisma/client";
 import Link from "next/link";
 import { cn } from "@/components/ui";
+import { trackAttrs } from "@/lib/track";
 import {
   gradeBadgeClasses,
   gradeLabel,
@@ -164,6 +165,7 @@ export function ProductCard({ product: p }: { product: ProductCardData }) {
               href={p.coaUrl}
               target="_blank"
               rel="nofollow noopener noreferrer"
+              {...trackAttrs("coa_click", { location: "product_card", product: p.slug, brand: p.brand.name })}
               className={cn(
                 "shrink-0 inline-flex items-center gap-1 rounded px-3 py-2 text-xs font-semibold transition-colors",
                 p.coaStatus === "PUBLIC"
